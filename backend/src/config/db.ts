@@ -23,6 +23,13 @@ export async function connectDB() {
     return true;
   } catch (error) {
     console.error("❌ MongoDB Atlas connection error:", error);
+    // Auto-retry connection every 15s in background until Atlas IP whitelist is active
+    setTimeout(() => {
+      if (mongoose.connection.readyState === 0) {
+        console.log("🔄 Retrying connection to MongoDB Atlas...");
+        connectDB();
+      }
+    }, 15000);
     return false;
   }
 }
