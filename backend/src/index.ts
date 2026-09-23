@@ -20,14 +20,18 @@ app.use(
 
 app.use(express.json());
 
+import mongoose from "mongoose";
+
 // Health Check
 app.get("/api/health", (_req: Request, res: Response) => {
+  const isConnected = mongoose.connection.readyState === 1;
   res.json({
     status: "HEALTHY",
     service: "RailPlan AI - High-Density Railway Operations API",
     mode: "Production / Render Web Service",
     timestamp: new Date().toISOString(),
-    database: "MongoDB Atlas",
+    database: isConnected ? "CONNECTED (MongoDB Atlas)" : "DISCONNECTED (In-memory fallback)",
+    dbState: mongoose.connection.readyState,
   });
 });
 
