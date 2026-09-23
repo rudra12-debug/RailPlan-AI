@@ -11,6 +11,9 @@ export async function connectDB() {
     return false;
   }
 
+  const sanitizedUri = uri.replace(/:([^:@]+)@/, ":****@");
+  console.log(`🔌 Attempting MongoDB Atlas connection to: ${sanitizedUri}`);
+
   try {
     await mongoose.connect(uri, {
       dbName: process.env.MONGODB_DB_NAME || "railplan_ai",
