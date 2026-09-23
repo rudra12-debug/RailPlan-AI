@@ -14,7 +14,7 @@ export async function connectDB() {
   try {
     await mongoose.connect(uri, {
       dbName: process.env.MONGODB_DB_NAME || "railplan_ai",
-    });
+    } as any);
     console.log("✅ Successfully connected to MongoDB Atlas!");
     return true;
   } catch (error) {

@@ -37,7 +37,7 @@ const ServiceRequestSchema = new Schema<IServiceRequest>({
   updatedAt: { type: String, default: () => new Date().toISOString() },
 });
 
-export const ServiceRequestModel = mongoose.models.ServiceRequest || mongoose.model<IServiceRequest>("ServiceRequest", ServiceRequestSchema);
+export const ServiceRequestModel: mongoose.Model<IServiceRequest> = (mongoose.models.ServiceRequest as any) || mongoose.model<IServiceRequest>("ServiceRequest", ServiceRequestSchema);
 
 // 2. Bundled Order Model (Mega-Blocks)
 export interface IBundledOrder extends Document {
@@ -72,7 +72,7 @@ const BundledOrderSchema = new Schema<IBundledOrder>({
   savingsPercentage: { type: Number, default: 46.1 },
 });
 
-export const BundledOrderModel = mongoose.models.BundledOrder || mongoose.model<IBundledOrder>("BundledOrder", BundledOrderSchema);
+export const BundledOrderModel: mongoose.Model<IBundledOrder> = (mongoose.models.BundledOrder as any) || mongoose.model<IBundledOrder>("BundledOrder", BundledOrderSchema);
 
 // 3. T/806 Statutory Sanction Model
 export interface IT806Sanction extends Document {
@@ -99,7 +99,7 @@ const T806SanctionSchema = new Schema<IT806Sanction>({
   signSteps: { type: [Schema.Types.Mixed] as any, default: [] },
 });
 
-export const T806SanctionModel = mongoose.models.T806Sanction || mongoose.model<IT806Sanction>("T806Sanction", T806SanctionSchema);
+export const T806SanctionModel: mongoose.Model<IT806Sanction> = (mongoose.models.T806Sanction as any) || mongoose.model<IT806Sanction>("T806Sanction", T806SanctionSchema);
 
 // 4. Audit Log Model
 export interface IAuditLog extends Document {
@@ -124,4 +124,4 @@ const AuditLogSchema = new Schema<IAuditLog>({
   details: { type: String, required: true },
 });
 
-export const AuditLogModel = mongoose.models.AuditLog || mongoose.model<IAuditLog>("AuditLog", AuditLogSchema);
+export const AuditLogModel: mongoose.Model<IAuditLog> = (mongoose.models.AuditLog as any) || mongoose.model<IAuditLog>("AuditLog", AuditLogSchema);
