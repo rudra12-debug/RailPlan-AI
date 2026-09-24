@@ -26,8 +26,14 @@ import {
   ShieldCheck,
   Package,
   Pulse,
-  Icon
+  Icon,
+  Train,
+  X,
+  Question,
+  ArrowCounterClockwise
 } from "@phosphor-icons/react";
+import { useDemoTour } from "@/context/DemoTourContext";
+import { ZONE_CORRIDOR_MAP } from "@/context/RailPlanContext";
 
 interface NavItem {
   label: string;
@@ -43,7 +49,19 @@ interface NavItem {
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
   const { user, isCentralAdmin } = useAuth();
-  const { requests, bundles } = useRailPlan();
+  const { 
+    requests, 
+    bundles, 
+    isMobileMenuOpen, 
+    setIsMobileMenuOpen,
+    selectedZone,
+    setSelectedZone,
+    selectedCorridorId,
+    setSelectedCorridorId,
+    corridors,
+    resetToDemoState
+  } = useRailPlan();
+  const { openTour } = useDemoTour();
 
   const pendingApprovalsCount = requests.filter(
     (r) => r.status === "UNDER_REVIEW" || r.status === "SUBMITTED"
@@ -129,13 +147,30 @@ export const Sidebar: React.FC = () => {
 
   const sections = isCentralAdmin ? centralNavItems : departmentNavItems;
 
-  return (
-    <aside className="w-64 bg-[#011526] border-r-2 border-black flex flex-col h-[calc(100vh-4rem)] sticky top-16 select-none shrink-0 overflow-y-auto">
+  const zones = [
+    "All Zones (National OCC)",
+    "West Central Railway (WCR - Bhopal)",
+    "Northern Railway (NR - Delhi)",
+    "Western Railway (WR - Mumbai/Gujarat)",
+    "Central Railway (CR - CSMT/Pune)",
+    "Eastern Railway (ER - Howrah)",
+    "Southern & SWR (SR/SWR - Chennai/Bengaluru)",
+    "DFCCIL (Dedicated Freight Corridors)",
+    "Konkan Railway (KRCL)",
+  ];
+
+  const availableCorridors = React.useMemo(() => {
+    const allowed = ZONE_CORRIDOR_MAP[selectedZone] || ZONE_CORRIDOR_MAP["ALL"];
+    return corridors.filter((c) => allowed.includes(c.id));
+  }, [corridors, selectedZone]);
+
+  const renderContent = (onLinkClick?: () => void) => (
+    <>
       {/* Officer ID Banner */}
       <div className="p-4 border-b-2 border-black bg-[#022642] shrink-0">
         <div className="flex items-center space-x-3">
           <div
-            className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm border-2 border-black shadow-[2px_2px_0_#000000] ${
+            className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm border-2 border-black shadow-[2px_2px_0_#000000] shrink-0 ${
               isCentralAdmin
                 ? "bg-[#6367FF] text-white"
                 : "bg-[#00FFD2] text-black"
@@ -152,7 +187,7 @@ export const Sidebar: React.FC = () => {
             <p className="text-[10px] text-[#CABFFF] truncate font-medium">
               {isCentralAdmin ? "Executive Director (Railway Board)" : user?.designation || user?.departmentName}
             </p>
-            <span className="inline-block mt-0.5 text-[9px] font-mono font-black px-2 py-0.5 rounded bg-[#000D18] text-[#00FFD2] border border-black">
+            <span className="inline-block mt-0.5 text-[9px] font-mono font-black px-2 py-0.5 rounded bg-[#000D18] text-[#00FFD2] border border-black truncate max-w-full">
               {isCentralAdmin ? "Central Authority (Railway Board)" : user?.division || "HQ New Delhi"}
             </span>
           </div>
@@ -177,6 +212,7 @@ export const Sidebar: React.FC = () => {
                   <Link
                     key={item.href}
                     href={item.href}
+                    onClick={onLinkClick}
                     className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-bold transition-all duration-100 group border-2 ${
                       isActive
                         ? "bg-[#6367FF] text-white border-black shadow-[2px_2px_0_#000000] translate-y-0.5"
@@ -226,6 +262,116 @@ export const Sidebar: React.FC = () => {
           G&SR Standard 15.06 Compliant
         </p>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* 1. Desktop Solid Permanent Sidebar (Visible only on lg and above) */}
+      <aside className="hidden lg:flex w-64 bg-[#011526] border-r-2 border-black flex-col h-[calc(100vh-4rem)] sticky top-16 select-none shrink-0 overflow-y-auto">
+        {renderContent()}
+      </aside>
+
+      {/* 2. Mobile Responsive Drawer Backdrop */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 lg:hidden transition-opacity"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* 3. Mobile Responsive Drawer Panel (Slides out on mobile/tablet) */}
+      <aside
+        className={`fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-[#011526] border-r-2 border-black flex flex-col h-full z-50 select-none overflow-y-auto shadow-[6px_0_24px_rgba(0,0,0,0.9)] lg:hidden transition-transform duration-200 ease-in-out ${
+          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        {/* Mobile Drawer Top Bar with Close Button */}
+        <div className="p-4 border-b-2 border-black bg-[#000D18] flex items-center justify-between shrink-0">
+          <div className="flex items-center space-x-2.5">
+            <div className="p-1.5 rounded-lg bg-[#022642] border border-black text-[#00FFD2]">
+              <Train size={18} weight="duotone" />
+            </div>
+            <div>
+              <span className="font-black text-sm text-white tracking-tight">RAILPLAN AI</span>
+              <span className="ml-1.5 text-[9px] font-mono font-bold bg-[#00FFD2] text-black px-1.5 py-0.5 rounded border border-black">
+                IR-RAMS
+              </span>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setIsMobileMenuOpen(false)}
+            aria-label="Close Navigation Drawer"
+            className="p-1.5 rounded-lg bg-[#FB2077] text-white border border-black shadow-[1px_1px_0_#000000] active:translate-y-0.5 cursor-pointer"
+          >
+            <X size={18} weight="bold" />
+          </button>
+        </div>
+
+        {/* Mobile Corridor & Zone Switcher */}
+        <div className="p-3 bg-[#022642] border-b-2 border-black space-y-2 shrink-0">
+          <label className="text-[10px] font-black uppercase text-[#8595FF] tracking-wider block">
+            Railway Zone
+          </label>
+          <select
+            value={selectedZone}
+            onChange={(e) => setSelectedZone(e.target.value)}
+            className="w-full bg-[#000D18] text-white text-xs font-bold rounded-lg p-2 border border-black focus:outline-none focus:ring-1 focus:ring-[#00FFD2] cursor-pointer"
+          >
+            {zones.map((z) => (
+              <option key={z} value={z} className="bg-[#000D18] text-white">
+                {z}
+              </option>
+            ))}
+          </select>
+
+          <label className="text-[10px] font-black uppercase text-[#8595FF] tracking-wider block pt-1">
+            Active Corridor
+          </label>
+          <select
+            value={selectedCorridorId}
+            onChange={(e) => setSelectedCorridorId(e.target.value)}
+            className="w-full bg-[#000D18] text-white text-xs font-mono font-bold rounded-lg p-2 border border-black focus:outline-none focus:ring-1 focus:ring-[#00FFD2] cursor-pointer"
+          >
+            <option value="ALL" className="bg-[#000D18] text-white">
+              {selectedZone.startsWith("All") ? `All Corridors (${corridors.length})` : `All ${selectedZone.split("(")[0].trim()} (${availableCorridors.length})`}
+            </option>
+            {availableCorridors.map((c) => (
+              <option key={c.id} value={c.id} className="bg-[#000D18] text-white">
+                {c.id} - {c.name.split("(")[0]} ({c.totalLengthKm} KM)
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Mobile Quick Action Buttons: Tour & Reset */}
+        <div className="p-3 bg-[#011526] border-b-2 border-black flex items-center gap-2 shrink-0">
+          <button
+            onClick={() => {
+              openTour();
+              setIsMobileMenuOpen(false);
+            }}
+            className="flex-1 py-1.5 px-2 rounded-lg bg-[#022642] hover:bg-[#033358] border border-black text-[#00FFD2] text-[11px] font-bold flex items-center justify-center space-x-1.5 shadow-[1px_1px_0_#000000] cursor-pointer"
+          >
+            <Question size={15} weight="duotone" />
+            <span>Guide Tour</span>
+          </button>
+          <button
+            onClick={() => {
+              resetToDemoState();
+              setIsMobileMenuOpen(false);
+            }}
+            className="flex-1 py-1.5 px-2 rounded-lg bg-[#022642] hover:bg-[#033358] border border-black text-[#FFFF00] text-[11px] font-bold flex items-center justify-center space-x-1.5 shadow-[1px_1px_0_#000000] cursor-pointer"
+          >
+            <ArrowCounterClockwise size={15} weight="duotone" />
+            <span>Reset Demo</span>
+          </button>
+        </div>
+
+        {/* Navigation Content (auto-closes drawer on mobile link click) */}
+        {renderContent(() => setIsMobileMenuOpen(false))}
+      </aside>
+    </>
   );
 };

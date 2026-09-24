@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
@@ -11,6 +11,12 @@ import { AiChatbot } from "@/components/chat/AiChatbot";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
 
 export const metadata: Metadata = {
   title: "RailPlan AI | Team Debug Dynasty – SIH 2026",
@@ -30,9 +36,9 @@ export default function RootLayout({
             <DemoTourProvider>
               <div className="flex flex-col min-h-screen">
                 <Header />
-                <div className="flex flex-1">
+                <div className="flex flex-1 min-w-0">
                   <Sidebar />
-                  <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-28 max-w-7xl mx-auto w-full overflow-x-hidden">
+                  <main className="flex-1 p-2.5 sm:p-4 lg:p-6 pb-28 max-w-7xl mx-auto w-full min-w-0 overflow-x-hidden">
                     {children}
                   </main>
                 </div>

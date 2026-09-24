@@ -56,29 +56,29 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({ isOpen, 
     <div className="fixed inset-0 z-50 overflow-hidden">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="fixed inset-y-0 right-0 max-w-md w-full bg-[#0C1326] border-l border-[#1A274E] shadow-2xl flex flex-col z-10 animate-slide-left">
+      <div className="fixed inset-y-0 right-0 w-full max-w-[100vw] sm:max-w-md bg-[#0C1326] border-l-2 border-black shadow-2xl flex flex-col z-10 animate-slide-left">
         {/* Header */}
-        <div className="p-5 border-b border-[#1A274E] bg-[#050814] flex items-center justify-between">
+        <div className="p-3.5 sm:p-5 border-b border-[#1A274E] bg-[#050814] flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="p-2 rounded-lg bg-[#6367FF]/15 text-[#8494FF] border border-[#6367FF]/30">
               <Bell size={20} weight="duotone" />
             </div>
             <div>
-              <h3 className="font-bold text-[#F8FAFC] text-lg">Central Notification Feed</h3>
-              <p className="text-xs text-[#8494FF]">Live railway operational & maintenance alerts</p>
+              <h3 className="font-bold text-[#F8FAFC] text-base sm:text-lg">Central Notification Feed</h3>
+              <p className="text-[11px] sm:text-xs text-[#8494FF]">Live operational & maintenance alerts</p>
             </div>
           </div>
           <button
             onClick={onClose}
             aria-label="Close Notification Drawer"
-            className="p-1.5 rounded-lg text-[#B6BFFF] hover:text-[#F8FAFC] hover:bg-[#131E3D] transition"
+            className="p-1.5 rounded-lg text-[#B6BFFF] hover:text-[#F8FAFC] hover:bg-[#131E3D] transition border border-black"
           >
             <X size={18} weight="bold" />
           </button>
         </div>
 
         {/* Filter bar & Mark all read */}
-        <div className="px-5 py-3 border-b border-[#1A274E] bg-[#0C1326] flex items-center justify-between text-xs">
+        <div className="px-3.5 sm:px-5 py-2.5 sm:py-3 border-b border-[#1A274E] bg-[#0C1326] flex flex-wrap items-center justify-between gap-2 text-xs">
           <div className="flex space-x-1.5 bg-[#050814] p-1 rounded-lg border border-[#1A274E]">
             <button
               onClick={() => setFilter("ALL")}

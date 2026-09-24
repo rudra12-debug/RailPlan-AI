@@ -14,7 +14,9 @@ import {
   Question, 
   ArrowCounterClockwise, 
   SignOut, 
-  Broadcast
+  Broadcast,
+  List,
+  X
 } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -32,7 +34,9 @@ export const Header: React.FC = () => {
     corridors,
     unreadNotificationCount,
     resetToDemoState,
-    serverSyncConnected
+    serverSyncConnected,
+    isMobileMenuOpen,
+    setIsMobileMenuOpen
   } = useRailPlan();
   const { openTour } = useDemoTour();
   const router = useRouter();
@@ -94,31 +98,40 @@ export const Header: React.FC = () => {
         {/* Official Indian National Tricolor Ribbon Accent Top Bar */}
         <div className="h-1.5 w-full bg-gradient-to-r from-[#FF671F] via-[#FFFFFF] to-[#046A38]" />
 
-        <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
-          {/* Left: Official Indian Railways Emblem & Brand */}
-          <div className="flex items-center space-x-3 shrink-0">
+        <div className="px-3 sm:px-6 h-16 flex items-center justify-between gap-2 sm:gap-3">
+          {/* Left: Hamburger (Mobile) + Official Indian Railways Emblem & Brand */}
+          <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
+            {/* Mobile Navigation Drawer Toggle Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Toggle Navigation Drawer"
+              className="lg:hidden p-2 rounded-xl bg-[#022642] hover:bg-[#033358] border-2 border-black text-[#00FFD2] shadow-[2px_2px_0_#000000] active:translate-y-0.5 active:shadow-none transition shrink-0 cursor-pointer"
+            >
+              {isMobileMenuOpen ? <X size={20} weight="bold" /> : <List size={20} weight="bold" />}
+            </button>
+
             <Link 
               href={isCentralAdmin ? "/central" : "/department/dashboard"} 
-              className="flex items-center space-x-3 group shrink-0"
+              className="flex items-center space-x-2 sm:space-x-3 group shrink-0"
             >
               {/* Official Crest Badge */}
-              <div className="p-2 rounded-xl bg-[#000D18] border-2 border-black shadow-[2px_2px_0_#000000] shrink-0 transition-transform group-hover:scale-105 text-[#00FFD2]">
-                <Train size={22} weight="duotone" />
+              <div className="p-1.5 sm:p-2 rounded-xl bg-[#000D18] border-2 border-black shadow-[2px_2px_0_#000000] shrink-0 transition-transform group-hover:scale-105 text-[#00FFD2]">
+                <Train size={20} weight="duotone" className="w-5 h-5 sm:w-[22px] sm:h-[22px]" />
               </div>
 
               <div className="flex flex-col justify-center">
                 <div className="flex items-center space-x-1.5 leading-none">
-                  <span className="font-black text-base sm:text-lg text-white tracking-tight font-sans whitespace-nowrap leading-tight">
+                  <span className="font-black text-sm sm:text-base lg:text-lg text-white tracking-tight font-sans whitespace-nowrap leading-tight">
                     RAILPLAN AI
                   </span>
-                  <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-[#00FFD2] text-black font-black border border-black shadow-[1px_1px_0_#000000] shrink-0">
+                  <span className="font-mono text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded bg-[#00FFD2] text-black font-black border border-black shadow-[1px_1px_0_#000000] shrink-0">
                     IR-RAMS
                   </span>
                 </div>
-                <p className="text-[10px] text-[#CABFFF] font-bold tracking-wide flex items-center space-x-1 mt-0.5 leading-tight whitespace-nowrap">
+                <p className="text-[9px] sm:text-[10px] text-[#CABFFF] font-bold tracking-wide flex items-center space-x-1 mt-0.5 leading-tight whitespace-nowrap">
                   <span className="text-[#FFFF00] font-black">भारतीय रेल</span>
-                  <span>•</span>
-                  <span>Ministry of Railways</span>
+                  <span className="hidden xs:inline">•</span>
+                  <span className="hidden xs:inline">Ministry of Railways</span>
                 </p>
               </div>
             </Link>
@@ -224,7 +237,7 @@ export const Header: React.FC = () => {
             <button
               onClick={openTour}
               aria-label="Start System Guide Tour"
-              className="p-2 rounded-xl bg-[#022642] hover:bg-[#033358] border-2 border-black shadow-[2px_2px_0_#000000] text-white transition active:translate-y-0.5 active:shadow-none"
+              className="hidden sm:flex p-2 rounded-xl bg-[#022642] hover:bg-[#033358] border-2 border-black shadow-[2px_2px_0_#000000] text-white transition active:translate-y-0.5 active:shadow-none cursor-pointer"
               title="System Walkthrough Guide"
             >
               <Question size={18} weight="duotone" />
@@ -234,7 +247,7 @@ export const Header: React.FC = () => {
             <button
               onClick={resetToDemoState}
               aria-label="Reset System Data to Default"
-              className="p-2 rounded-xl bg-[#022642] hover:bg-[#033358] border-2 border-black shadow-[2px_2px_0_#000000] text-white transition active:translate-y-0.5 active:shadow-none"
+              className="hidden sm:flex p-2 rounded-xl bg-[#022642] hover:bg-[#033358] border-2 border-black shadow-[2px_2px_0_#000000] text-white transition active:translate-y-0.5 active:shadow-none cursor-pointer"
               title="Reset System Simulation State"
             >
               <ArrowCounterClockwise size={18} weight="duotone" />

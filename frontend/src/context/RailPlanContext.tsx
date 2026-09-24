@@ -58,6 +58,8 @@ interface RailPlanContextType {
   selectedCorridorId: string;
   unreadNotificationCount: number;
   serverSyncConnected: boolean;
+  isMobileMenuOpen: boolean;
+  setIsMobileMenuOpen: (open: boolean) => void;
 
   // RailPlan AI Telemetry & Simulation State
   trains: LiveTrain[];
@@ -237,6 +239,7 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [selectedCorridorId, setSelectedCorridorIdState] = useState<string>("BPL-ET");
   const [serverSyncConnected, setServerSyncConnected] = useState<boolean>(true);
   const [activeToast, setActiveToast] = useState<NotificationItem | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   // Helper: Tamper-proof audit logger with pseudo-hash chaining
   const logAudit = useCallback((
@@ -703,6 +706,8 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         selectedCorridorId,
         unreadNotificationCount,
         serverSyncConnected,
+        isMobileMenuOpen,
+        setIsMobileMenuOpen,
         trains,
         blockRequests,
         t806Sanctions,

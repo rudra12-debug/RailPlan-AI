@@ -380,51 +380,51 @@ export const OfficialSanctionLetterModal: React.FC<OfficialSanctionProps> = ({
     <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex flex-col items-center justify-center p-2 sm:p-4 overflow-hidden no-print">
       <div className="relative w-full max-w-3xl bg-white text-slate-900 rounded-2xl shadow-2xl overflow-hidden border border-slate-700 flex flex-col max-h-[92vh] animate-scale-up">
         {/* Pinned Top Header Control Bar (Always Visible on screen, excluded from print) */}
-        <div className="p-3.5 bg-slate-950 text-white flex items-center justify-between border-b border-slate-800 shrink-0 select-none no-print">
-          <div className="flex items-center space-x-2.5">
+        <div className="p-2.5 sm:p-3.5 bg-slate-950 text-white flex items-center justify-between border-b border-slate-800 shrink-0 select-none no-print">
+          <div className="flex items-center space-x-2">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
             <div>
               <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-200">
-                Official Sanction Order • Form T/806
+                Form T/806
               </h3>
               <p className="text-[10px] text-slate-400 font-mono hidden sm:block">
-                Ref: {orderNumber} • Sanctioned: {sanctionTimestamp}
+                Ref: {orderNumber}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1.5 sm:space-x-2">
             <button
               onClick={handlePrint}
-              className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center space-x-1.5 transition shadow active:scale-95 cursor-pointer"
+              className="px-2 sm:px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center space-x-1 sm:space-x-1.5 transition shadow active:scale-95 cursor-pointer"
               title="Print Clean 1-Page Sanction Document (PDF)"
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>Print Order</span>
+              <span className="hidden sm:inline">Print Order</span>
             </button>
 
             <button
               onClick={handleDownloadFile}
-              className="px-3.5 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold flex items-center space-x-1.5 transition shadow active:scale-95 cursor-pointer"
+              className="px-2 sm:px-3.5 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold flex items-center space-x-1 sm:space-x-1.5 transition shadow active:scale-95 cursor-pointer"
               title="Download Sanction Document (.html)"
             >
               <Download className="w-3.5 h-3.5" />
-              <span>Download Letter</span>
+              <span className="hidden sm:inline">Download</span>
             </button>
 
             <button
               onClick={onClose}
-              className="px-3.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold flex items-center space-x-1.5 transition shadow active:scale-95 cursor-pointer"
+              className="px-2 sm:px-3.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold flex items-center space-x-1 sm:space-x-1.5 transition shadow active:scale-95 cursor-pointer"
               title="Close Sanction View (Esc)"
             >
               <X className="w-4 h-4" />
-              <span>Exit</span>
+              <span className="hidden sm:inline">Exit</span>
             </button>
           </div>
         </div>
 
         {/* Scrollable Printable Official Stationery Content */}
-        <div id="official-sanction-print-area" className="flex-1 overflow-y-auto p-6 sm:p-10 space-y-4 text-slate-900 text-xs font-serif leading-relaxed bg-white select-text">
+        <div id="official-sanction-print-area" className="flex-1 overflow-y-auto p-3 sm:p-10 space-y-4 text-slate-900 text-xs font-serif leading-relaxed bg-white select-text">
           {/* Government of India Official Header */}
           <div className="text-center space-y-1 border-b-2 border-slate-900 pb-3">
             <div className="flex justify-center mb-1">
@@ -447,13 +447,13 @@ export const OfficialSanctionLetterModal: React.FC<OfficialSanctionProps> = ({
           </div>
 
           {/* Reference & Metadata Bar */}
-          <div className="flex justify-between items-start pt-1 font-mono text-[11px] border-b border-slate-300 pb-3">
+          <div className="flex flex-col sm:flex-row justify-between items-start pt-1 font-mono text-[10px] sm:text-[11px] border-b border-slate-300 pb-3 gap-2">
             <div>
               <p><strong>Sanction Dispatch No:</strong> {orderNumber}</p>
               <p><strong>G&SR Rule Authority:</strong> Para 15.06 & 17.03 (Special Block Working)</p>
               <p><strong>Security Digital Digest:</strong> SHA-256: 8f4a9c1e...7b2d (Verified)</p>
             </div>
-            <div className="text-right">
+            <div className="text-left sm:text-right">
               <p><strong>Date & Time of Sanction:</strong> <span className="font-bold text-slate-950">{sanctionTimestamp}</span></p>
               <p><strong>Corridor Zone:</strong> {corridor} (Trunk Line)</p>
               <p><strong>Classification:</strong> <span className="uppercase font-bold text-red-700">Official Sanction Order</span></p>
@@ -476,34 +476,36 @@ export const OfficialSanctionLetterModal: React.FC<OfficialSanctionProps> = ({
               1. <strong>SANCTION IS HEREBY ACCORDED</strong> by the Central Authority (Railway Board / Executive Director O&M) for the execution of integrated railway maintenance works detailed hereunder on the <strong>{corridor}</strong> corridor between <strong>{locationKm}</strong>.
             </p>
 
-            <table className="w-full border-collapse border border-slate-400 text-[10px] font-sans my-1.5">
-              <tbody>
-                <tr className="border-b border-slate-300 bg-slate-50">
-                  <td className="p-1.5 border-r border-slate-300 font-bold w-1/3">Work Order Title:</td>
-                  <td className="p-1.5 font-semibold">{title}</td>
-                </tr>
-                <tr className="border-b border-slate-300">
-                  <td className="p-1.5 border-r border-slate-300 font-bold">Requesting Department:</td>
-                  <td className="p-1.5">{reqDept} Department</td>
-                </tr>
-                <tr className="border-b border-slate-300 bg-slate-50">
-                  <td className="p-1.5 border-r border-slate-300 font-bold">Assigned Execution Unit:</td>
-                  <td className="p-1.5">{targetDept} Directorate</td>
-                </tr>
-                <tr className="border-b border-slate-300">
-                  <td className="p-1.5 border-r border-slate-300 font-bold">Sanctioned Financial Grant:</td>
-                  <td className="p-1.5 font-mono font-bold text-slate-900">{formatFullINR(costVal)}</td>
-                </tr>
-                <tr className="border-b border-slate-300 bg-slate-50">
-                  <td className="p-1.5 border-r border-slate-300 font-bold">Permitted Block Window:</td>
-                  <td className="p-1.5 font-mono font-bold text-slate-900">01:30 hrs to 05:30 hrs (4.0 Hours Night Slot)</td>
-                </tr>
-                <tr>
-                  <td className="p-1.5 border-r border-slate-300 font-bold">Caution Speed Restriction:</td>
-                  <td className="p-1.5 font-bold text-red-700">30 km/h Caution Order enforced on adjacent line</td>
-                </tr>
-              </tbody>
-            </table>
+            <div className="overflow-x-auto -mx-1 sm:mx-0">
+              <table className="w-full min-w-[320px] border-collapse border border-slate-400 text-[10px] font-sans my-1.5">
+                <tbody>
+                  <tr className="border-b border-slate-300 bg-slate-50">
+                    <td className="p-1.5 border-r border-slate-300 font-bold w-1/3">Work Order Title:</td>
+                    <td className="p-1.5 font-semibold">{title}</td>
+                  </tr>
+                  <tr className="border-b border-slate-300">
+                    <td className="p-1.5 border-r border-slate-300 font-bold">Requesting Department:</td>
+                    <td className="p-1.5">{reqDept} Department</td>
+                  </tr>
+                  <tr className="border-b border-slate-300 bg-slate-50">
+                    <td className="p-1.5 border-r border-slate-300 font-bold">Assigned Execution Unit:</td>
+                    <td className="p-1.5">{targetDept} Directorate</td>
+                  </tr>
+                  <tr className="border-b border-slate-300">
+                    <td className="p-1.5 border-r border-slate-300 font-bold">Sanctioned Financial Grant:</td>
+                    <td className="p-1.5 font-mono font-bold text-slate-900">{formatFullINR(costVal)}</td>
+                  </tr>
+                  <tr className="border-b border-slate-300 bg-slate-50">
+                    <td className="p-1.5 border-r border-slate-300 font-bold">Permitted Block Window:</td>
+                    <td className="p-1.5 font-mono font-bold text-slate-900">01:30 hrs to 05:30 hrs (4.0 Hours Night Slot)</td>
+                  </tr>
+                  <tr>
+                    <td className="p-1.5 border-r border-slate-300 font-bold">Caution Speed Restriction:</td>
+                    <td className="p-1.5 font-bold text-red-700">30 km/h Caution Order enforced on adjacent line</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
             <p>
               2. <strong>25kV TRACTION POWER ISOLATION:</strong> Chief Electrical Distribution Controller (TPC) is instructed to issue Permit-To-Work (PTW) and earth discharge rod certificate before commencement of physical work on site.
@@ -519,10 +521,10 @@ export const OfficialSanctionLetterModal: React.FC<OfficialSanctionProps> = ({
           </div>
 
           {/* Signatures & Seal Box */}
-          <div className="pt-3 border-t-2 border-slate-900 flex justify-between items-end font-sans text-[11px]">
+          <div className="pt-3 border-t-2 border-slate-900 flex flex-col sm:flex-row justify-between items-center sm:items-end font-sans text-[11px] gap-3">
             {/* QR Code & Digital Stamp */}
-            <div className="flex items-center space-x-3">
-              <div className="w-14 h-14 border border-slate-400 p-1 flex items-center justify-center bg-slate-50">
+            <div className="flex items-center space-x-3 w-full sm:w-auto">
+              <div className="w-14 h-14 border border-slate-400 p-1 flex items-center justify-center bg-slate-50 shrink-0">
                 <QrCode className="w-12 h-12 text-slate-900" />
               </div>
               <div className="text-[9px] font-mono text-slate-600">
@@ -533,7 +535,7 @@ export const OfficialSanctionLetterModal: React.FC<OfficialSanctionProps> = ({
             </div>
 
             {/* Signature Block */}
-            <div className="text-right space-y-0.5">
+            <div className="text-center sm:text-right space-y-0.5 w-full sm:w-auto">
               <div className="inline-block border-b border-slate-700 pb-0.5 px-4">
                 <p className="font-serif italic font-bold text-sm text-slate-800">Rajesh Verma</p>
               </div>

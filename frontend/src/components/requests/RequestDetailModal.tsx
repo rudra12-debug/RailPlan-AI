@@ -161,49 +161,51 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({ request,
           )}
 
           {/* 9-Stage Visual Interactive Timeline */}
-          <div className="p-4 rounded-xl bg-navy-950 border border-slate-800 space-y-2">
+          <div className="p-3 sm:p-4 rounded-xl bg-navy-950 border border-slate-800 space-y-2 overflow-hidden">
             <div className="flex items-center justify-between text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
               <span>9-Stage Operational Lifecycle</span>
               <span className="text-cyan-400 font-mono">Progress: {request.progress}%</span>
             </div>
 
-            <div className="relative flex items-center justify-between">
-              <div className="absolute top-1/2 left-0 right-0 h-1 bg-slate-800 -translate-y-1/2 z-0" />
-              <div
-                className="absolute top-1/2 left-0 h-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-emerald-500 -translate-y-1/2 z-0 transition-all duration-500"
-                style={{ width: `${(stageIdx / (STAGES.length - 1)) * 100}%` }}
-              />
+            <div className="overflow-x-auto pb-2 -mx-1 px-1">
+              <div className="relative flex items-center justify-between min-w-[540px] px-2 py-1">
+                <div className="absolute top-1/2 left-0 right-0 h-1 bg-slate-800 -translate-y-1/2 z-0" />
+                <div
+                  className="absolute top-1/2 left-0 h-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-emerald-500 -translate-y-1/2 z-0 transition-all duration-500"
+                  style={{ width: `${(stageIdx / (STAGES.length - 1)) * 100}%` }}
+                />
 
-              {STAGES.map((stage, idx) => {
-                const isPast = idx < stageIdx;
-                const isCurrent = idx === stageIdx;
-                const isRejected = request.status === "REJECTED" && stage.key === "APPROVED";
+                {STAGES.map((stage, idx) => {
+                  const isPast = idx < stageIdx;
+                  const isCurrent = idx === stageIdx;
+                  const isRejected = request.status === "REJECTED" && stage.key === "APPROVED";
 
-                return (
-                  <div key={stage.key} className="relative z-10 flex flex-col items-center group">
-                    <div
-                      className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
-                        isRejected
-                          ? "bg-rose-600 text-white border-2 border-rose-400"
-                          : isCurrent
-                          ? "bg-cyan-500 text-navy-950 border-2 border-white shadow-glow-cyan scale-110"
-                          : isPast
-                          ? "bg-emerald-500 text-navy-950 border-2 border-emerald-400"
-                          : "bg-slate-900 text-slate-500 border border-slate-700"
-                      }`}
-                    >
-                      {isPast ? <CheckCircle2 className="w-4 h-4" /> : idx + 1}
+                  return (
+                    <div key={stage.key} className="relative z-10 flex flex-col items-center group">
+                      <div
+                        className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
+                          isRejected
+                            ? "bg-rose-600 text-white border-2 border-rose-400"
+                            : isCurrent
+                            ? "bg-cyan-500 text-navy-950 border-2 border-white shadow-glow-cyan scale-110"
+                            : isPast
+                            ? "bg-emerald-500 text-navy-950 border-2 border-emerald-400"
+                            : "bg-slate-900 text-slate-500 border border-slate-700"
+                        }`}
+                      >
+                        {isPast ? <CheckCircle2 className="w-4 h-4" /> : idx + 1}
+                      </div>
+                      <span
+                        className={`text-[9px] font-semibold mt-1.5 text-center max-w-[65px] leading-tight ${
+                          isCurrent ? "text-cyan-300 font-bold" : isPast ? "text-slate-300" : "text-slate-500"
+                        }`}
+                      >
+                        {stage.label}
+                      </span>
                     </div>
-                    <span
-                      className={`text-[9px] font-semibold mt-1.5 text-center max-w-[65px] leading-tight ${
-                        isCurrent ? "text-cyan-300 font-bold" : isPast ? "text-slate-300" : "text-slate-500"
-                      }`}
-                    >
-                      {stage.label}
-                    </span>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </div>
 
@@ -371,28 +373,28 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({ request,
                 </div>
               )}
 
-              <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
-                <div className="flex space-x-2">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pt-2">
+                <div className="flex space-x-2 w-full sm:w-auto">
                   <button
                     onClick={() => setShowRejectInput(true)}
-                    className="px-3 py-1.5 rounded-lg bg-rose-950 hover:bg-rose-900 border border-rose-700 text-rose-300 text-xs font-semibold transition"
+                    className="flex-1 sm:flex-initial px-3 py-2 rounded-lg bg-rose-950 hover:bg-rose-900 border border-rose-700 text-rose-300 text-xs font-semibold transition text-center"
                   >
-                    Reject Request
+                    Reject
                   </button>
                   <button
                     onClick={handleRequestModification}
-                    className="px-3 py-1.5 rounded-lg bg-amber-950 hover:bg-amber-900 border border-amber-700 text-amber-300 text-xs font-semibold transition"
+                    className="flex-1 sm:flex-initial px-3 py-2 rounded-lg bg-amber-950 hover:bg-amber-900 border border-amber-700 text-amber-300 text-xs font-semibold transition text-center"
                   >
-                    Request Modification
+                    Modify
                   </button>
                 </div>
 
                 <button
                   onClick={handleApprove}
-                  className="px-5 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-navy-950 font-bold text-xs shadow-glow-emerald flex items-center space-x-1.5 transition transform active:scale-95"
+                  className="w-full sm:w-auto justify-center px-4 sm:px-5 py-2.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-navy-950 font-bold text-xs shadow-glow-emerald flex items-center space-x-1.5 transition transform active:scale-95"
                 >
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Sanction Order & Assign to {request.targetDepartment}</span>
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
+                  <span>Sanction Order & Assign</span>
                 </button>
               </div>
             </div>

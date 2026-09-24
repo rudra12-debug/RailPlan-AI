@@ -79,77 +79,77 @@ export default function CentralCommandPage() {
   return (
     <div className="space-y-6">
       {/* Top Welcome & Central Header (Tactile Cyber-Brutalist 100% Solid) */}
-      <div className="p-6 rounded-2xl bg-[#022642] border-2 border-black shadow-[5px_5px_0_#000000] flex flex-wrap items-center justify-between gap-4 relative overflow-hidden">
+      <div className="p-4 sm:p-6 rounded-2xl bg-[#022642] border-2 border-black shadow-[5px_5px_0_#000000] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative overflow-hidden">
         {/* Solid Indian National Tricolor Ribbon Top Accent */}
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#FF671F] via-[#FFFFFF] to-[#046A38]" />
 
-        <div className="space-y-1.5 relative z-10">
-          <div className="flex items-center space-x-2">
-            <span className="text-[11px] font-mono font-black bg-[#00FFD2] text-black border-2 border-black px-2.5 py-0.5 rounded shadow-[2px_2px_0_#000000] uppercase tracking-wider">
+        <div className="space-y-1.5 relative z-10 min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[10px] sm:text-[11px] font-mono font-black bg-[#00FFD2] text-black border-2 border-black px-2.5 py-0.5 rounded shadow-[2px_2px_0_#000000] uppercase tracking-wider shrink-0">
               भारतीय रेल • National OCC
             </span>
-            <span className="text-xs text-[#CABFFF] font-mono font-bold">
+            <span className="text-xs text-[#CABFFF] font-mono font-bold truncate">
               Zone: {selectedZone || "Railway Board (All-India Network)"}
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight font-sans">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight font-sans leading-tight">
             Central Railway Operations Command & Maintenance Control
           </h1>
-          <p className="text-xs text-[#8595FF] font-medium">
+          <p className="text-xs text-[#8595FF] font-medium leading-relaxed">
             Real-time multi-department maintenance planning, predictive risk mitigation & authority block sanctions
           </p>
         </div>
 
         {/* 3 Prominent Solid 3D Hardware Action Buttons */}
-        <div className="flex flex-wrap items-center gap-3 relative z-10">
+        <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2.5 sm:gap-3 relative z-10 w-full md:w-auto shrink-0">
           <Link
             href="/central/sanctions"
-            className="btn-tactile px-4 py-2.5 rounded-xl bg-[#FB2077] text-white text-xs font-black flex items-center space-x-2 cursor-pointer"
+            className="btn-tactile px-3.5 sm:px-4 py-2.5 rounded-xl bg-[#FB2077] text-white text-xs font-black flex items-center justify-center space-x-2 cursor-pointer w-full sm:w-auto"
           >
             <FileText size={18} weight="duotone" className="text-white shrink-0" />
-            <span>Official Sanctions (Form T/806)</span>
+            <span className="truncate">Official Sanctions (Form T/806)</span>
           </Link>
 
           <Link
             href="/central/bundling"
-            className="btn-tactile px-4 py-2.5 rounded-xl bg-[#6367FF] text-white text-xs font-black flex items-center space-x-2 cursor-pointer"
+            className="btn-tactile px-3.5 sm:px-4 py-2.5 rounded-xl bg-[#6367FF] text-white text-xs font-black flex items-center justify-center space-x-2 cursor-pointer w-full sm:w-auto"
           >
             <Package size={18} weight="duotone" className="text-white shrink-0" />
-            <span>Task Bundler ({filteredBundles.length} Mega Blocks)</span>
+            <span className="truncate">Task Bundler ({filteredBundles.length} Mega Blocks)</span>
           </Link>
 
           <Link
             href="/central/approvals"
-            className="btn-tactile px-4 py-2.5 rounded-xl bg-[#00FFD2] text-black text-xs font-black flex items-center space-x-2 cursor-pointer"
+            className="btn-tactile px-3.5 sm:px-4 py-2.5 rounded-xl bg-[#00FFD2] text-black text-xs font-black flex items-center justify-center space-x-2 cursor-pointer w-full sm:w-auto"
           >
             <CheckSquare size={18} weight="duotone" className="text-black shrink-0" />
-            <span>Approval Center ({pendingApprovals})</span>
+            <span className="truncate">Approval Center ({pendingApprovals})</span>
           </Link>
         </div>
       </div>
 
       {/* Corridor & Zone Filter Console Strip */}
-      <div className="p-4 rounded-xl bg-[#022642] border-2 border-black shadow-[4px_4px_0_#000000] flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center space-x-3">
-          <div className="p-2.5 rounded-xl bg-[#000D18] border-2 border-black shadow-[2px_2px_0_#000000] text-[#00FFD2] shrink-0">
+      <div className="p-3.5 sm:p-4 rounded-xl bg-[#022642] border-2 border-black shadow-[4px_4px_0_#000000] flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+        <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0">
+          <div className="p-2 sm:p-2.5 rounded-xl bg-[#000D18] border-2 border-black shadow-[2px_2px_0_#000000] text-[#00FFD2] shrink-0">
             <Train size={20} weight="duotone" />
           </div>
-          <div>
-            <div className="flex items-center space-x-2">
-              <span className="text-xs font-black uppercase tracking-wider text-white">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-white">
                 {isCorridorFiltered ? "Active Filtered Corridor:" : isZoneFiltered ? "Active Filtered Zone:" : "Select Railway Trunk Corridor:"}
               </span>
               {selectedCorridor ? (
-                <span className="text-xs font-mono font-black text-black bg-[#00FFD2] px-2.5 py-0.5 rounded border border-black shadow-[1px_1px_0_#000000]">
+                <span className="text-xs font-mono font-black text-black bg-[#00FFD2] px-2 py-0.5 rounded border border-black shadow-[1px_1px_0_#000000]">
                   {selectedCorridor.id}
                 </span>
               ) : isZoneFiltered ? (
-                <span className="text-xs font-mono font-bold text-white bg-[#02395D] px-2.5 py-0.5 rounded border border-black">
+                <span className="text-xs font-mono font-bold text-white bg-[#02395D] px-2 py-0.5 rounded border border-black">
                   {selectedZone.split("(")[0].trim()}
                 </span>
               ) : null}
             </div>
-            <p className="text-xs text-[#8595FF] font-medium mt-0.5">
+            <p className="text-xs text-[#8595FF] font-medium mt-0.5 line-clamp-1 sm:line-clamp-none">
               {selectedCorridor
                 ? `${selectedCorridor.name} (${selectedCorridor.route}) • Total: ${selectedCorridor.totalLengthKm} KM`
                 : isZoneFiltered
@@ -159,11 +159,11 @@ export default function CentralCommandPage() {
           </div>
         </div>
 
-        {/* Quick Corridor Selection Rocker Switch Pills */}
-        <div className="flex flex-wrap items-center gap-2">
+        {/* Quick Corridor Selection Rocker Switch Pills (Horizontally Scrollable on Mobile) */}
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar w-full md:w-auto py-1 shrink-0">
           <button
             onClick={() => setSelectedCorridorId("ALL")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-black font-mono transition flex items-center space-x-1.5 border-2 border-black ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-black font-mono transition flex items-center space-x-1.5 border-2 border-black shrink-0 ${
               selectedCorridorId === "ALL"
                 ? "bg-[#6367FF] text-white shadow-[0_1px_0_#000000] translate-y-0.5"
                 : "bg-[#000D18] text-[#CABFFF] shadow-[0_3px_0_#000000] hover:bg-[#02395D]"
@@ -176,7 +176,7 @@ export default function CentralCommandPage() {
             <button
               key={c.id}
               onClick={() => setSelectedCorridorId(c.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-black font-mono transition flex items-center space-x-1.5 border-2 border-black ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-black font-mono transition flex items-center space-x-1.5 border-2 border-black shrink-0 ${
                 selectedCorridorId === c.id
                   ? "bg-[#6367FF] text-white shadow-[0_1px_0_#000000] translate-y-0.5"
                   : "bg-[#000D18] text-[#CABFFF] shadow-[0_3px_0_#000000] hover:bg-[#02395D]"
@@ -193,7 +193,7 @@ export default function CentralCommandPage() {
                 setSelectedCorridorId("ALL");
               }}
               title="Reset All Filters"
-              className="px-3 py-1.5 rounded-lg text-xs font-mono font-black bg-[#FF1818] text-white border-2 border-black shadow-[0_3px_0_#000000] hover:brightness-110 active:translate-y-0.5 active:shadow-[0_1px_0_#000000] flex items-center space-x-1 transition cursor-pointer"
+              className="px-3 py-1.5 rounded-lg text-xs font-mono font-black bg-[#FF1818] text-white border-2 border-black shadow-[0_3px_0_#000000] hover:brightness-110 active:translate-y-0.5 active:shadow-[0_1px_0_#000000] flex items-center space-x-1 transition cursor-pointer shrink-0"
             >
               <ArrowCounterClockwise size={14} weight="bold" />
               <span>Reset</span>
@@ -266,30 +266,32 @@ export default function CentralCommandPage() {
 
       {/* View Switcher: Live Map vs 24H Master Gantt Chart */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2 bg-[#000D18] p-1.5 rounded-xl border-2 border-black shadow-[3px_3px_0_#000000]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="grid grid-cols-2 sm:flex sm:items-center gap-1.5 sm:space-x-2 bg-[#000D18] p-1.5 rounded-xl border-2 border-black shadow-[3px_3px_0_#000000]">
             <button
               onClick={() => setActiveViewTab("MAP")}
-              className={`px-4 py-2 rounded-lg text-xs font-black transition flex items-center space-x-2 border-2 border-black ${
+              className={`px-3 sm:px-4 py-2 rounded-lg text-xs font-black transition flex items-center justify-center space-x-1.5 sm:space-x-2 border-2 border-black ${
                 activeViewTab === "MAP"
                   ? "bg-[#6367FF] text-white shadow-[0_1px_0_#000000] translate-y-0.5"
                   : "bg-[#022642] text-[#CABFFF] shadow-[0_3px_0_#000000] hover:text-white"
               }`}
             >
-              <MapTrifold size={18} weight="duotone" />
-              <span>National Operations Map</span>
+              <MapTrifold size={18} weight="duotone" className="shrink-0" />
+              <span className="sm:hidden">Map View</span>
+              <span className="hidden sm:inline">National Operations Map</span>
             </button>
 
             <button
               onClick={() => setActiveViewTab("GANTT")}
-              className={`px-4 py-2 rounded-lg text-xs font-black transition flex items-center space-x-2 border-2 border-black ${
+              className={`px-3 sm:px-4 py-2 rounded-lg text-xs font-black transition flex items-center justify-center space-x-1.5 sm:space-x-2 border-2 border-black ${
                 activeViewTab === "GANTT"
                   ? "bg-[#00FFD2] text-black shadow-[0_1px_0_#000000] translate-y-0.5"
                   : "bg-[#022642] text-[#CABFFF] shadow-[0_3px_0_#000000] hover:text-white"
               }`}
             >
-              <Clock size={18} weight="duotone" />
-              <span>24H Track Occupancy Timeline</span>
+              <Clock size={18} weight="duotone" className="shrink-0" />
+              <span className="sm:hidden">24H Timeline</span>
+              <span className="hidden sm:inline">24H Track Occupancy Timeline</span>
             </button>
           </div>
 

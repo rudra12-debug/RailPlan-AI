@@ -79,7 +79,7 @@ export default function LoginPage() {
         {/* Login Form Card */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Left: Traditional Login Form (5 Cols) */}
-          <div className="lg:col-span-5 rounded-2xl bg-navy-900/90 border border-slate-700/80 p-6 shadow-2xl space-y-5">
+          <div className="lg:col-span-5 rounded-2xl bg-navy-900/90 border border-slate-700/80 p-4 sm:p-6 shadow-2xl space-y-5">
             <div className="border-b border-slate-800 pb-3">
               <h3 className="text-base font-bold text-slate-100">Secure Authority Portal</h3>
               <p className="text-xs text-slate-400">Enter your credentials or select a persona</p>
@@ -159,7 +159,7 @@ export default function LoginPage() {
           </div>
 
           {/* Right: 1-Click Persona Login Hub (7 Cols) */}
-          <div className="lg:col-span-7 rounded-2xl bg-navy-900/90 border border-slate-700/80 p-6 shadow-2xl space-y-4">
+          <div className="lg:col-span-7 rounded-2xl bg-navy-900/90 border border-slate-700/80 p-4 sm:p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div>
                 <h3 className="text-base font-bold text-slate-100">1-Click Demo Personas</h3>

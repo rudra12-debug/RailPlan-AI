@@ -706,62 +706,62 @@ export const GeographicalLeafletMap: React.FC<GeographicalLeafletMapProps> = ({
   ]);
 
   return (
-    <div className="relative w-full h-[520px] bg-[#050914] overflow-hidden select-none">
+    <div className="relative w-full h-[400px] sm:h-[520px] bg-[#050914] overflow-hidden select-none">
       {/* Real Leaflet Slippy Map Container (Locked to India Bounds) */}
       <div ref={mapContainerRef} className="w-full h-full z-0" />
 
       {/* Floating Basemap Provider Switcher (Top-Right) */}
-      <div className="absolute top-3.5 right-3.5 z-[1000] flex items-center space-x-1.5 bg-[#022642] p-1.5 rounded-xl border-2 border-black shadow-[3px_3px_0_#000000] text-xs select-none">
+      <div className="absolute top-2 right-2 sm:top-3.5 sm:right-3.5 z-[1000] flex flex-wrap items-center justify-end gap-1 sm:space-x-1.5 max-w-[calc(100%-1rem)] bg-[#022642] p-1 sm:p-1.5 rounded-xl border-2 border-black shadow-[3px_3px_0_#000000] text-[10px] sm:text-xs select-none">
         <button
           onClick={() => setActiveTile("DARK")}
-          className={`px-2.5 py-1 rounded-lg font-black transition flex items-center space-x-1 border border-black ${
+          className={`px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg font-black transition flex items-center space-x-1 border border-black ${
             activeTile === "DARK"
               ? "bg-[#6367FF] text-white shadow-[1px_1px_0_#000000]"
               : "bg-[#000D18] text-[#CABFFF] hover:text-white"
           }`}
           title="ESRI Dark Mode OCC Railway Grid"
         >
-          <span>🌙 Dark OCC</span>
+          <span>🌙 <span className="hidden sm:inline">Dark </span>OCC</span>
         </button>
         <button
           onClick={() => setActiveTile("SATELLITE")}
-          className={`px-2.5 py-1 rounded-lg font-black transition flex items-center space-x-1 border border-black ${
+          className={`px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg font-black transition flex items-center space-x-1 border border-black ${
             activeTile === "SATELLITE"
               ? "bg-[#FFFF00] text-black shadow-[1px_1px_0_#000000]"
               : "bg-[#000D18] text-[#CABFFF] hover:text-white"
           }`}
           title="ESRI High-Resolution Photographic Satellite Imagery"
         >
-          <span>🛰️ Satellite</span>
+          <span>🛰️ <span className="hidden sm:inline">Satellite</span><span className="sm:hidden">Sat</span></span>
         </button>
         <button
           onClick={() => setActiveTile("STREET")}
-          className={`px-2.5 py-1 rounded-lg font-black transition flex items-center space-x-1 border border-black ${
+          className={`px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg font-black transition flex items-center space-x-1 border border-black ${
             activeTile === "STREET"
               ? "bg-[#00FFD2] text-black shadow-[1px_1px_0_#000000]"
               : "bg-[#000D18] text-[#CABFFF] hover:text-white"
           }`}
           title="Street View"
         >
-          <span>🗺️ Street</span>
+          <span>🗺️ <span className="hidden sm:inline">Street</span><span className="sm:hidden">Map</span></span>
         </button>
 
         {/* Railway Overlay Toggle */}
         <button
           onClick={() => setShowRailOverlay(!showRailOverlay)}
-          className={`px-2.5 py-1 rounded-lg font-black transition border border-black ml-1 ${
+          className={`px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg font-black transition border border-black ${
             showRailOverlay
               ? "bg-[#00FFD2] text-black shadow-[1px_1px_0_#000000]"
               : "bg-[#000D18] text-[#CABFFF] hover:text-white"
           }`}
           title="Toggle OpenRailwayMap Real Track Infrastructure Lines"
         >
-          <span>🚆 IR Tracks: {showRailOverlay ? "ON" : "OFF"}</span>
+          <span>🚆 Tracks: {showRailOverlay ? "ON" : "OFF"}</span>
         </button>
       </div>
 
       {/* Floating Center Controls (Bottom-Right) */}
-      <div className="absolute bottom-3 right-3 z-[1000] flex flex-col space-y-1.5">
+      <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 z-[1000] flex flex-col space-y-1 sm:space-y-1.5">
         <button
           onClick={() => {
             const map = mapInstanceRef.current;
@@ -769,7 +769,7 @@ export const GeographicalLeafletMap: React.FC<GeographicalLeafletMapProps> = ({
             onSelectCorridor({ id: "ALL" } as any);
             onSelectCautionZone(null);
           }}
-          className="p-2 rounded-xl bg-[#022642] hover:bg-[#03345A] border-2 border-black text-white shadow-[3px_3px_0_#000000] transition flex items-center space-x-1.5 text-xs font-mono font-bold cursor-pointer"
+          className="p-1.5 sm:p-2 rounded-xl bg-[#022642] hover:bg-[#03345A] border-2 border-black text-white shadow-[2px_2px_0_#000000] sm:shadow-[3px_3px_0_#000000] transition flex items-center space-x-1 sm:space-x-1.5 text-[11px] sm:text-xs font-mono font-bold cursor-pointer"
           title="Reset View to India Boundaries"
         >
           <Compass className="w-3.5 h-3.5 text-[#00FFD2]" />
@@ -785,7 +785,7 @@ export const GeographicalLeafletMap: React.FC<GeographicalLeafletMapProps> = ({
                 map.flyToBounds(bounds, { padding: [50, 50], maxZoom: 9, duration: 1 });
               }
             }}
-            className="p-2 rounded-xl bg-[#022642] hover:bg-[#03345A] border-2 border-black text-white shadow-[3px_3px_0_#000000] transition flex items-center space-x-1.5 text-xs font-mono font-bold cursor-pointer"
+            className="p-1.5 sm:p-2 rounded-xl bg-[#022642] hover:bg-[#03345A] border-2 border-black text-white shadow-[2px_2px_0_#000000] sm:shadow-[3px_3px_0_#000000] transition flex items-center space-x-1 sm:space-x-1.5 text-[11px] sm:text-xs font-mono font-bold cursor-pointer"
             title={`Center on ${activeCorridor.id}`}
           >
             <Navigation className="w-3.5 h-3.5 text-[#00FFD2]" />

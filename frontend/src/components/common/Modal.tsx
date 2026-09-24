@@ -50,40 +50,40 @@ export const Modal: React.FC<ModalProps> = ({
   }[maxWidth];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-      {/* Dark backdrop with blur */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-6 overflow-y-auto">
+      {/* Dark backdrop */}
       <div
-        className="fixed inset-0 bg-black/80 backdrop-blur-md transition-opacity duration-300 animate-fade-in"
+        className="fixed inset-0 bg-black/80 transition-opacity duration-300"
         onClick={onClose}
       />
 
       {/* Modal Container */}
       <div
-        className={`relative w-full ${widthClasses} z-10 bg-navy-900 border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden my-auto animate-scale-up`}
+        className={`relative w-full ${widthClasses} z-10 bg-[#022642] border-2 border-black rounded-2xl shadow-[6px_6px_0_#000000] overflow-hidden my-auto`}
       >
-        {/* Glowing top line */}
-        <div className="h-1 w-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500" />
+        {/* IR Tri-color top strip */}
+        <div className="h-1.5 w-full bg-gradient-to-r from-[#FF671F] via-[#FFFFFF] to-[#046A38]" />
 
         {/* Header */}
-        <div className="flex items-start justify-between p-6 border-b border-slate-800 bg-navy-950/60">
+        <div className="flex items-start justify-between p-3.5 sm:p-5 border-b-2 border-black bg-[#000D18]">
           <div className="space-y-1">
-            <div className="flex items-center space-x-3">
-              <h3 className="text-xl font-bold text-slate-100 tracking-tight">{title}</h3>
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="text-base sm:text-xl font-black text-white tracking-tight">{title}</h3>
               {headerBadge}
             </div>
-            {subtitle && <p className="text-sm text-slate-400">{subtitle}</p>}
+            {subtitle && <p className="text-xs sm:text-sm text-[#CABFFF] font-medium">{subtitle}</p>}
           </div>
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors"
+            className="p-1 sm:p-1.5 rounded-lg text-white bg-[#022642] hover:bg-[#6367FF] border-2 border-black shadow-[2px_2px_0_#000000] transition-colors"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         </div>
 
         {/* Content body */}
-        <div className="p-6 max-h-[80vh] overflow-y-auto">{children}</div>
+        <div className="p-3.5 sm:p-6 max-h-[82vh] overflow-y-auto">{children}</div>
       </div>
     </div>
   );

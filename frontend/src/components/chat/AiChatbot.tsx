@@ -133,15 +133,15 @@ Ask me anything or click one of the quick topics below!`,
     <>
       {/* Floating Launcher Trigger Button - Compact, Solid Tactile */}
       {!isOpen && (
-        <div className="fixed bottom-5 right-5 z-40">
+        <div className="fixed bottom-3 right-3 sm:bottom-5 sm:right-5 z-40">
           <button
             onClick={() => setIsOpen(true)}
             aria-label="Open IR-Sahayak Railway Assistant"
             title="Ask IR-Sahayak AI Copilot"
-            className="w-12 h-12 rounded-xl bg-[#6367FF] text-white shadow-[3px_3px_0_#000000] hover:-translate-y-0.5 hover:shadow-[4px_4px_0_#000000] active:translate-y-0.5 active:shadow-[1px_1px_0_#000000] flex items-center justify-center transition-all duration-150 border-2 border-black"
+            className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#6367FF] text-white shadow-[3px_3px_0_#000000] hover:-translate-y-0.5 hover:shadow-[4px_4px_0_#000000] active:translate-y-0.5 active:shadow-[1px_1px_0_#000000] flex items-center justify-center transition-all duration-150 border-2 border-black"
           >
-            <Bot className="w-6 h-6 text-white" />
-            <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-[#00FFD2] border-2 border-black rounded-full animate-pulse" />
+            <Bot className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+            <span className="absolute -top-1 -right-1 w-3 h-3 sm:w-3.5 sm:h-3.5 bg-[#00FFD2] border-2 border-black rounded-full animate-pulse" />
           </button>
         </div>
       )}
@@ -151,8 +151,8 @@ Ask me anything or click one of the quick topics below!`,
         <div
           className={`fixed z-50 transition-all duration-200 shadow-[6px_6px_0_#000000] flex flex-col overflow-hidden bg-[#022642] border-2 border-black ${
             isExpanded
-              ? "inset-4 sm:inset-10 rounded-2xl"
-              : "bottom-4 right-4 w-[95vw] sm:w-[440px] h-[640px] max-h-[90vh] rounded-2xl"
+              ? "inset-2 sm:inset-10 rounded-2xl"
+              : "bottom-2 right-2 sm:bottom-4 sm:right-4 w-[calc(100vw-1rem)] sm:w-[440px] h-[520px] sm:h-[640px] max-h-[85vh] sm:max-h-[90vh] rounded-2xl"
           }`}
         >
           {/* Header */}

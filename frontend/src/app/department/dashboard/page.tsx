@@ -109,10 +109,10 @@ export default function DepartmentDashboardPage() {
           </p>
         </div>
 
-        <div className="flex items-center space-x-3 relative z-10">
+        <div className="flex items-center space-x-3 relative z-10 w-full sm:w-auto">
           <Link
             href="/department/create-request"
-            className="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow-gov flex items-center space-x-2 transition transform active:scale-95 border border-amber-400/40"
+            className="w-full sm:w-auto justify-center px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow-gov flex items-center space-x-2 transition transform active:scale-95 border border-amber-400/40"
           >
             <PlusCircle className="w-4 h-4" />
             <span>Create Service Request</span>
