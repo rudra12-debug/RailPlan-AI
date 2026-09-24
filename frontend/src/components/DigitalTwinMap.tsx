@@ -392,8 +392,15 @@ export function DigitalTwinMap() {
               </div>
 
               {/* SVG Schematic Canvas */}
-              <div className="relative bg-[#070E12] rounded-xl border border-slate-800/80 p-6 shadow-inner">
-                <svg viewBox="0 0 1000 280" className="w-full h-auto select-none">
+              <div className="relative bg-[#070E12] rounded-xl border border-slate-800/80 p-3 sm:p-6 shadow-inner">
+                {/* Mobile Drag hint indicator */}
+                <div className="md:hidden flex items-center justify-between text-[11px] font-mono text-cyan-400 bg-cyan-950/40 border border-cyan-800/40 rounded px-2.5 py-1 mb-3">
+                  <span>👈 Scroll / Drag Trackbed 👉</span>
+                  <span className="text-[10px] text-slate-400">120 KM Track</span>
+                </div>
+                <div className="overflow-x-auto pb-2 -mx-1 px-1 touch-pan-x">
+                  <div className="min-w-[750px]">
+                    <svg viewBox="0 0 1000 280" className="w-full h-auto select-none">
                   <defs>
                     <linearGradient id="ghatGlow" x1="0%" y1="0%" x2="100%" y2="0%">
                       <stop offset="0%" stopColor="#EF4444" stopOpacity="0.05" />
@@ -616,6 +623,8 @@ export function DigitalTwinMap() {
                     );
                   })}
                 </svg>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -688,7 +697,7 @@ export function DigitalTwinMap() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
                 <button
                   onClick={() => {
                     const match = selectedAsset.locationKm.match(/KM\s*([\d.]+)/i);
@@ -703,14 +712,14 @@ export function DigitalTwinMap() {
                       description: `Initiated from Digital Twin inspection: Failure risk ${selectedAsset.failureRisk}%.`,
                     });
                   }}
-                  className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#6367FF] to-[#8494FF] text-white font-bold text-xs shadow-md transition flex items-center space-x-1.5"
+                  className="flex-1 sm:flex-initial min-h-[40px] px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#6367FF] to-[#8494FF] text-white font-bold text-xs shadow-md transition flex items-center justify-center space-x-1.5"
                 >
                   <AlertTriangle className="w-3.5 h-3.5" />
                   <span>Request Block</span>
                 </button>
                 <button
                   onClick={() => setSelectedAsset(null)}
-                  className="px-3 py-1.5 rounded-lg bg-[#131E3D] hover:bg-[#1A274E] text-slate-300 text-xs transition border border-[#1A274E]"
+                  className="min-h-[40px] px-4 py-1.5 rounded-lg bg-[#131E3D] hover:bg-[#1A274E] text-slate-300 text-xs transition border border-[#1A274E]"
                 >
                   Close
                 </button>
@@ -762,7 +771,7 @@ export function DigitalTwinMap() {
 
               <button
                 onClick={() => setSelectedTrain(null)}
-                className="px-3 py-1.5 rounded-lg bg-[#131E3D] hover:bg-[#1A274E] text-slate-300 text-xs transition border border-[#1A274E]"
+                className="w-full sm:w-auto min-h-[40px] px-4 py-1.5 rounded-lg bg-[#131E3D] hover:bg-[#1A274E] text-slate-300 text-xs transition border border-[#1A274E]"
               >
                 Close
               </button>

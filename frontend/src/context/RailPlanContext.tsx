@@ -60,6 +60,8 @@ interface RailPlanContextType {
   serverSyncConnected: boolean;
   isMobileMenuOpen: boolean;
   setIsMobileMenuOpen: (open: boolean) => void;
+  activeHomeTab: "OCC" | "BUNDLER" | "EMERGENCY" | "SANCTIONS";
+  setActiveHomeTab: (tab: "OCC" | "BUNDLER" | "EMERGENCY" | "SANCTIONS") => void;
 
   // RailPlan AI Telemetry & Simulation State
   trains: LiveTrain[];
@@ -240,6 +242,7 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [serverSyncConnected, setServerSyncConnected] = useState<boolean>(true);
   const [activeToast, setActiveToast] = useState<NotificationItem | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [activeHomeTab, setActiveHomeTab] = useState<"OCC" | "BUNDLER" | "EMERGENCY" | "SANCTIONS">("OCC");
 
   // Helper: Tamper-proof audit logger with pseudo-hash chaining
   const logAudit = useCallback((
@@ -743,6 +746,8 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         markNotificationRead,
         markAllNotificationsRead,
         resetToDemoState,
+        activeHomeTab,
+        setActiveHomeTab,
       }}
     >
       {children}

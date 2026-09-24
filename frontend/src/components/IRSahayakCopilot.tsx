@@ -113,7 +113,14 @@ export function IRSahayakCopilot({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-y-0 right-0 w-full sm:w-[500px] z-50 bg-[#0C1326]/98 border-l border-[#1A274E] shadow-2xl backdrop-blur-xl flex flex-col animate-in slide-in-from-right duration-300">
+    <>
+      {/* Backdrop for easy mobile/desktop dismissal */}
+      <div
+        className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 animate-in fade-in duration-200"
+        onClick={onClose}
+        aria-label="Close AI Copilot"
+      />
+      <div className="fixed inset-y-0 right-0 w-full sm:w-[500px] z-50 bg-[#0C1326]/98 border-l border-[#1A274E] shadow-2xl backdrop-blur-xl flex flex-col animate-in slide-in-from-right duration-300">
       {/* Drawer Header */}
       <div className="p-4 bg-gradient-to-r from-[#050814] via-[#0C1326] to-[#131E3D] border-b border-[#1A274E] flex items-center justify-between">
         <div className="flex items-center space-x-2.5">
@@ -292,5 +299,6 @@ export function IRSahayakCopilot({
         </form>
       </div>
     </div>
+    </>
   );
 }

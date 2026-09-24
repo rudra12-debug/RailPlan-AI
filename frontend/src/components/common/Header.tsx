@@ -16,13 +16,16 @@ import {
   SignOut, 
   Broadcast,
   List,
-  X
+  X,
+  DeviceMobile,
+  Desktop
 } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { QuickRoleSwitcher } from "./QuickRoleSwitcher";
 import { NotificationDrawer } from "./NotificationDrawer";
 import { EmergencyReplanModal } from "@/components/simulation/EmergencyReplanModal";
+import { useDevice } from "@/context/DeviceContext";
 
 export const Header: React.FC = () => {
   const { user, logout, isCentralAdmin } = useAuth();
@@ -38,6 +41,7 @@ export const Header: React.FC = () => {
     isMobileMenuOpen,
     setIsMobileMenuOpen
   } = useRailPlan();
+  const { isMobile, deviceType, modeOverride, toggleDeviceMode } = useDevice();
   const { openTour } = useDemoTour();
   const router = useRouter();
 
@@ -197,6 +201,29 @@ export const Header: React.FC = () => {
               <Broadcast size={15} weight="duotone" className="w-3.5 h-3.5" />
               <span className="hidden md:inline">{serverSyncConnected ? "Multi-Device Live Sync" : "Sync Reconnecting"}</span>
             </div>
+
+            {/* Device Mode Switcher (Detects device type & allows instant 1-click toggle) */}
+            <button
+              onClick={toggleDeviceMode}
+              className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1 rounded-lg border-2 border-black shadow-[2px_2px_0_#000000] text-[10px] sm:text-[11px] font-mono font-black transition cursor-pointer ${
+                isMobile
+                  ? "bg-[#FFFF00] text-black hover:bg-[#FFE600]"
+                  : "bg-[#6367FF] text-white hover:bg-[#5256FF]"
+              }`}
+              title={`Detected Device: ${deviceType.toUpperCase()} • Mode: ${modeOverride.toUpperCase()} (Click to toggle Mobile/Desktop UI)`}
+            >
+              {isMobile ? (
+                <DeviceMobile size={15} weight="bold" className="text-black shrink-0" />
+              ) : (
+                <Desktop size={15} weight="bold" className="text-white shrink-0" />
+              )}
+              <span>{isMobile ? "Mobile UI" : "Desktop UI"}</span>
+              {modeOverride !== "auto" && (
+                <span className="text-[8px] px-1 py-0.2 bg-black text-[#00FFD2] rounded border border-black font-mono">
+                  MANUAL
+                </span>
+              )}
+            </button>
 
             {/* Live IST Clock (Sunken Black LED Readout) */}
             <div className="hidden lg:flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-[#000D18] border border-[#011526] text-[#00FFD2] text-xs font-mono font-black shadow-[inset_0_2px_4px_rgba(0,0,0,0.8)]">

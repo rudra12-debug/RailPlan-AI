@@ -301,7 +301,7 @@ export function T806SanctionModal({
       </div>
 
       {/* Formal Printable Indian Railways Certificate Document */}
-      <div id="printable-t806-certificate" className="p-8 sm:p-10 rounded-2xl bg-[#070D0E] border-2 border-slate-700/80 shadow-2xl relative space-y-6 text-[#F8FAFC]">
+      <div id="printable-t806-certificate" className="p-4 sm:p-8 md:p-10 rounded-2xl bg-[#070D0E] border-2 border-slate-700/80 shadow-2xl relative space-y-6 text-[#F8FAFC]">
         {/* Government Watermark / Crest */}
         <div className="text-center border-b-2 border-slate-700 pb-6 space-y-1">
           <div className="flex items-center justify-center space-x-2">

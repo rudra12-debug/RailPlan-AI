@@ -82,7 +82,7 @@ export function MegaBlockBundler({ onForwardToSanctions }: { onForwardToSanction
           <button
             onClick={handleRunBundler}
             disabled={isComputing}
-            className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#6367FF] to-[#8494FF] hover:brightness-110 text-white font-bold text-xs sm:text-sm shadow-[0_0_15px_rgba(99,103,255,0.35)] flex items-center space-x-2 transition disabled:opacity-50"
+            className="w-full sm:w-auto min-h-[44px] justify-center px-5 py-3 rounded-xl bg-gradient-to-r from-[#6367FF] to-[#8494FF] hover:brightness-110 text-white font-bold text-xs sm:text-sm shadow-[0_0_15px_rgba(99,103,255,0.35)] flex items-center space-x-2 transition disabled:opacity-50"
           >
             <Sparkles className={`w-4 h-4 ${isComputing ? "animate-spin" : ""}`} />
             <span>{isComputing ? "Evaluating Spatial-Temporal Synergies..." : "Run AI Bundler Algorithm"}</span>
@@ -191,25 +191,27 @@ export function MegaBlockBundler({ onForwardToSanctions }: { onForwardToSanction
               </div>
 
               {/* Fragmented Gantt Bar */}
-              <div className="h-14 rounded-xl bg-[#050814] border border-[#1A274E] p-2 flex items-center gap-2 overflow-x-auto relative">
-                {activeCluster.timelineBefore.map((item, idx) => (
-                  <div
-                    key={item.requestId}
-                    className="h-full rounded-lg px-3 py-1 flex flex-col justify-center text-[10px] font-mono text-white shadow-md relative overflow-hidden"
-                    style={{
-                      flex: item.duration,
-                      backgroundColor: item.color + "33",
-                      borderColor: item.color,
-                      borderWidth: "1px",
-                    }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-slate-200">{item.department}</span>
-                      <span className="text-slate-300">{item.duration}h</span>
+              <div className="overflow-x-auto pb-1 touch-pan-x">
+                <div className="min-w-[480px] h-14 rounded-xl bg-[#050814] border border-[#1A274E] p-2 flex items-center gap-2 relative">
+                  {activeCluster.timelineBefore.map((item, idx) => (
+                    <div
+                      key={item.requestId}
+                      className="h-full rounded-lg px-3 py-1 flex flex-col justify-center text-[10px] font-mono text-white shadow-md relative overflow-hidden"
+                      style={{
+                        flex: item.duration,
+                        backgroundColor: item.color + "33",
+                        borderColor: item.color,
+                        borderWidth: "1px",
+                      }}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-slate-200">{item.department}</span>
+                        <span className="text-slate-300">{item.duration}h</span>
+                      </div>
+                      <span className="text-slate-400 truncate">{item.title}</span>
                     </div>
-                    <span className="text-slate-400 truncate">{item.title}</span>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -226,28 +228,30 @@ export function MegaBlockBundler({ onForwardToSanctions }: { onForwardToSanction
               </div>
 
               {/* Bundled Mega-Block Gantt Bar */}
-              <div className="h-16 rounded-xl bg-[#131E3D]/40 border-2 border-[#3DFDCE]/50 p-2 flex items-center gap-2 relative overflow-hidden">
-                {activeCluster.timelineAfter.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="h-full rounded-lg px-3 py-1 flex flex-col justify-center text-[10px] font-mono text-white shadow-md flex-1 relative"
-                    style={{
-                      backgroundColor: item.color + "44",
-                      borderColor: item.color,
-                      borderWidth: "1px",
-                    }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-slate-100">{item.department}</span>
-                      <span className="text-[#3DFDCE] font-bold">{item.duration}h concurrent</span>
+              <div className="overflow-x-auto pb-1 touch-pan-x">
+                <div className="min-w-[480px] h-16 rounded-xl bg-[#131E3D]/40 border-2 border-[#3DFDCE]/50 p-2 flex items-center gap-2 relative overflow-hidden">
+                  {activeCluster.timelineAfter.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="h-full rounded-lg px-3 py-1 flex flex-col justify-center text-[10px] font-mono text-white shadow-md flex-1 relative"
+                      style={{
+                        backgroundColor: item.color + "44",
+                        borderColor: item.color,
+                        borderWidth: "1px",
+                      }}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-slate-100">{item.department}</span>
+                        <span className="text-[#3DFDCE] font-bold">{item.duration}h concurrent</span>
+                      </div>
+                      <span className="text-slate-300 truncate">{item.activity}</span>
                     </div>
-                    <span className="text-slate-300 truncate">{item.activity}</span>
-                  </div>
-                ))}
+                  ))}
 
-                {/* Overlap Savings Indicator Badge */}
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded bg-[#00FFE0] text-[#050814] text-[10px] font-black font-mono shadow-md hidden sm:block">
-                  46.1% Closure Time Saved
+                  {/* Overlap Savings Indicator Badge */}
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded bg-[#00FFE0] text-[#050814] text-[10px] font-black font-mono shadow-md hidden sm:block">
+                    46.1% Closure Time Saved
+                  </div>
                 </div>
               </div>
             </div>
@@ -278,15 +282,15 @@ export function MegaBlockBundler({ onForwardToSanctions }: { onForwardToSanction
             </div>
 
             {/* Action Bar */}
-            <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-2">
               <div className="text-xs text-[#B6BFFF] font-mono">
                 Clicking accept will bundle all 3 requests and auto-populate Indian Railways Form T/806.
               </div>
 
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-3 w-full sm:w-auto">
                 <button
                   onClick={handleAcceptBundle}
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#6367FF] to-[#8494FF] hover:brightness-110 text-white font-bold text-xs sm:text-sm shadow-md flex items-center space-x-2 transition"
+                  className="w-full sm:w-auto justify-center min-h-[44px] px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#6367FF] to-[#8494FF] hover:brightness-110 text-white font-bold text-xs sm:text-sm shadow-md flex items-center space-x-2 transition"
                 >
                   <CheckSquare className="w-4 h-4" />
                   <span>Accept AI Bundle & Forward to Form T/806</span>

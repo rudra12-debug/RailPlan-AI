@@ -164,7 +164,7 @@ export function EmergencyReplanner() {
         <span className="text-xs font-bold uppercase tracking-wider text-[#B6BFFF]">
           Select or Simulate Crisis Incident:
         </span>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {PRESET_INCIDENTS.map((inc) => {
             const isCurrent = activeIncident.id === inc.id;
             const Icon = inc.icon;
@@ -360,7 +360,7 @@ export function EmergencyReplanner() {
         <button
           onClick={handleConfirmDispatch}
           disabled={isDispatched}
-          className={`px-6 py-3 rounded-xl font-bold text-xs sm:text-sm shadow-xl flex items-center space-x-2 transition ${
+          className={`w-full sm:w-auto min-h-[44px] justify-center px-6 py-3 rounded-xl font-bold text-xs sm:text-sm shadow-xl flex items-center space-x-2 transition ${
             isDispatched
               ? "bg-slate-800 text-slate-400 cursor-not-allowed"
               : canConfirmEmergency
