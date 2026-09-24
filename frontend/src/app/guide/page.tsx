@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
-import { useRailPlan, INDIAN_RAILWAYS_CORRIDORS } from "@/context/RailPlanContext";
+import { useRailPlan } from "@/context/RailPlanContext";
 import { useDemoTour, DEMO_STEPS } from "@/context/DemoTourContext";
 import { MOCK_USERS } from "@/lib/mockData";
 import {
@@ -97,7 +97,7 @@ const FAQ_ITEMS: FaqItem[] = [
 
 export default function SystemGuidePage() {
   const { user, switchUser, isCentralAdmin } = useAuth();
-  const { resetToDemoState } = useRailPlan();
+  const { corridors, resetToDemoState } = useRailPlan();
   const { openTour, goToStep } = useDemoTour();
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -383,7 +383,7 @@ export default function SystemGuidePage() {
             Supported Indian Railways Trunk Corridors Directory:
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 font-mono text-xs">
-            {INDIAN_RAILWAYS_CORRIDORS.map((c) => (
+            {corridors.map((c) => (
               <div key={c.id} className="p-2 rounded-lg bg-[#011526] border border-black shadow-[1px_1px_0_#000000]">
                 <p className="font-black text-[#00FFD2]">{c.id}</p>
                 <p className="text-[10px] text-white truncate font-sans">{c.name.split("(")[0]}</p>
