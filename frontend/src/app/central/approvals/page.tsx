@@ -88,22 +88,32 @@ export default function ApprovalCenterPage() {
       </div>
 
       {/* Quick Corridor Selection Bar */}
-      <div className="p-4 rounded-xl bg-[#061526]/90 backdrop-blur-md border border-slate-800/80 shadow-2xl flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center space-x-2">
-          <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-            {isCorridorFiltered ? "Approvals Corridor Filter:" : "Filter Approvals by Corridor:"}
-          </span>
-          {selectedCorridor && (
-            <span className="text-xs font-mono font-bold text-cyan-300 bg-[#030914] px-2 py-0.5 rounded border border-cyan-700/60">
-              {selectedCorridor.id}
+      <div className="p-4 rounded-xl bg-[#061526]/90 backdrop-blur-md border border-slate-800/80 shadow-2xl space-y-2.5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+              {isCorridorFiltered ? "Approvals Corridor Filter:" : "Filter Approvals by Corridor:"}
             </span>
+            {selectedCorridor && (
+              <span className="text-xs font-mono font-bold text-cyan-300 bg-[#030914] px-2 py-0.5 rounded border border-cyan-700/60">
+                {selectedCorridor.id}
+              </span>
+            )}
+          </div>
+          {isCorridorFiltered && (
+            <button
+              onClick={() => setSelectedCorridorId("ALL")}
+              className="text-xs text-rose-400 hover:text-rose-300 font-mono font-bold cursor-pointer"
+            >
+              Reset Filter
+            </button>
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-1.5">
+        <div className="pt-2 border-t border-slate-800/80 flex items-center gap-1.5 overflow-x-auto pb-1 touch-pan-x no-scrollbar">
           <button
             onClick={() => setSelectedCorridorId("ALL")}
-            className={`px-3 py-1 rounded-lg text-xs font-bold font-mono transition ${
+            className={`px-3 py-1 rounded-lg text-xs font-bold font-mono transition shrink-0 cursor-pointer ${
               selectedCorridorId === "ALL"
                 ? "bg-cyan-500 text-[#030914] shadow-[0_0_12px_rgba(0,242,254,0.35)] font-black"
                 : "bg-[#030914] border border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white"
@@ -118,7 +128,7 @@ export default function ApprovalCenterPage() {
               <button
                 key={c.id}
                 onClick={() => setSelectedCorridorId(c.id)}
-                className={`px-3 py-1 rounded-lg text-xs font-bold font-mono transition ${
+                className={`px-3 py-1 rounded-lg text-xs font-bold font-mono transition shrink-0 cursor-pointer ${
                   selectedCorridorId === c.id
                     ? "bg-cyan-500 text-[#030914] shadow-[0_0_12px_rgba(0,242,254,0.35)] font-black"
                     : "bg-[#030914] border border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white"

@@ -83,12 +83,12 @@ export default function OfficialSanctionsPage() {
           />
         </div>
 
-        <div className="flex items-center space-x-2 w-full sm:w-auto overflow-x-auto">
+        <div className="flex items-center space-x-2 w-full sm:w-auto overflow-x-auto pb-1 touch-pan-x no-scrollbar">
           {["ALL", "FORM T/806 (Block Sanction)", "FORM T/409 (Caution TSR)", "FORM T/1518 (Fitness)"].map((t) => (
             <button
               key={t}
               onClick={() => setFilterType(t)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap shrink-0 cursor-pointer ${
                 filterType === t
                   ? "bg-amber-400 text-[#030914] shadow-[0_0_12px_rgba(245,158,11,0.35)] font-extrabold"
                   : "bg-[#030914] text-slate-400 hover:text-slate-200 border border-slate-800"

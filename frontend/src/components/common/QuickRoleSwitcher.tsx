@@ -22,17 +22,17 @@ export const QuickRoleSwitcher: React.FC = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative shrink-0">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-[#022642] border-2 border-black shadow-[2px_2px_0_#000000] hover:bg-[#033358] transition-all text-xs font-bold text-white cursor-pointer active:translate-y-0.5 active:shadow-none"
+        className="flex items-center space-x-1.5 sm:space-x-2 px-2 sm:px-3 py-1.5 rounded-lg bg-[#022642] border-2 border-black shadow-[2px_2px_0_#000000] hover:bg-[#033358] transition-all text-xs font-bold text-white cursor-pointer active:translate-y-0.5 active:shadow-none shrink-0"
       >
-        <div className="w-2 h-2 rounded-full bg-[#00FFD2] animate-pulse" />
-        <span className="text-[#CABFFF] hidden sm:inline">Role:</span>
-        <span className="font-mono font-black text-[#00FFD2]">
+        <div className="w-2 h-2 rounded-full bg-[#00FFD2] animate-pulse shrink-0" />
+        <span className="text-[#CABFFF] hidden md:inline">Role:</span>
+        <span className="font-mono font-black text-[#00FFD2] truncate max-w-[90px] sm:max-w-[130px] md:max-w-none">
           {user?.role === "CENTRAL_ADMIN" ? "Central Admin" : user?.departmentName || "Department"}
         </span>
-        <CaretDown size={14} weight="bold" className={`text-[#CABFFF] transition-transform ${isOpen ? "rotate-180" : ""}`} />
+        <CaretDown size={14} weight="bold" className={`text-[#CABFFF] shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`} />
       </button>
 
       {isOpen && (

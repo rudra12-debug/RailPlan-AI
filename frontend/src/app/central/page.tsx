@@ -129,41 +129,58 @@ export default function CentralCommandPage() {
       </div>
 
       {/* Corridor & Zone Filter Console Strip */}
-      <div className="p-3.5 sm:p-4 rounded-xl bg-[#022642] border-2 border-black shadow-[4px_4px_0_#000000] flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-        <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0">
-          <div className="p-2 sm:p-2.5 rounded-xl bg-[#000D18] border-2 border-black shadow-[2px_2px_0_#000000] text-[#00FFD2] shrink-0">
-            <Train size={20} weight="duotone" />
-          </div>
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-              <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-white">
-                {isCorridorFiltered ? "Active Filtered Corridor:" : isZoneFiltered ? "Active Filtered Zone:" : "Select Railway Trunk Corridor:"}
-              </span>
-              {selectedCorridor ? (
-                <span className="text-xs font-mono font-black text-black bg-[#00FFD2] px-2 py-0.5 rounded border border-black shadow-[1px_1px_0_#000000]">
-                  {selectedCorridor.id}
-                </span>
-              ) : isZoneFiltered ? (
-                <span className="text-xs font-mono font-bold text-white bg-[#02395D] px-2 py-0.5 rounded border border-black">
-                  {selectedZone.split("(")[0].trim()}
-                </span>
-              ) : null}
+      <div className="p-3.5 sm:p-4 rounded-xl bg-[#022642] border-2 border-black shadow-[4px_4px_0_#000000] space-y-3">
+        {/* Tier 1: Corridor Status and Details */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+          <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0">
+            <div className="p-2 sm:p-2.5 rounded-xl bg-[#000D18] border-2 border-black shadow-[2px_2px_0_#000000] text-[#00FFD2] shrink-0">
+              <Train size={20} weight="duotone" />
             </div>
-            <p className="text-xs text-[#8595FF] font-medium mt-0.5 line-clamp-1 sm:line-clamp-none">
-              {selectedCorridor
-                ? `${selectedCorridor.name} (${selectedCorridor.route}) • Total: ${selectedCorridor.totalLengthKm} KM`
-                : isZoneFiltered
-                ? `Showing ${availableCorridors.length} corridors in ${selectedZone} (${availableCorridors.map((c) => c.id).join(", ")})`
-                : "Showing aggregated telemetry and maintenance data across all 10 Indian Railways trunk corridors"}
-            </p>
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-white">
+                  {isCorridorFiltered ? "Active Filtered Corridor:" : isZoneFiltered ? "Active Filtered Zone:" : "Select Railway Trunk Corridor:"}
+                </span>
+                {selectedCorridor ? (
+                  <span className="text-xs font-mono font-black text-black bg-[#00FFD2] px-2 py-0.5 rounded border border-black shadow-[1px_1px_0_#000000]">
+                    {selectedCorridor.id}
+                  </span>
+                ) : isZoneFiltered ? (
+                  <span className="text-xs font-mono font-bold text-white bg-[#02395D] px-2 py-0.5 rounded border border-black">
+                    {selectedZone.split("(")[0].trim()}
+                  </span>
+                ) : null}
+              </div>
+              <p className="text-xs text-[#8595FF] font-medium mt-0.5 line-clamp-1 sm:line-clamp-none">
+                {selectedCorridor
+                  ? `${selectedCorridor.name} (${selectedCorridor.route}) • Total: ${selectedCorridor.totalLengthKm} KM`
+                  : isZoneFiltered
+                  ? `Showing ${availableCorridors.length} corridors in ${selectedZone} (${availableCorridors.map((c) => c.id).join(", ")})`
+                  : "Showing aggregated telemetry and maintenance data across all 10 Indian Railways trunk corridors"}
+              </p>
+            </div>
           </div>
+
+          {(isCorridorFiltered || isZoneFiltered) && (
+            <button
+              onClick={() => {
+                setSelectedZone("All Zones (National OCC)");
+                setSelectedCorridorId("ALL");
+              }}
+              title="Reset All Filters"
+              className="px-3 py-1.5 rounded-lg text-xs font-mono font-black bg-[#FF1818] text-white border-2 border-black shadow-[0_3px_0_#000000] hover:brightness-110 active:translate-y-0.5 active:shadow-[0_1px_0_#000000] flex items-center justify-center space-x-1.5 transition cursor-pointer self-start sm:self-auto shrink-0"
+            >
+              <ArrowCounterClockwise size={14} weight="bold" />
+              <span>Reset Filters</span>
+            </button>
+          )}
         </div>
 
-        {/* Quick Corridor Selection Rocker Switch Pills (Horizontally Scrollable on Mobile) */}
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar w-full md:w-auto py-1 shrink-0">
+        {/* Tier 2: Dedicated Full-Width Scrollable Corridor Pills */}
+        <div className="pt-2.5 border-t border-[#011526] flex items-center gap-2 overflow-x-auto pb-1 touch-pan-x no-scrollbar">
           <button
             onClick={() => setSelectedCorridorId("ALL")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-black font-mono transition flex items-center space-x-1.5 border-2 border-black shrink-0 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-black font-mono transition flex items-center space-x-1.5 border-2 border-black shrink-0 cursor-pointer ${
               selectedCorridorId === "ALL"
                 ? "bg-[#6367FF] text-white shadow-[0_1px_0_#000000] translate-y-0.5"
                 : "bg-[#000D18] text-[#CABFFF] shadow-[0_3px_0_#000000] hover:bg-[#02395D]"
@@ -176,7 +193,7 @@ export default function CentralCommandPage() {
             <button
               key={c.id}
               onClick={() => setSelectedCorridorId(c.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-black font-mono transition flex items-center space-x-1.5 border-2 border-black shrink-0 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-black font-mono transition flex items-center space-x-1.5 border-2 border-black shrink-0 cursor-pointer ${
                 selectedCorridorId === c.id
                   ? "bg-[#6367FF] text-white shadow-[0_1px_0_#000000] translate-y-0.5"
                   : "bg-[#000D18] text-[#CABFFF] shadow-[0_3px_0_#000000] hover:bg-[#02395D]"
@@ -185,20 +202,6 @@ export default function CentralCommandPage() {
               <span>{c.id}</span>
             </button>
           ))}
-
-          {(isCorridorFiltered || isZoneFiltered) && (
-            <button
-              onClick={() => {
-                setSelectedZone("All Zones (National OCC)");
-                setSelectedCorridorId("ALL");
-              }}
-              title="Reset All Filters"
-              className="px-3 py-1.5 rounded-lg text-xs font-mono font-black bg-[#FF1818] text-white border-2 border-black shadow-[0_3px_0_#000000] hover:brightness-110 active:translate-y-0.5 active:shadow-[0_1px_0_#000000] flex items-center space-x-1 transition cursor-pointer shrink-0"
-            >
-              <ArrowCounterClockwise size={14} weight="bold" />
-              <span>Reset</span>
-            </button>
-          )}
         </div>
       </div>
 

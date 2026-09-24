@@ -141,7 +141,7 @@ export const Header: React.FC = () => {
             </Link>
 
             {/* Zone & Corridor Selectors */}
-            <div className="hidden md:flex items-center space-x-2 pl-3 border-l-2 border-black shrink-0">
+            <div className="hidden xl:flex items-center space-x-2 pl-3 border-l-2 border-black shrink-0">
               <div className={`flex items-center space-x-1.5 rounded-lg px-2.5 py-1 text-xs border-2 border-black shadow-[2px_2px_0_#000000] ${
                 !selectedZone.startsWith("All")
                   ? "bg-[#6367FF] text-white"
@@ -188,24 +188,24 @@ export const Header: React.FC = () => {
           </div>
 
           {/* Right: Actions, Live Clock, Notifications, User */}
-          <div className="flex items-center space-x-2.5 shrink-0">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
             {/* Live Multi-Device Sync Indicator */}
             <div
-              className={`hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border-2 border-black shadow-[2px_2px_0_#000000] text-[11px] font-mono font-black ${
+              className={`hidden sm:flex items-center space-x-1.5 px-2 sm:px-2.5 py-1 rounded-lg border-2 border-black shadow-[2px_2px_0_#000000] text-[10px] sm:text-[11px] font-mono font-black shrink-0 ${
                 serverSyncConnected
                   ? "bg-[#00FFD2] text-black"
                   : "bg-[#FF1818] text-white"
               }`}
               title="Real-Time Central Server State Synchronization"
             >
-              <Broadcast size={15} weight="duotone" className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">{serverSyncConnected ? "Multi-Device Live Sync" : "Sync Reconnecting"}</span>
+              <Broadcast size={15} weight="duotone" className="w-3.5 h-3.5 shrink-0" />
+              <span className="hidden xl:inline">{serverSyncConnected ? "Live Sync" : "Sync Reconnecting"}</span>
             </div>
 
             {/* Device Mode Switcher (Detects device type & allows instant 1-click toggle) */}
             <button
               onClick={toggleDeviceMode}
-              className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1 rounded-lg border-2 border-black shadow-[2px_2px_0_#000000] text-[10px] sm:text-[11px] font-mono font-black transition cursor-pointer ${
+              className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1 rounded-lg border-2 border-black shadow-[2px_2px_0_#000000] text-[10px] sm:text-[11px] font-mono font-black transition cursor-pointer shrink-0 ${
                 isMobile
                   ? "bg-[#FFFF00] text-black hover:bg-[#FFE600]"
                   : "bg-[#6367FF] text-white hover:bg-[#5256FF]"
@@ -226,7 +226,7 @@ export const Header: React.FC = () => {
             </button>
 
             {/* Live IST Clock (Sunken Black LED Readout) */}
-            <div className="hidden lg:flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-[#000D18] border border-[#011526] text-[#00FFD2] text-xs font-mono font-black shadow-[inset_0_2px_4px_rgba(0,0,0,0.8)]">
+            <div className="hidden 2xl:flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-[#000D18] border border-[#011526] text-[#00FFD2] text-xs font-mono font-black shadow-[inset_0_2px_4px_rgba(0,0,0,0.8)] shrink-0">
               <Clock size={15} weight="duotone" className="text-[#00FFD2] shrink-0" />
               <span>{currentTime || "Live Synchronized"}</span>
             </div>
@@ -235,10 +235,10 @@ export const Header: React.FC = () => {
             {isCentralAdmin && (
               <button
                 onClick={() => setIsEmergencyOpen(true)}
-                className="hidden md:flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[#FB2077] hover:brightness-110 border-2 border-black text-white text-xs font-black shadow-[2px_2px_0_#000000] active:translate-y-0.5 active:shadow-none transition"
+                className="hidden xl:flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[#FB2077] hover:brightness-110 border-2 border-black text-white text-xs font-black shadow-[2px_2px_0_#000000] active:translate-y-0.5 active:shadow-none transition shrink-0 cursor-pointer"
                 title="Trigger Emergency Line Block Replanning"
               >
-                <Lightning size={15} weight="fill" className="text-white" />
+                <Lightning size={15} weight="fill" className="text-white shrink-0" />
                 <span>Emergency OCC</span>
               </button>
             )}
@@ -250,7 +250,7 @@ export const Header: React.FC = () => {
             <button
               onClick={() => setIsNotifOpen(true)}
               aria-label="View Notifications"
-              className="relative p-2 rounded-xl bg-[#022642] hover:bg-[#033358] border-2 border-black shadow-[2px_2px_0_#000000] text-white transition active:translate-y-0.5 active:shadow-none"
+              className="relative p-2 rounded-xl bg-[#022642] hover:bg-[#033358] border-2 border-black shadow-[2px_2px_0_#000000] text-white transition active:translate-y-0.5 active:shadow-none shrink-0 cursor-pointer"
             >
               <Bell size={18} weight="duotone" />
               {unreadNotificationCount > 0 && (
@@ -264,7 +264,7 @@ export const Header: React.FC = () => {
             <button
               onClick={openTour}
               aria-label="Start System Guide Tour"
-              className="hidden sm:flex p-2 rounded-xl bg-[#022642] hover:bg-[#033358] border-2 border-black shadow-[2px_2px_0_#000000] text-white transition active:translate-y-0.5 active:shadow-none cursor-pointer"
+              className="hidden lg:flex p-2 rounded-xl bg-[#022642] hover:bg-[#033358] border-2 border-black shadow-[2px_2px_0_#000000] text-white transition active:translate-y-0.5 active:shadow-none cursor-pointer shrink-0"
               title="System Walkthrough Guide"
             >
               <Question size={18} weight="duotone" />
@@ -274,7 +274,7 @@ export const Header: React.FC = () => {
             <button
               onClick={resetToDemoState}
               aria-label="Reset System Data to Default"
-              className="hidden sm:flex p-2 rounded-xl bg-[#022642] hover:bg-[#033358] border-2 border-black shadow-[2px_2px_0_#000000] text-white transition active:translate-y-0.5 active:shadow-none cursor-pointer"
+              className="hidden lg:flex p-2 rounded-xl bg-[#022642] hover:bg-[#033358] border-2 border-black shadow-[2px_2px_0_#000000] text-white transition active:translate-y-0.5 active:shadow-none cursor-pointer shrink-0"
               title="Reset System Simulation State"
             >
               <ArrowCounterClockwise size={18} weight="duotone" />
@@ -284,7 +284,7 @@ export const Header: React.FC = () => {
             <button
               onClick={handleLogout}
               aria-label="Sign Out"
-              className="p-2 rounded-xl bg-[#FF1818] hover:brightness-110 border-2 border-black shadow-[2px_2px_0_#000000] text-white transition active:translate-y-0.5 active:shadow-none"
+              className="p-2 rounded-xl bg-[#FF1818] hover:brightness-110 border-2 border-black shadow-[2px_2px_0_#000000] text-white transition active:translate-y-0.5 active:shadow-none shrink-0 cursor-pointer"
               title="Sign Out"
             >
               <SignOut size={18} weight="duotone" />

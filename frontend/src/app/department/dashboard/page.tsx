@@ -121,41 +121,57 @@ export default function DepartmentDashboardPage() {
       </div>
 
       {/* Corridor & Zone Filter Quick Bar */}
-      <div className="p-4 rounded-2xl bg-navy-900/90 border border-slate-700/80 shadow-gov flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center space-x-3">
-          <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0">
-            <Layers className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center space-x-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-300">
-                {isCorridorFiltered ? "Department Corridor View:" : isZoneFiltered ? "Department Zone View:" : "Department Filter (All Corridors):"}
-              </span>
-              {selectedCorridor ? (
-                <span className="text-xs font-mono font-bold text-amber-300 bg-amber-950 px-2 py-0.5 rounded border border-amber-800">
-                  {selectedCorridor.id}
-                </span>
-              ) : isZoneFiltered ? (
-                <span className="text-xs font-mono font-bold text-blue-300 bg-blue-950 px-2 py-0.5 rounded border border-blue-800">
-                  {selectedZone.split("(")[0].trim()}
-                </span>
-              ) : null}
+      <div className="p-4 rounded-2xl bg-navy-900/90 border border-slate-700/80 shadow-gov space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center space-x-3 min-w-0">
+            <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0">
+              <Layers className="w-5 h-5" />
             </div>
-            <p className="text-xs text-slate-400 font-medium">
-              {selectedCorridor
-                ? `${selectedCorridor.name} • ${deptTasks.length} tasks and ${deptRequests.length} requests on this corridor`
-                : isZoneFiltered
-                ? `Showing ${deptTasks.length} tasks and ${deptRequests.length} requests across ${availableCorridors.length} corridors in ${selectedZone}`
-                : `Showing all ${deptInfo.name} activities across all national routes (${deptTasks.length} tasks, ${deptRequests.length} requests)`}
-            </p>
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-300">
+                  {isCorridorFiltered ? "Department Corridor View:" : isZoneFiltered ? "Department Zone View:" : "Department Filter (All Corridors):"}
+                </span>
+                {selectedCorridor ? (
+                  <span className="text-xs font-mono font-bold text-amber-300 bg-amber-950 px-2 py-0.5 rounded border border-amber-800">
+                    {selectedCorridor.id}
+                  </span>
+                ) : isZoneFiltered ? (
+                  <span className="text-xs font-mono font-bold text-blue-300 bg-blue-950 px-2 py-0.5 rounded border border-blue-800">
+                    {selectedZone.split("(")[0].trim()}
+                  </span>
+                ) : null}
+              </div>
+              <p className="text-xs text-slate-400 font-medium mt-0.5 line-clamp-1 sm:line-clamp-none">
+                {selectedCorridor
+                  ? `${selectedCorridor.name} • ${deptTasks.length} tasks and ${deptRequests.length} requests on this corridor`
+                  : isZoneFiltered
+                  ? `Showing ${deptTasks.length} tasks and ${deptRequests.length} requests across ${availableCorridors.length} corridors in ${selectedZone}`
+                  : `Showing all ${deptInfo.name} activities across all national routes (${deptTasks.length} tasks, ${deptRequests.length} requests)`}
+              </p>
+            </div>
           </div>
+
+          {(isCorridorFiltered || isZoneFiltered) && (
+            <button
+              onClick={() => {
+                setSelectedZone("All Zones (National OCC)");
+                setSelectedCorridorId("ALL");
+              }}
+              title="Reset All Filters"
+              className="px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 flex items-center space-x-1.5 transition self-start sm:self-auto shrink-0 cursor-pointer"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-amber-400" />
+              <span>Reset Filters</span>
+            </button>
+          )}
         </div>
 
-        {/* Quick Corridor Selection Pills */}
-        <div className="flex flex-wrap items-center gap-1.5">
+        {/* Quick Corridor Selection Pills (Horizontally scrollable) */}
+        <div className="pt-2.5 border-t border-slate-800 flex items-center gap-1.5 overflow-x-auto pb-1 touch-pan-x no-scrollbar">
           <button
             onClick={() => setSelectedCorridorId("ALL")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold font-mono transition flex items-center space-x-1.5 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold font-mono transition flex items-center space-x-1.5 shrink-0 cursor-pointer ${
               selectedCorridorId === "ALL"
                 ? "bg-amber-500 text-navy-950 shadow-sm font-black"
                 : "bg-navy-950 border border-slate-700 text-slate-300 hover:border-slate-500"
@@ -168,7 +184,7 @@ export default function DepartmentDashboardPage() {
             <button
               key={c.id}
               onClick={() => setSelectedCorridorId(c.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold font-mono transition flex items-center space-x-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold font-mono transition flex items-center space-x-1.5 shrink-0 cursor-pointer ${
                 selectedCorridorId === c.id
                   ? "bg-amber-500 text-navy-950 shadow-sm font-black"
                   : "bg-navy-950 border border-slate-700 text-slate-300 hover:border-slate-500"
@@ -177,20 +193,6 @@ export default function DepartmentDashboardPage() {
               <span>{c.id}</span>
             </button>
           ))}
-
-          {(isCorridorFiltered || isZoneFiltered) && (
-            <button
-              onClick={() => {
-                setSelectedZone("All Zones (National OCC)");
-                setSelectedCorridorId("ALL");
-              }}
-              title="Reset All Filters"
-              className="px-2.5 py-1.5 rounded-lg text-xs font-mono font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 flex items-center space-x-1 transition"
-            >
-              <RotateCcw className="w-3 h-3 text-amber-400" />
-              <span className="hidden sm:inline">Reset</span>
-            </button>
-          )}
         </div>
       </div>
 
