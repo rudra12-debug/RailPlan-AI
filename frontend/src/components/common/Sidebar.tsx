@@ -30,7 +30,8 @@ import {
   Train,
   X,
   Question,
-  ArrowCounterClockwise
+  ArrowCounterClockwise,
+  BookOpen
 } from "@phosphor-icons/react";
 import { useDemoTour } from "@/context/DemoTourContext";
 import { ZONE_CORRIDOR_MAP } from "@/context/RailPlanContext";
@@ -116,6 +117,13 @@ export const Sidebar: React.FC = () => {
         { label: "Intelligence & Risk Hub", href: "/central/ai-insights", icon: Sparkle },
         { label: "Reports & Gazette Audit", href: "/central/reports", icon: FileText },
         { label: "Station Inspection Logs", href: "/central/audit", icon: ClockCounterClockwise },
+        {
+          label: "System Guide & Manual",
+          href: "/guide",
+          icon: BookOpen,
+          badge: "DOCS",
+          badgeColor: "bg-[#00FFD2] text-black font-black border border-black shadow-[1px_1px_0_#000000]",
+        },
       ]
     }
   ];
@@ -141,6 +149,13 @@ export const Sidebar: React.FC = () => {
         { label: "IoT Sensor Monitoring", href: "/department/telemetry", icon: Pulse },
         { label: "Workforce & Gang Roster", href: "/department/workforce", icon: Users },
         { label: "Department Profile & SLA", href: "/department/profile", icon: Buildings },
+        {
+          label: "System Guide & Manual",
+          href: "/guide",
+          icon: BookOpen,
+          badge: "DOCS",
+          badgeColor: "bg-[#00FFD2] text-black font-black border border-black shadow-[1px_1px_0_#000000]",
+        },
       ]
     }
   ];
@@ -345,18 +360,16 @@ export const Sidebar: React.FC = () => {
           </select>
         </div>
 
-        {/* Mobile Quick Action Buttons: Tour & Reset */}
+        {/* Mobile Quick Action Buttons: Guide Webpage & Reset */}
         <div className="p-3 bg-[#011526] border-b-2 border-black flex items-center gap-2 shrink-0">
-          <button
-            onClick={() => {
-              openTour();
-              setIsMobileMenuOpen(false);
-            }}
+          <Link
+            href="/guide"
+            onClick={() => setIsMobileMenuOpen(false)}
             className="flex-1 py-1.5 px-2 rounded-lg bg-[#022642] hover:bg-[#033358] border border-black text-[#00FFD2] text-[11px] font-bold flex items-center justify-center space-x-1.5 shadow-[1px_1px_0_#000000] cursor-pointer"
           >
-            <Question size={15} weight="duotone" />
-            <span>Guide Tour</span>
-          </button>
+            <BookOpen size={15} weight="duotone" />
+            <span>System Guide</span>
+          </Link>
           <button
             onClick={() => {
               resetToDemoState();

@@ -18,7 +18,8 @@ import {
   List,
   X,
   DeviceMobile,
-  Desktop
+  Desktop,
+  BookOpen
 } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -260,15 +261,16 @@ export const Header: React.FC = () => {
               )}
             </button>
 
-            {/* Interactive Tour Guide */}
-            <button
-              onClick={openTour}
-              aria-label="Start System Guide Tour"
-              className="hidden lg:flex p-2 rounded-xl bg-[#022642] hover:bg-[#033358] border-2 border-black shadow-[2px_2px_0_#000000] text-white transition active:translate-y-0.5 active:shadow-none cursor-pointer shrink-0"
-              title="System Walkthrough Guide"
+            {/* System Guide Webpage */}
+            <Link
+              href="/guide"
+              aria-label="System Operations Guide & Manual"
+              className="flex items-center space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl bg-[#022642] hover:bg-[#033358] border-2 border-black shadow-[2px_2px_0_#000000] text-[#00FFD2] transition active:translate-y-0.5 active:shadow-none cursor-pointer shrink-0"
+              title="System Operations Guide & Walkthrough Manual"
             >
-              <Question size={18} weight="duotone" />
-            </button>
+              <BookOpen size={16} weight="duotone" className="shrink-0 text-[#00FFD2]" />
+              <span className="text-[11px] font-mono font-black hidden md:inline">Guide</span>
+            </Link>
 
             {/* Reset Demo Data */}
             <button
