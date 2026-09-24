@@ -182,6 +182,36 @@ export const GeographicalLeafletMap: React.FC<GeographicalLeafletMapProps> = ({
     };
   }, []);
 
+  // Responsive map size invalidation on resize, device orientation change, or tab switch
+  useEffect(() => {
+    if (!mapContainerRef.current || !mapInstanceRef.current || !leafletLoaded) return;
+    const invalidate = () => {
+      try {
+        mapInstanceRef.current?.invalidateSize();
+      } catch (e) {
+        // Safe resize
+      }
+    };
+
+    const ro = new ResizeObserver(() => {
+      invalidate();
+    });
+    ro.observe(mapContainerRef.current);
+
+    window.addEventListener("resize", invalidate);
+    window.addEventListener("orientationchange", invalidate);
+    const timer1 = setTimeout(invalidate, 150);
+    const timer2 = setTimeout(invalidate, 500);
+
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", invalidate);
+      window.removeEventListener("orientationchange", invalidate);
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+    };
+  }, [leafletLoaded]);
+
   // Switch Tile Provider
   useEffect(() => {
     const L = leafletModuleRef.current;
@@ -706,7 +736,7 @@ export const GeographicalLeafletMap: React.FC<GeographicalLeafletMapProps> = ({
   ]);
 
   return (
-    <div className="relative w-full h-[400px] sm:h-[520px] bg-[#050914] overflow-hidden select-none">
+    <div className="relative w-full h-full min-h-[420px] bg-[#050914] overflow-hidden select-none">
       {/* Real Leaflet Slippy Map Container (Locked to India Bounds) */}
       <div ref={mapContainerRef} className="w-full h-full z-0" />
 

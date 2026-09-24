@@ -30,7 +30,8 @@ import {
   Waves,
   Mountain,
   AlertOctagon,
-  Filter
+  Filter,
+  ListFilter
 } from "lucide-react";
 import { 
   Waves as PhosphorWaves, 
@@ -120,6 +121,9 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
 
   // View mode: "GEO" shows real interactive Leaflet GIS map; "FOCUS" shows clean linear schematic
   const [viewMode, setViewMode] = useState<"GEO" | "FOCUS">("GEO");
+
+  // Mobile adaptive tab: "MAP" gives 100% full-screen map; "INSPECTOR" shows corridor stations/telemetry
+  const [mobileActiveTab, setMobileActiveTab] = useState<"MAP" | "INSPECTOR">("MAP");
 
   // Layer Toggles
   const [activeLayer, setActiveLayer] = useState<"ALL" | "TRAFFIC" | "MAINTENANCE" | "TRACTION" | "KAVACH">("ALL");
@@ -841,10 +845,39 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
         </div>
       </div>
 
+      {/* Mobile Tab Switcher (Visible only on mobile/tablet < lg) */}
+      <div className="lg:hidden p-2 bg-[#011526] border-b-2 border-black flex items-center gap-2">
+        <button
+          onClick={() => setMobileActiveTab("MAP")}
+          className={`flex-1 py-2 px-3 rounded-xl font-black text-xs flex items-center justify-center space-x-1.5 transition border-2 border-black shadow-[2px_2px_0_#000000] cursor-pointer ${
+            mobileActiveTab === "MAP"
+              ? "bg-[#6367FF] text-white"
+              : "bg-[#000D18] text-[#CABFFF] hover:text-white"
+          }`}
+        >
+          <Globe className="w-4 h-4 text-[#00FFD2]" />
+          <span>Interactive Map</span>
+        </button>
+        <button
+          onClick={() => setMobileActiveTab("INSPECTOR")}
+          className={`flex-1 py-2 px-3 rounded-xl font-black text-xs flex items-center justify-center space-x-1.5 transition border-2 border-black shadow-[2px_2px_0_#000000] cursor-pointer ${
+            mobileActiveTab === "INSPECTOR"
+              ? "bg-[#00FFD2] text-black"
+              : "bg-[#000D18] text-[#CABFFF] hover:text-white"
+          }`}
+        >
+          <ListFilter className="w-4 h-4" />
+          <span>
+            Stations & Details
+            {(selectedTrain || selectedBlock || selectedStation || selectedCautionZone) ? " (1)" : ""}
+          </span>
+        </button>
+      </div>
+
       {/* Main Canvas Area */}
-      <div className="relative w-full h-[520px] bg-[#050914] bg-grid-pattern overflow-hidden select-none flex">
+      <div className="relative w-full h-[460px] sm:h-[520px] lg:h-[580px] bg-[#050914] bg-grid-pattern overflow-hidden select-none flex flex-col lg:flex-row">
         {/* Railway Map Engine (GIS Map or Linear Track Schematic) */}
-        <div className="flex-1 relative h-full flex items-center justify-center overflow-hidden">
+        <div className={`flex-1 relative w-full h-full flex items-center justify-center overflow-hidden ${mobileActiveTab === "INSPECTOR" ? "hidden lg:flex" : "flex"}`}>
           {viewMode === "GEO" ? (
             <GeographicalLeafletMap
               corridors={corridors}
@@ -897,7 +930,9 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
             /* 1. CLEAN HORIZONTAL LINEAR CORRIDOR TRACK SCHEMATIC      */
             /* ZERO OVERLAP: Stations staggered top/bottom, pure focus  */
             /* ======================================================== */
-            <svg className="w-full h-full max-w-4xl p-2" viewBox="0 0 850 460">
+            <div className="w-full h-full overflow-x-auto touch-pan-x flex items-center justify-center p-2">
+              <div className="min-w-[750px] w-full h-full flex items-center justify-center">
+                <svg className="w-full h-full max-w-4xl" viewBox="0 0 850 460">
               <defs>
                 <linearGradient id="focusGlow" x1="0%" y1="0%" x2="100%" y2="0%">
                   <stop offset="0%" stopColor="#10B981" stopOpacity="0.1" />
@@ -1136,8 +1171,10 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
                     </g>
                   );
                 })}
-            </svg>
-          )}
+              </svg>
+            </div>
+          </div>
+        )}
 
           {/* Top-Left: Clean Tactile Status Chip (Never overlaps or crowds basemap controls) */}
           <div className="absolute top-3.5 left-3.5 z-[1000] pointer-events-auto flex items-center space-x-2 bg-[#022642] px-3 py-1.5 rounded-xl border-2 border-black shadow-[2px_2px_0_#000000] text-xs font-mono select-none">
@@ -1329,10 +1366,60 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
               </span>
             </div>
           </div>
+
+          {/* Mobile Selection Quick-Peek Banner */}
+          {(selectedTrain || selectedBlock || selectedStation || selectedCautionZone) && (
+            <div className="lg:hidden absolute bottom-3 left-2 right-2 z-[1001] p-3 rounded-xl bg-[#022642] border-2 border-black shadow-[3px_3px_0_#000000] flex items-center justify-between text-xs animate-in slide-in-from-bottom duration-200">
+              <div className="truncate pr-2">
+                <span className="text-[10px] font-mono text-[#00FFD2] font-black block uppercase">
+                  {selectedTrain ? "Train Selected" : selectedBlock ? "Track Block Zone" : selectedStation ? "Station Info" : "Hazard Alert"}
+                </span>
+                <span className="font-bold text-white text-xs truncate block">
+                  {selectedTrain 
+                    ? `${selectedTrain.name} (#${selectedTrain.trainNumber})` 
+                    : selectedBlock 
+                    ? selectedBlock.name 
+                    : selectedStation 
+                    ? `${selectedStation.name} (${selectedStation.code})` 
+                    : selectedCautionZone?.name}
+                </span>
+              </div>
+              <div className="flex items-center space-x-1.5 shrink-0">
+                <button
+                  onClick={() => setMobileActiveTab("INSPECTOR")}
+                  className="px-2.5 py-1.5 rounded-lg bg-[#00FFD2] text-black font-black text-xs border border-black shadow-[1px_1px_0_#000000] active:translate-y-0.5 cursor-pointer"
+                >
+                  View Details
+                </button>
+                <button
+                  onClick={() => {
+                    setSelectedTrain(null);
+                    setSelectedBlock(null);
+                    setSelectedStation(null);
+                    setSelectedCautionZone(null);
+                  }}
+                  className="p-1.5 rounded-lg bg-[#000D18] text-slate-300 hover:text-white border border-black cursor-pointer"
+                  title="Close Preview"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Dynamic Multi-Target Inspector Side Panel */}
-        <div className="w-80 border-l-2 border-black bg-[#011B30] p-4 flex flex-col justify-between overflow-y-auto z-10 select-text">
+        <div className={`w-full lg:w-80 lg:border-l-2 border-black bg-[#011B30] p-4 flex flex-col justify-between overflow-y-auto z-10 select-text ${mobileActiveTab === "MAP" ? "hidden lg:flex" : "flex h-full"}`}>
+          {/* Mobile Back to Map Banner */}
+          <div className="lg:hidden flex items-center justify-between pb-3 mb-3 border-b-2 border-black shrink-0">
+            <button
+              onClick={() => setMobileActiveTab("MAP")}
+              className="py-1.5 px-3 rounded-lg bg-[#6367FF] text-white text-xs font-bold border border-black shadow-[1px_1px_0_#000000] flex items-center space-x-1.5 cursor-pointer"
+            >
+              <span>← Back to Interactive Map</span>
+            </button>
+            <span className="text-[10px] font-mono text-[#00FFD2] font-black uppercase">Inspector Mode</span>
+          </div>
           {/* A: When a Live Train is clicked */}
           {selectedTrain ? (
             <div className="space-y-4 animate-scale-up">
@@ -1634,6 +1721,7 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
                         onClick={() => {
                           handleCorridorClick(c);
                           setViewMode("FOCUS");
+                          setMobileActiveTab("MAP");
                         }}
                         className="p-2 rounded-lg text-xs bg-[#022642] border-2 border-black shadow-[2px_2px_0_#000000] text-slate-200 hover:bg-[#03345A] cursor-pointer transition group"
                       >
@@ -1708,7 +1796,10 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
                   {activeCorridor.stations.map((stn) => (
                     <div
                       key={stn.code}
-                      onClick={() => setSelectedStation(stn)}
+                      onClick={() => {
+                        setSelectedStation(stn);
+                        setMobileActiveTab("MAP");
+                      }}
                       className={`p-2 rounded-lg text-xs flex items-center justify-between cursor-pointer transition border-2 border-black shadow-[1px_1px_0_#000000] ${
                         selectedStation?.code === stn.code
                           ? "bg-[#6367FF] text-white font-bold"
@@ -1732,7 +1823,10 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
 
               <div className="pt-2 border-t border-black/40">
                 <button
-                  onClick={() => setSelectedCorridorId(activeCorridor.id)}
+                  onClick={() => {
+                    setSelectedCorridorId(activeCorridor.id);
+                    setMobileActiveTab("MAP");
+                  }}
                   className="w-full py-2.5 rounded-xl bg-[#022642] hover:bg-[#03345A] border-2 border-black shadow-[2px_2px_0_#000000] text-xs font-bold text-white flex items-center justify-center space-x-1.5 transition cursor-pointer"
                 >
                   <span>Filter Platform to {activeCorridor.id}</span>
