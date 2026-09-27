@@ -64,6 +64,20 @@ const FAQ_ITEMS: FaqItem[] = [
     actionText: "Go to Central OCC",
   },
   {
+    category: "Block Scheduling & Horizons",
+    question: "How do Weekly Short-Term and Monthly Long-Term block plans support maintenance?",
+    whatItDoes: "Enables multi-horizon decision making by providing two coordinated planning layers: Weekly 7-Day tactical plans for immediate daily possessions, machine slots, and passenger train delay minimization; and Monthly 30-Day strategic plans for heavy track renewal (TRR/TSR), deep ballast screening (BCM), bridge rehabilitation, and capital budget allocation.",
+    howToDoIt: [
+      "Open '/central/planning' from the sidebar menu or OCC dashboard.",
+      "Switch between 'WEEKLY (Short-Term • 7 Days)' and 'MONTHLY (Long-Term • 30 Days)' using the Horizon toggle.",
+      "In Weekly view, examine day-by-day (Mon-Sun) night mega-blocks and train regulation advisories.",
+      "In Monthly view, examine 4-week macro progress milestones, track-km renewal targets, and budget spend.",
+      "Click 'AI Optimize Horizon' to minimize passenger delay, or 'Official Circular' to export the Railway Board Program.",
+    ],
+    actionHref: "/central/planning",
+    actionText: "Open Planning Hub",
+  },
+  {
     category: "Map & Navigation",
     question: "How do I use the Interactive Live Corridor Map on a mobile device?",
     whatItDoes: "Provides 100% full-screen GPS interactive map navigation with pinch-zoom, station tap popups, and real-time line block visualization.",
@@ -259,6 +273,17 @@ export default function SystemGuidePage() {
             <span className="text-xs font-black uppercase text-white group-hover:text-[#6367FF]">4. Mega Bundler</span>
           </div>
           <p className="text-[11px] text-[#CABFFF] mt-1 font-medium">Spatio-temporal joint blocks</p>
+        </a>
+
+        <a
+          href="#horizon-section"
+          className="p-3.5 rounded-xl bg-[#022642] hover:bg-[#033358] border-2 border-black shadow-[3px_3px_0_#000000] text-left transition block group"
+        >
+          <div className="flex items-center space-x-2 text-[#00FFD2]">
+            <Calendar size={20} weight="duotone" />
+            <span className="text-xs font-black uppercase text-white group-hover:text-[#00FFD2]">5. Multi-Horizon</span>
+          </div>
+          <p className="text-[11px] text-[#CABFFF] mt-1 font-medium">Weekly & Monthly schedules</p>
         </a>
       </div>
 
@@ -648,6 +673,94 @@ export default function SystemGuidePage() {
         </div>
       </section>
 
+      {/* 6. Section: Multi-Horizon Block Planning */}
+      <section id="horizon-section" className="p-5 sm:p-6 rounded-2xl bg-[#022642] border-3 border-black shadow-[5px_5px_0_#000000] space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-black pb-3">
+          <div className="flex items-center space-x-2.5">
+            <div className="p-2 rounded-xl bg-[#000D18] border-2 border-black text-[#00FFD2] shrink-0">
+              <Calendar size={24} weight="duotone" />
+            </div>
+            <div>
+              <h2 className="text-lg sm:text-xl font-black text-white tracking-tight">
+                5. Multi-Horizon Block Planning (Weekly Short-Term & Monthly Long-Term)
+              </h2>
+              <p className="text-xs text-[#CABFFF] font-medium">
+                Dual-horizon decision support for short-term tactical execution (7-day rolling window) and long-term strategic corridor overhauls (30-day master window).
+              </p>
+            </div>
+          </div>
+
+          <Link
+            href="/central/planning"
+            className="btn-tactile px-3.5 py-2 rounded-xl bg-[#00FFD2] text-black font-black text-xs flex items-center space-x-2 border-2 border-black shadow-[2px_2px_0_#000000] shrink-0 self-start sm:self-auto hover:bg-[#33FFDC]"
+          >
+            <span>Open Multi-Horizon Hub</span>
+            <ArrowRight size={14} weight="bold" />
+          </Link>
+        </div>
+
+        {/* What this does & How to do it */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          <div className="p-3.5 rounded-xl bg-[#011526] border-2 border-black shadow-[2px_2px_0_#000000] space-y-1.5">
+            <div className="flex items-center space-x-2 text-[#00FFD2]">
+              <Target size={18} weight="duotone" />
+              <h3 className="text-xs font-mono font-black uppercase text-white">What This Option Does:</h3>
+            </div>
+            <p className="text-xs text-[#E2E8F0] leading-relaxed pl-6">
+              Solves the conflict between daily train traffic and engineering works by separating block planning into two coordinated operational horizons: <strong>Weekly (Short-Term Tactical)</strong> for managing daily night mega-blocks, track tamping (CSM), OHE power isolation, and protecting passenger timetables; and <strong>Monthly (Long-Term Strategic)</strong> for tracking cumulative Track Renewal (TRR/TSR in track-km), deep ballast cleaning (BCM), bridge girder rehabilitation, and capital budget drawdowns.
+            </p>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-[#000D18] border-2 border-black shadow-[2px_2px_0_#000000] space-y-1.5">
+            <div className="flex items-center space-x-2 text-[#FFFF00]">
+              <ListNumbers size={18} weight="bold" />
+              <h3 className="text-xs font-mono font-black uppercase text-white">How To Do It:</h3>
+            </div>
+            <ol className="space-y-1 pl-6 text-xs text-[#CABFFF] list-decimal list-inside font-medium">
+              <li>Navigate to <strong>'/central/planning'</strong> from the sidebar or click 'Open Multi-Horizon Hub'.</li>
+              <li>Toggle between <strong>'WEEKLY (Short-Term • 7 Days)'</strong> and <strong>'MONTHLY (Long-Term • 30 Days)'</strong>.</li>
+              <li>Filter by Corridor (e.g. NDLS-MMCT or BPL-ET) and Directorate (Civil, Electrical, S&T).</li>
+              <li>Switch between <strong>'Visual Horizon Matrix'</strong> and <strong>'Block Slot Registry'</strong>.</li>
+              <li>Click <strong>'AI Optimize Horizon'</strong> to automatically resolve train conflicts and save passenger delay minutes.</li>
+              <li>Click <strong>'Official Circular'</strong> to generate and print the authorized Railway Board Block Program.</li>
+            </ol>
+          </div>
+        </div>
+
+        {/* 3 Pillars Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+          <div className="p-4 rounded-xl bg-[#000D18] border-2 border-black shadow-[3px_3px_0_#000000] space-y-2">
+            <div className="flex items-center space-x-2 text-[#00FFD2]">
+              <Clock size={18} weight="duotone" />
+              <h3 className="text-xs font-black uppercase text-white">1. Weekly Tactical (7-Day Rolling)</h3>
+            </div>
+            <p className="text-xs text-[#CABFFF] leading-relaxed">
+              Focuses on immediate 7-day execution. Coordinates night mega-blocks (01:00-05:00), daily machine rosters (CSM 09-3X, BRM-112), and precise passenger train regulation advisories (e.g. 12952 Mumbai Rajdhani delayed 8 mins, zero cancellations).
+            </p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-[#000D18] border-2 border-black shadow-[3px_3px_0_#000000] space-y-2">
+            <div className="flex items-center space-x-2 text-[#FFFF00]">
+              <Calendar size={18} weight="duotone" />
+              <h3 className="text-xs font-black uppercase text-white">2. Monthly Strategic (30-Day Master)</h3>
+            </div>
+            <p className="text-xs text-[#CABFFF] leading-relaxed">
+              Provides the macro view across 4 rolling weeks (W1 to W4). Tracks major capital projects: Track Renewal (148.5 track-km targeted), Ballast Cleaning Machine (BCM-341) deep screening, Chambal river bridge overhaul, and Electronic Interlocking (EI) cutover.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-[#000D18] border-2 border-black shadow-[3px_3px_0_#000000] space-y-2">
+            <div className="flex items-center space-x-2 text-[#6367FF]">
+              <Sparkle size={18} weight="duotone" />
+              <h3 className="text-xs font-black uppercase text-white">3. AI Schedule Optimization & Circulars</h3>
+            </div>
+            <p className="text-xs text-[#CABFFF] leading-relaxed">
+              The AI optimization engine automatically tightens block schedules to co-locate multi-department tasks, saving 4.5 hours of track time and boosting punctuality by +14.2%. Generates official Railway Board circulars ready for distribution.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* 7. Section: Official Sanctions & Form T/806 */}
       <section className="p-5 sm:p-6 rounded-2xl bg-[#022642] border-3 border-black shadow-[5px_5px_0_#000000] space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-black pb-3">
@@ -657,7 +770,7 @@ export default function SystemGuidePage() {
             </div>
             <div>
               <h2 className="text-lg sm:text-xl font-black text-white tracking-tight">
-                5. Statutory Form T/806 & G&SR Sanctions Center
+                6. Statutory Form T/806 & G&SR Sanctions Center
               </h2>
               <p className="text-xs text-[#CABFFF] font-medium">
                 Official dispatch memorandums compliant with Indian Railways General and Subsidiary Rules.
@@ -727,7 +840,7 @@ export default function SystemGuidePage() {
             <div className="flex items-center space-x-2">
               <PlayCircle size={24} weight="fill" className="text-[#00FFD2]" />
               <h2 className="text-lg sm:text-xl font-black text-white tracking-tight">
-                6. 16-Step End-to-End Walkthrough Reference
+                7. 17-Step End-to-End Walkthrough Reference
               </h2>
             </div>
             <p className="text-xs text-[#CABFFF] font-medium mt-1">

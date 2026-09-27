@@ -293,13 +293,13 @@ export default function CentralCommandPage() {
               }`}
             >
               <Clock size={18} weight="duotone" className="shrink-0" />
-              <span className="sm:hidden">24H Timeline</span>
-              <span className="hidden sm:inline">24H Track Occupancy Timeline</span>
+              <span className="sm:hidden">Multi-Horizon</span>
+              <span className="hidden sm:inline">Multi-Horizon Block Timeline (Daily/Weekly/Monthly)</span>
             </button>
           </div>
 
           <span className="text-xs text-[#8595FF] font-mono font-bold hidden sm:inline px-3 py-1 rounded bg-[#022642] border border-black">
-            {activeViewTab === "MAP" ? "Viewing Live Moving Traffic & Block Zones" : "Viewing 24-Hour Master Section Diagram"}
+            {activeViewTab === "MAP" ? "Viewing Live Moving Traffic & Block Zones" : "Viewing Multi-Horizon Block Plans & Section Diagram"}
           </span>
         </div>
 

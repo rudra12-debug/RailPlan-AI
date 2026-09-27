@@ -302,6 +302,7 @@ export interface NotificationItem {
   read: boolean;
   departmentId?: DepartmentId | 'ALL';
   linkHref?: string;
+  relatedId?: string;
 }
 
 export interface AuditLogEntry {
@@ -424,6 +425,7 @@ export interface MaintenanceBlockRequest {
   t806Id?: string;
   bundleId?: string;
   requestedBy?: string;
+  horizon?: PlanningHorizon;
 }
 
 export interface StatutoryT806Sanction {
@@ -459,5 +461,59 @@ export interface StatutoryT806Sanction {
   previousHash?: string;
   issuedAt: string;
   cautionOrderSummary?: string;
+}
+
+// ----------------------------------------------------
+// MULTI-HORIZON BLOCK PLANNING SPECIFICATION
+// Weekly (Short-Term Tactical) & Monthly (Long-Term Strategic)
+// ----------------------------------------------------
+export type PlanningHorizon = 'DAILY' | 'WEEKLY' | 'MONTHLY';
+
+export interface HorizonScheduleSlot {
+  id: string;
+  horizon: PlanningHorizon;
+  dayOrPeriod: string; // e.g. "Monday, 28 Sep" or "Week 1 (01-07 Oct)"
+  date: string; // "2026-09-28"
+  timeWindow: string; // "01:30 - 05:30"
+  durationHours: number;
+  trackLine: 'UP_MAIN' | 'DOWN_MAIN' | 'LOOP_LINE' | 'BOTH_MAIN' | 'DFC_FREIGHT';
+  corridorId: string;
+  fromKm: number;
+  toKm: number;
+  locationSection: string;
+  departmentId: DepartmentId;
+  departmentName: string;
+  workType: string;
+  machinery: string[];
+  speedRestriction?: string;
+  passengerTrainsRegulated: string[];
+  freightImpact: string;
+  status: 'SCHEDULED' | 'CONFIRMED' | 'IN_PROGRESS' | 'COMPLETED' | 'T806_SANCTIONED' | 'BOARD_APPROVED';
+  t806Id?: string;
+  riskScore: number;
+}
+
+export interface HorizonBlockPlan {
+  id: string;
+  horizon: PlanningHorizon;
+  scope: 'SHORT_TERM_MAINTENANCE' | 'LONG_TERM_MAINTENANCE';
+  title: string;
+  periodLabel: string;
+  corridorId: string;
+  totalBlockHours: number;
+  totalSlots: number;
+  departmentsInvolved: DepartmentId[];
+  passengerTrainsRegulated: number;
+  averageDelayMinutesPerTrain: number;
+  freightCapacityImpactPct: number;
+  trackKmTargeted: number;
+  trackKmCompleted?: number;
+  totalBudgetEstimated: number;
+  status: 'DRAFT' | 'BOARD_APPROVED' | 'IN_EXECUTION' | 'COMPLETED';
+  conflictCheckPassed: boolean;
+  aiOptimizationScore: number; // 0 - 100
+  slots: HorizonScheduleSlot[];
+  keyObjectives: string[];
+  criticalRisksMitigated: string[];
 }
 

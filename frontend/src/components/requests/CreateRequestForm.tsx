@@ -7,7 +7,8 @@ import {
   DepartmentId, 
   RequestPriority, 
   ServiceRequestType, 
-  CostBreakdown 
+  CostBreakdown,
+  PlanningHorizon 
 } from "@/lib/types";
 import { formatINR, formatFullINR } from "@/lib/formatters";
 import { 
@@ -41,6 +42,7 @@ export const CreateRequestForm: React.FC = () => {
     "Engineering department is scheduled for heavy 60kg rail renewal and sleeper replacement between KM 148 and KM 154. Urgent 25kV OHE power isolation (block window of 4 hours), neutral section checking, and post-track-lift catenary readjustment is required from the Electrical department to avoid pantograph entanglement."
   );
   const [requiredDate, setRequiredDate] = useState("2026-08-28");
+  const [horizon, setHorizon] = useState<PlanningHorizon>("WEEKLY");
   const [additionalNotes, setAdditionalNotes] = useState(
     "Traffic block requested during 01:30 AM to 05:30 AM low-traffic window to minimize impact on 12952 Mumbai Rajdhani Express."
   );
@@ -300,6 +302,21 @@ export const CreateRequestForm: React.FC = () => {
                   className="w-full bg-navy-950 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-100 focus:border-cyan-500 focus:outline-none font-mono"
                   required
                 />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-300 mb-1">
+                  Planning Horizon (Short-Term vs Long-Term) *
+                </label>
+                <select
+                  value={horizon}
+                  onChange={(e) => setHorizon(e.target.value as PlanningHorizon)}
+                  className="w-full bg-navy-950 border border-slate-700 rounded-lg p-2.5 text-xs text-cyan-300 font-bold focus:border-cyan-500 focus:outline-none"
+                >
+                  <option value="WEEKLY">WEEKLY (Short-Term Tactical Maintenance - 7-Day Window)</option>
+                  <option value="MONTHLY">MONTHLY (Long-Term Strategic Overhaul - 30-Day Master)</option>
+                  <option value="DAILY">DAILY (Immediate Emergency Execution - 24-Hour Possession)</option>
+                </select>
               </div>
             </div>
           </div>

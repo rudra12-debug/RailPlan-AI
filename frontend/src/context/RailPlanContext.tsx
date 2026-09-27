@@ -22,6 +22,9 @@ import {
   LiveTrain,
   MaintenanceBlockRequest,
   StatutoryT806Sanction,
+  PlanningHorizon,
+  HorizonBlockPlan,
+  HorizonScheduleSlot,
 } from "@/lib/types";
 import {
   MOCK_SERVICE_REQUESTS,
@@ -38,6 +41,7 @@ import {
   MOCK_BLOCK_REQUESTS,
   MOCK_T806_SANCTIONS,
 } from "@/lib/mockData";
+import { ALL_HORIZON_BLOCK_PLANS } from "@/lib/horizonPlansData";
 import { useAuth } from "./AuthContext";
 import { LiveSyncToast } from "@/components/common/LiveSyncToast";
 import { BundledCluster, clusterToMaintenanceOrder } from "@/lib/bundlerEngine";
@@ -77,6 +81,13 @@ interface RailPlanContextType {
   setSelectedCorridorId: (id: string) => void;
   setTelemetryTickActive: (active: boolean) => void;
   triggerTelemetryTick: () => void;
+
+  // Multi-Horizon Block Planning (Weekly Short-Term & Monthly Long-Term)
+  selectedHorizon: PlanningHorizon;
+  setSelectedHorizon: (horizon: PlanningHorizon) => void;
+  horizonPlans: HorizonBlockPlan[];
+  approveHorizonPlan: (planId: string) => { success: boolean; message: string };
+  aiOptimizeHorizonSchedule: (planId: string) => { success: boolean; message: string; savedHours: number; punctualityGainPct: number };
 
   // Block Requests & Bundling
   createBlockRequest: (data: Partial<MaintenanceBlockRequest>) => string;
@@ -243,6 +254,10 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [activeToast, setActiveToast] = useState<NotificationItem | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [activeHomeTab, setActiveHomeTab] = useState<"OCC" | "BUNDLER" | "EMERGENCY" | "SANCTIONS">("OCC");
+
+  // Multi-Horizon Block Planning State (Weekly Short-Term & Monthly Long-Term)
+  const [selectedHorizon, setSelectedHorizon] = useState<PlanningHorizon>("WEEKLY");
+  const [horizonPlans, setHorizonPlans] = useState<HorizonBlockPlan[]>(ALL_HORIZON_BLOCK_PLANS);
 
   // Helper: Tamper-proof audit logger with pseudo-hash chaining
   const logAudit = useCallback((
@@ -424,6 +439,62 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       prev.map((r) => (r.id === id ? { ...r, status } : r))
     );
   };
+
+  // Multi-Horizon Block Planning Actions
+  const approveHorizonPlan = useCallback((planId: string) => {
+    setHorizonPlans((prev) =>
+      prev.map((plan) =>
+        plan.id === planId ? { ...plan, status: "BOARD_APPROVED" } : plan
+      )
+    );
+    const plan = horizonPlans.find((p) => p.id === planId);
+    const msg = `Railway Board Statutory Sanction issued for ${plan?.title || planId}`;
+    logAudit(user?.name || "Executive Director", user?.role || "CENTRAL_ADMIN", "BOARD_SANCTION_PLAN", planId, msg);
+    const toast: NotificationItem = {
+      id: `NOTIF-SANCT-${Date.now().toString().slice(-4)}`,
+      title: "Board Sanction Granted",
+      message: msg,
+      timestamp: "Just now",
+      type: "SUCCESS",
+      read: false,
+      relatedId: planId,
+    };
+    setActiveToast(toast);
+    playNotificationChime();
+    return { success: true, message: msg };
+  }, [horizonPlans, logAudit, user]);
+
+  const aiOptimizeHorizonSchedule = useCallback((planId: string) => {
+    setHorizonPlans((prev) =>
+      prev.map((plan) => {
+        if (plan.id === planId) {
+          return {
+            ...plan,
+            aiOptimizationScore: Math.min(100, plan.aiOptimizationScore + 4),
+            averageDelayMinutesPerTrain: Math.max(1.5, Number((plan.averageDelayMinutesPerTrain * 0.72).toFixed(1))),
+            freightCapacityImpactPct: Math.max(1.0, Number((plan.freightCapacityImpactPct * 0.78).toFixed(1))),
+            conflictCheckPassed: true,
+          };
+        }
+        return plan;
+      })
+    );
+    const plan = horizonPlans.find((p) => p.id === planId);
+    const msg = `AI Optimization Engine tightened schedule for ${plan?.title || planId}: Reduced passenger delay by 28% and aligned co-located OHE power cutoff windows.`;
+    logAudit(user?.name || "Official", user?.role || "CENTRAL_ADMIN", "AI_OPTIMIZE_HORIZON_SCHEDULE", planId, msg);
+    const toast: NotificationItem = {
+      id: `NOTIF-OPT-${Date.now().toString().slice(-4)}`,
+      title: "AI Horizon Optimization Complete",
+      message: msg,
+      timestamp: "Just now",
+      type: "SUCCESS",
+      read: false,
+      relatedId: planId,
+    };
+    setActiveToast(toast);
+    playNotificationChime();
+    return { success: true, message: msg, savedHours: 4.5, punctualityGainPct: 14.2 };
+  }, [horizonPlans, logAudit, user]);
 
   // AI Mega-Block Acceptance Action
   const acceptBundledCluster = (cluster: BundledCluster): BundledMaintenanceOrder => {
@@ -722,6 +793,11 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setSelectedCorridorId,
         setTelemetryTickActive,
         triggerTelemetryTick,
+        selectedHorizon,
+        setSelectedHorizon,
+        horizonPlans,
+        approveHorizonPlan,
+        aiOptimizeHorizonSchedule,
         createBlockRequest,
         updateBlockRequestStatus,
         acceptBundledCluster,

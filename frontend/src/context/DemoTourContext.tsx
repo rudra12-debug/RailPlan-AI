@@ -259,9 +259,25 @@ export const DEMO_STEPS: DemoStep[] = [
     howToDoIt: [
       "Visit Budget & Grants (/central/costs) to see updated expenditure.",
       "Visit National OCC (/central) to inspect healthy corridor operational ratings.",
-      "Congratulations! You have mastered the entire RailPlan AI operational lifecycle.",
+      "Proceed to Step 17 to review Multi-Horizon Maintenance Planning.",
     ],
-    actionPrompt: "Congratulations! You have completed the full 16-Step RailPlan AI operations tour.",
+    actionPrompt: "Inspect updated budget and cost variances, then proceed to Multi-Horizon Planning.",
+  },
+  {
+    stepNumber: 17,
+    title: "17. Multi-Horizon Block Planning (Weekly Short-Term & Monthly Long-Term)",
+    role: "Central Admin",
+    roleEmail: "admin@railplan.ai",
+    route: "/central/planning",
+    description: "Plan and inspect synchronized Weekly 7-day tactical block windows vs Monthly 30-day strategic corridor overhauls.",
+    whatItDoes: "Separates short-term tactical execution (daily night mega-blocks, tamping machines, and passenger train delay protection) from long-term strategic master corridor overhauls (heavy track renewals, deep ballast screening, and capital expenditure monitoring).",
+    howToDoIt: [
+      "Navigate to '/central/planning' from the sidebar menu or header.",
+      "Toggle between 'WEEKLY (Short-Term • 7 Days)' and 'MONTHLY (Long-Term • 30 Days)'.",
+      "Notice how KPIs and timeline dynamically adapt to tactical vs strategic metrics.",
+      "Click 'AI Optimize Horizon' to minimize passenger delay, or 'Official Circular' to export the Railway Board Program.",
+    ],
+    actionPrompt: "Toggle between Weekly and Monthly horizons to explore short-term vs long-term maintenance planning.",
   },
 ];
 
