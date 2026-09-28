@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { MOCK_USERS } from "@/lib/mockData";
-import { ShieldCheck, Users, CaretDown, CheckCircle } from "@phosphor-icons/react";
+import { ShieldCheck, Users, CaretDown, CheckCircle, X } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
 
 export const QuickRoleSwitcher: React.FC = () => {
@@ -41,16 +41,25 @@ export const QuickRoleSwitcher: React.FC = () => {
 
       {isOpen && (
         <>
-          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          <div className="absolute right-0 mt-2 w-80 rounded-xl bg-[#011526] border-2 border-black shadow-[5px_5px_0_#000000] z-50 overflow-hidden">
+          <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-[1px]" onClick={() => setIsOpen(false)} />
+          <div className="absolute right-0 top-full mt-2 w-72 sm:w-80 max-w-[calc(100vw-1.5rem)] rounded-xl bg-[#011526] border-2 border-black shadow-[6px_6px_0_#000000] z-50 overflow-hidden">
             <div className="p-3 bg-[#000D18] border-b-2 border-black">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black uppercase tracking-wider text-white">
                   Switch Active Persona
                 </span>
-                <span className="text-[10px] bg-[#6367FF] text-white border border-black px-1.5 py-0.5 rounded font-mono font-black">
-                  RBAC Mode
-                </span>
+                <div className="flex items-center space-x-2">
+                  <span className="text-[10px] bg-[#6367FF] text-white border border-black px-1.5 py-0.5 rounded font-mono font-black">
+                    RBAC Mode
+                  </span>
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-white cursor-pointer"
+                    aria-label="Close"
+                  >
+                    <X size={14} weight="bold" />
+                  </button>
+                </div>
               </div>
             </div>
 

@@ -100,11 +100,11 @@ export const Header: React.FC = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full bg-[#011526] border-b-2 border-black shadow-[0_4px_0_#000000] select-none">
+      <header className="sticky top-0 z-50 w-full bg-[#011526] border-b-2 border-black shadow-[0_4px_0_#000000] select-none">
         {/* Official Indian National Tricolor Ribbon Accent Top Bar */}
         <div className="h-1.5 w-full bg-gradient-to-r from-[#FF671F] via-[#FFFFFF] to-[#046A38]" />
 
-        <div className="px-2 sm:px-4 lg:px-6 h-16 flex items-center justify-between gap-1.5 sm:gap-2.5 max-w-full overflow-hidden">
+        <div className="px-2 sm:px-4 lg:px-6 h-16 flex items-center justify-between gap-1.5 sm:gap-2.5 w-full">
           {/* Left: Always-Visible Hamburger Menu Button + Official Indian Railways Emblem & Brand */}
           <div className="flex items-center space-x-1.5 sm:space-x-2.5 shrink-0 min-w-0">
             {/* Unified Hamburger Menu Button (Accessible across Mobile, Tablet & Desktop) */}
