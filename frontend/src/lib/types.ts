@@ -161,6 +161,10 @@ export interface CorridorAsset {
     pantographContactWear?: number; // mm (0.5 - 4.8)
     trackGeometryGaugeDeviation?: number; // mm (-4 to +12)
     dynamicRiskScore?: number; // 0 - 100%
+    pierTiltDeg?: number; // Bridge Pier tilt in degrees (0.01 - 1.5°)
+    scourDepthM?: number; // Riverbed scour depth in meters (0.2 - 3.8m)
+    bearingTemperature?: number; // Wheel/Axle box temp in °C
+    rockfallSensorActive?: boolean; // Rockfall tripwire barrier intact / tripped
   };
   departmentResponsible: DepartmentId;
 }

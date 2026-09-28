@@ -303,6 +303,12 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         const nextTension = Math.min(15.5, Math.max(8.0, Number((currentTension + deltaTension).toFixed(1))));
 
         let risk = asset.failureRisk;
+        let nextVoltage = asset.telemetry.voltage;
+        let nextSwitchOpening = asset.telemetry.switchOpeningMm;
+        let nextTilt = asset.telemetry.pierTiltDeg;
+        let nextScour = asset.telemetry.scourDepthM;
+        let nextBearingTemp = asset.telemetry.bearingTemperature;
+
         if (asset.type === "RAIL_JOINT") {
           risk = Math.min(100, Math.floor(
             (nextTemp > 52 ? (nextTemp - 52) * 5 : 0) +
@@ -313,6 +319,29 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           risk = Math.min(100, Math.floor(
             (nextTension < 10.0 ? (10.0 - nextTension) * 20 : 5) +
             ((asset.telemetry.pantographContactWear || 2) > 3.8 ? 30 : 10) + 10
+          ));
+        } else if (asset.type === "POINT_MACHINE" || asset.type === "SIGNAL" || asset.type === "TRACK_CIRCUIT") {
+          const deltaV = Number(((Math.random() - 0.5) * 0.1).toFixed(2));
+          nextVoltage = Math.min(25.5, Math.max(21.0, Number(((asset.telemetry.voltage || 24.0) + deltaV).toFixed(2))));
+          if (asset.telemetry.switchOpeningMm !== undefined) {
+            const deltaSwitch = Number(((Math.random() - 0.5) * 0.05).toFixed(2));
+            nextSwitchOpening = Number((asset.telemetry.switchOpeningMm + deltaSwitch).toFixed(2));
+          }
+          risk = Math.min(100, Math.floor(
+            (nextVoltage < 23.0 ? (23.0 - nextVoltage) * 25 : 5) +
+            (nextSwitchOpening && Math.abs(nextSwitchOpening - 115) > 2 ? 30 : 5) + 8
+          ));
+        } else if (asset.type === "BRIDGE_PIER") {
+          const deltaTilt = Number(((Math.random() - 0.5) * 0.005).toFixed(3));
+          nextTilt = Math.max(0.01, Number(((asset.telemetry.pierTiltDeg || 0.05) + deltaTilt).toFixed(3)));
+          if (asset.telemetry.bearingTemperature) {
+            const deltaB = Number(((Math.random() - 0.48) * 0.3).toFixed(1));
+            nextBearingTemp = Math.min(85, Math.max(30, Number((asset.telemetry.bearingTemperature + deltaB).toFixed(1))));
+          }
+          risk = Math.min(100, Math.floor(
+            (nextTilt > 0.15 ? (nextTilt - 0.15) * 120 : 5) +
+            ((asset.telemetry.scourDepthM || 0) > 1.5 ? 25 : 5) +
+            ((nextBearingTemp || 40) > 60 ? 20 : 5) + 5
           ));
         }
 
@@ -329,6 +358,11 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             vibrationAmplitude: nextVib,
             vibration: nextVib,
             oheContactWireTension: nextTension,
+            voltage: nextVoltage,
+            switchOpeningMm: nextSwitchOpening,
+            pierTiltDeg: nextTilt,
+            scourDepthM: nextScour,
+            bearingTemperature: nextBearingTemp,
             dynamicRiskScore: risk,
           },
         };

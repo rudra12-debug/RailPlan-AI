@@ -509,6 +509,30 @@ export default function SystemGuidePage() {
             ))}
           </div>
         </div>
+
+        {/* Quick Link to IoT Sensor Monitoring Hub */}
+        <div className="mt-4 p-3.5 rounded-xl bg-[#011526] border-2 border-[#00FFD2] shadow-[3px_3px_0_#000000] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 rounded-lg bg-[#00FFD2] text-black">
+              <Pulse size={20} weight="bold" />
+            </div>
+            <div>
+              <h4 className="text-xs font-black text-white uppercase tracking-wider">
+                Dedicated IoT Sensor Telemetry Hub (All Departments)
+              </h4>
+              <p className="text-[11px] text-[#CABFFF]">
+                Condition-based monitoring for rail buckling temperature, 25kV OHE wire tension, Kavach balise RSSI, and bridge pier tilt across all 4 directorates.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/department/telemetry"
+            className="btn-tactile px-3.5 py-1.5 rounded-xl bg-[#00FFD2] text-black font-black text-xs flex items-center space-x-1.5 border-2 border-black shadow-[2px_2px_0_#000000] self-start sm:self-auto shrink-0"
+          >
+            <span>Open IoT Sensor Hub</span>
+            <ArrowRight size={14} weight="bold" />
+          </Link>
+        </div>
       </section>
 
       {/* 5. Section: The 9-Stage Request Lifecycle */}

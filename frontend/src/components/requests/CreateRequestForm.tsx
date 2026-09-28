@@ -25,21 +25,30 @@ import {
   HelpCircle,
   FileText
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export const CreateRequestForm: React.FC = () => {
   const { user } = useAuth();
   const { createServiceRequest, corridors, departments } = useRailPlan();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const [title, setTitle] = useState("25kV OHE Power Block & Catenary Tensioning Support for Track Relay");
-  const [targetDepartment, setTargetDepartment] = useState<DepartmentId>("ELEC");
-  const [corridorId, setCorridorId] = useState("NDLS-MMCT");
-  const [locationKm, setLocationKm] = useState("KM 148.0 - 154.0 (Mathura Section)");
+  const initialCorridor = searchParams?.get("corridor") || "NDLS-MMCT";
+  const initialLocation = searchParams?.get("location") || "KM 148.0 - 154.0 (Mathura Section)";
+  const initialTargetDept = (searchParams?.get("targetDept") as DepartmentId) || "ELEC";
+  const initialTitle = searchParams?.get("title") || "25kV OHE Power Block & Catenary Tensioning Support for Track Relay";
+  const initialPriority = (searchParams?.get("priority") as RequestPriority) || "HIGH";
+
+  const [title, setTitle] = useState(initialTitle);
+  const [targetDepartment, setTargetDepartment] = useState<DepartmentId>(initialTargetDept);
+  const [corridorId, setCorridorId] = useState(initialCorridor);
+  const [locationKm, setLocationKm] = useState(initialLocation);
   const [requestType, setRequestType] = useState<ServiceRequestType>("Electrical Support");
-  const [priority, setPriority] = useState<RequestPriority>("HIGH");
+  const [priority, setPriority] = useState<RequestPriority>(initialPriority);
   const [description, setDescription] = useState(
-    "Engineering department is scheduled for heavy 60kg rail renewal and sleeper replacement between KM 148 and KM 154. Urgent 25kV OHE power isolation (block window of 4 hours), neutral section checking, and post-track-lift catenary readjustment is required from the Electrical department to avoid pantograph entanglement."
+    searchParams?.get("title")
+      ? `Condition-based maintenance requested based on IoT sensor anomaly at ${initialLocation}. Urgent traffic block and track isolation requested to perform immediate remediation.`
+      : "Engineering department is scheduled for heavy 60kg rail renewal and sleeper replacement between KM 148 and KM 154. Urgent 25kV OHE power isolation (block window of 4 hours), neutral section checking, and post-track-lift catenary readjustment is required from the Electrical department to avoid pantograph entanglement."
   );
   const [requiredDate, setRequiredDate] = useState("2026-08-28");
   const [horizon, setHorizon] = useState<PlanningHorizon>("WEEKLY");

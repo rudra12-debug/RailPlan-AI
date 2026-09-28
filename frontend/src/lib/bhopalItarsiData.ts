@@ -216,6 +216,54 @@ export function generateCorridorAssets(): CorridorAsset[] {
     });
   }
 
+  // D. 20 Safety Directorate Assets: SFTY-BPL-401 to SFTY-BPL-420 (KM 2.0 to 118.0)
+  for (let i = 1; i <= 20; i++) {
+    const idNum = 400 + i;
+    const km = Number((2.0 + (i - 1) * 6.1).toFixed(1));
+    const isNarmadaBridge = km >= 65 && km <= 75;
+    const isBarkheraGhat = km >= 54 && km <= 62;
+
+    const tilt = isNarmadaBridge ? Number((0.08 + Math.random() * 0.35).toFixed(2)) : Number((0.02 + Math.random() * 0.08).toFixed(2));
+    const scour = isNarmadaBridge ? Number((1.2 + Math.random() * 1.8).toFixed(1)) : 0;
+    const bearingTemp = Number((42 + Math.random() * 24).toFixed(1));
+    const rockfallTripped = isBarkheraGhat && i === 10;
+
+    let risk = Math.min(100, Math.floor(
+      (tilt > 0.25 ? (tilt - 0.25) * 80 : 0) +
+      (scour > 2.0 ? (scour - 2.0) * 20 : 0) +
+      (bearingTemp > 60 ? (bearingTemp - 60) * 3 : 0) +
+      (rockfallTripped ? 85 : 5)
+    ));
+    if (i === 11) risk = 88; // Pier #4 Narmada River scour alarm
+
+    const status = risk >= 80 ? "CRITICAL" : risk >= 50 ? "ATTENTION" : "NORMAL";
+
+    assets.push({
+      id: `SFTY-BPL-${idNum}`,
+      name: i % 2 === 0 
+        ? `Narmada/Betwa Bridge Pier Inclinometer #${idNum}` 
+        : `Ghat Rockfall & TRC Safety Monitoring Point #${idNum}`,
+      type: "BRIDGE_PIER",
+      corridorId: "BPL-ET",
+      locationKm: `KM ${km.toFixed(1)} (${isNarmadaBridge ? "Major Bridge Section" : isBarkheraGhat ? "Vindhyachal Ghat Cutting" : "Plain Route"})`,
+      status,
+      failureRisk: risk,
+      lastMaintenanceDate: "2026-07-28",
+      nextRecommendedInspection: "2026-09-29",
+      telemetry: {
+        vibration: Number((0.4 + Math.random() * 1.6).toFixed(2)),
+        temperature: Number((32 + Math.random() * 10).toFixed(1)),
+        pierTiltDeg: tilt,
+        scourDepthM: scour,
+        bearingTemperature: bearingTemp,
+        rockfallSensorActive: !rockfallTripped,
+        dynamicRiskScore: risk,
+        tqiScore: Math.floor(25 + Math.random() * 18),
+      },
+      departmentResponsible: "SFTY",
+    });
+  }
+
   return assets;
 }
 

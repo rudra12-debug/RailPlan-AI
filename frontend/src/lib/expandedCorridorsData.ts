@@ -486,6 +486,43 @@ export function generateLargeScaleAssets(): CorridorAsset[] {
         departmentResponsible: "SNT",
       });
     }
+
+    // Safety Directorate & Structural Sensors
+    for (let i = 1; i <= 10; i++) {
+      const km = Number(((maxKm / 11) * i).toFixed(1));
+      const tilt = Number((0.02 + Math.random() * 0.18).toFixed(2));
+      const scour = Number((0.4 + Math.random() * 1.5).toFixed(1));
+      const bearing = Number((38 + Math.random() * 22).toFixed(1));
+      let risk = Math.min(88, Math.floor(
+        (tilt > 0.15 ? (tilt - 0.15) * 100 : 0) +
+        (scour > 1.2 ? (scour - 1.2) * 20 : 0) +
+        (bearing > 55 ? 20 : 5) + 6
+      ));
+      const status = risk >= 80 ? "CRITICAL" : risk >= 50 ? "ATTENTION" : "NORMAL";
+
+      allAssets.push({
+        id: `SFTY-${corrId.slice(0, 3)}-${400 + i}`,
+        name: `Bridge Substructure & Geological Inclinometer #${400 + i} (${corr?.name.split("(")[0].trim()})`,
+        type: "BRIDGE_PIER",
+        corridorId: corrId,
+        locationKm: `KM ${km}`,
+        status,
+        failureRisk: risk,
+        lastMaintenanceDate: "2026-08-10",
+        nextRecommendedInspection: "2026-10-20",
+        telemetry: {
+          vibration: Number((0.3 + Math.random() * 1.5).toFixed(2)),
+          temperature: Number((30 + Math.random() * 12).toFixed(1)),
+          pierTiltDeg: tilt,
+          scourDepthM: scour,
+          bearingTemperature: bearing,
+          rockfallSensorActive: true,
+          dynamicRiskScore: risk,
+          tqiScore: Math.floor(22 + Math.random() * 20),
+        },
+        departmentResponsible: "SFTY",
+      });
+    }
   });
 
   return allAssets;
