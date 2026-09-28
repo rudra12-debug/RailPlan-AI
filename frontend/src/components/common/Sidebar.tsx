@@ -55,6 +55,7 @@ export const Sidebar: React.FC = () => {
     bundles, 
     isMobileMenuOpen, 
     setIsMobileMenuOpen,
+    isSidebarOpen,
     selectedZone,
     setSelectedZone,
     selectedCorridorId,
@@ -282,22 +283,22 @@ export const Sidebar: React.FC = () => {
 
   return (
     <>
-      {/* 1. Desktop Solid Permanent Sidebar (Visible only on lg and above) */}
-      <aside className="hidden lg:flex w-64 bg-[#011526] border-r-2 border-black flex-col h-[calc(100vh-4rem)] sticky top-16 select-none shrink-0 overflow-y-auto">
+      {/* 1. Desktop Solid Permanent Sidebar (Controlled by toggleSidebar on desktop) */}
+      <aside className={`${isSidebarOpen ? "hidden lg:flex" : "hidden"} w-64 bg-[#011526] border-r-2 border-black flex-col h-[calc(100vh-4rem)] sticky top-16 select-none shrink-0 overflow-y-auto transition-all duration-150`}>
         {renderContent()}
       </aside>
 
-      {/* 2. Mobile Responsive Drawer Backdrop */}
+      {/* 2. Responsive Drawer Backdrop (When Hamburger is opened) */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 lg:hidden transition-opacity"
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 transition-opacity"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
-      {/* 3. Mobile Responsive Drawer Panel (Slides out on mobile/tablet) */}
+      {/* 3. Responsive Drawer Panel (Slides out when Hamburger Menu is clicked on any device) */}
       <aside
-        className={`fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-[#011526] border-r-2 border-black flex flex-col h-full z-50 select-none overflow-y-auto shadow-[6px_0_24px_rgba(0,0,0,0.9)] lg:hidden transition-transform duration-200 ease-in-out ${
+        className={`fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-[#011526] border-r-2 border-black flex flex-col h-full z-50 select-none overflow-y-auto shadow-[6px_0_24px_rgba(0,0,0,0.9)] transition-transform duration-200 ease-in-out ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >

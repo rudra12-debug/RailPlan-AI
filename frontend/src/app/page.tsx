@@ -71,7 +71,7 @@ export default function MasterCommandPage() {
   const pendingSanctionsCount = t806Sanctions.filter((s) => s.status !== "ACTIVE_BLOCK").length + 2;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full max-w-full overflow-hidden">
       {/* OCC Command Console Hero Header (Tactile Cyber-Brutalist 100% Solid) */}
       <div className="p-3.5 sm:p-6 rounded-2xl bg-[#022642] border-2 border-black shadow-[4px_4px_0_#000000] sm:shadow-[5px_5px_0_#000000] relative overflow-hidden">
         {/* National Tricolor Top Line Accent */}

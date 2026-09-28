@@ -64,6 +64,9 @@ interface RailPlanContextType {
   serverSyncConnected: boolean;
   isMobileMenuOpen: boolean;
   setIsMobileMenuOpen: (open: boolean) => void;
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (open: boolean) => void;
+  toggleSidebar: () => void;
   activeHomeTab: "OCC" | "BUNDLER" | "EMERGENCY" | "SANCTIONS";
   setActiveHomeTab: (tab: "OCC" | "BUNDLER" | "EMERGENCY" | "SANCTIONS") => void;
 
@@ -253,6 +256,11 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [serverSyncConnected, setServerSyncConnected] = useState<boolean>(true);
   const [activeToast, setActiveToast] = useState<NotificationItem | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
+  const toggleSidebar = useCallback(() => {
+    setIsMobileMenuOpen((prev) => !prev);
+    setIsSidebarOpen((prev) => !prev);
+  }, []);
   const [activeHomeTab, setActiveHomeTab] = useState<"OCC" | "BUNDLER" | "EMERGENCY" | "SANCTIONS">("OCC");
 
   // Multi-Horizon Block Planning State (Weekly Short-Term & Monthly Long-Term)
@@ -816,6 +824,9 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         serverSyncConnected,
         isMobileMenuOpen,
         setIsMobileMenuOpen,
+        isSidebarOpen,
+        setIsSidebarOpen,
+        toggleSidebar,
         trains,
         blockRequests,
         t806Sanctions,

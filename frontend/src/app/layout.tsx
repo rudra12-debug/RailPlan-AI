@@ -38,9 +38,9 @@ export default function RootLayout({
           <AuthProvider>
             <RailPlanProvider>
               <DemoTourProvider>
-                <div className="flex flex-col min-h-screen">
+                <div className="flex flex-col min-h-screen w-full max-w-full overflow-x-hidden">
                   <Header />
-                  <div className="flex flex-1 min-w-0">
+                  <div className="flex flex-1 min-w-0 w-full max-w-full overflow-x-hidden">
                     <Sidebar />
                     <main className="flex-1 p-2.5 sm:p-4 lg:p-6 pb-24 lg:pb-8 max-w-7xl mx-auto w-full min-w-0 overflow-x-hidden">
                       {children}

@@ -178,7 +178,7 @@ export default function SystemGuidePage() {
   }, [searchQuery]);
 
   return (
-    <div className="space-y-8 select-none">
+    <div className="space-y-8 select-none w-full max-w-full overflow-hidden">
       {/* 1. Official Indian Railways Header Banner (100% Solid Opaque #022642) */}
       <div className="p-4 sm:p-6 lg:p-8 rounded-2xl bg-[#022642] border-3 border-black shadow-[6px_6px_0_#000000] relative overflow-hidden">
         {/* Tricolor Ribbon */}
@@ -230,7 +230,7 @@ export default function SystemGuidePage() {
       </div>
 
       {/* 2. Quick Navigation Shortcuts Row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3">
         <a
           href="#roles-section"
           className="p-3.5 rounded-xl bg-[#022642] hover:bg-[#033358] border-2 border-black shadow-[3px_3px_0_#000000] text-left transition block group"
