@@ -150,31 +150,48 @@ body {
 }
 
 /* =========================================================================
-   LIGHT / DAY MODE (DAYLIGHT OCC EXECUTIVE CONSOLE)
+   LIGHT / DAY MODE (DAYLIGHT OCC EXECUTIVE CONSOLE - AUTHENTIC RAILWAY PALETTE)
    ========================================================================= */
 
 html.light {
-  --background: #F1F5F9;
+  --background: #EDF2F6;
   --foreground: #0F172A;
 }
 
+/* Technical Drafting Grid Canvas (Tactile Engineering Desk - Not Plain White) */
 html.light body {
-  background-color: #F1F5F9 !important;
+  background-color: #EDF2F6 !important;
+  background-image: radial-gradient(rgba(100, 116, 139, 0.22) 1.2px, transparent 1.2px) !important;
+  background-size: 20px 20px !important;
   color: #0F172A !important;
 }
 
-/* Light Mode Card & Panel Background Overrides (Crisp White Chassis with 100% Solid Tactile Feel) */
-html.light .bg-\[\#011526\],
-html.light .bg-\[\#022642\],
+/* Level 1: Primary Command Chassis (Main Top Cards, Aside Sidebar) */
 html.light .bg-\[\#000D18\],
 html.light .bg-\[\#050814\],
 html.light .bg-\[\#0C1326\],
 html.light aside,
 html.light .panel-tactile {
   background-color: #FFFFFF !important;
+  border-color: #0F172A !important;
+  box-shadow: 4px 4px 0 #0F172A !important;
 }
 
-/* Sunken Bays, Wells, and Table Headers in Day Mode */
+/* Level 2: Secondary / Intermediate Panels (e.g., Operational Horizon Switcher, Section Dividers) */
+html.light .bg-\[\#022642\] {
+  background-color: #F8FAFC !important;
+  border-color: #0F172A !important;
+  box-shadow: 4px 4px 0 #0F172A !important;
+}
+
+/* Level 3: Card Sub-panels (e.g. inner possession slot cards, context guidance boxes) */
+html.light .bg-\[\#011526\] {
+  background-color: #F1F5F9 !important;
+  border-color: #0F172A !important;
+  box-shadow: 3px 3px 0 #0F172A !important;
+}
+
+/* Sunken Instrument Wells, Switcher Docks, Table Headers & Recessed Meters */
 html.light .bg-\[\#033358\],
 html.light .bg-\[\#011B30\],
 html.light .bg-\[\#131E3D\],
@@ -183,13 +200,29 @@ html.light .bg-slate-950,
 html.light .bg-navy-950,
 html.light .bg-navy-900,
 html.light .panel-elevated {
-  background-color: #F8FAFC !important;
+  background-color: #E2E8F0 !important;
+  border-color: #0F172A !important;
+  box-shadow: inset 0 2px 4px rgba(15, 23, 42, 0.08) !important;
+}
+
+/* Sub-card inside intermediate panel (e.g. inner slots, inner boxes in planning) */
+html.light .bg-\[\#022642\] .bg-\[\#000D18\] {
+  background-color: #FFFFFF !important;
+  border-color: #0F172A !important;
+}
+
+/* Recessed switcher dock bar inside cards */
+html.light .bg-\[\#022642\] div.bg-\[\#000D18\],
+html.light .bg-\[\#000D18\] div.bg-\[\#011B30\] {
+  background-color: #E2E8F0 !important;
+  border-color: #0F172A !important;
+  box-shadow: inset 0 2px 4px rgba(15, 23, 42, 0.1) !important;
 }
 
 html.light .led-bay {
-  background-color: #F1F5F9 !important;
-  border-color: #000000 !important;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+  background-color: #EEF2F6 !important;
+  border-color: #0F172A !important;
+  box-shadow: inset 0 2px 4px rgba(15, 23, 42, 0.1) !important;
 }
 
 /* Strip Dark Gradients in Day Mode (Preserve National Tricolor Ribbon via from-[#FF671F]) */
@@ -210,7 +243,172 @@ html.light [style*="background-color:#011526"] {
   background-color: #FFFFFF !important;
 }
 
-/* Base Light Mode Typography Overrides (Headings & Primary Text) */
+/* =========================================================================
+   AUTHENTIC DAYLIGHT OPERATIONAL PALETTE (NO AI NEONS)
+   ========================================================================= */
+
+/* 1. PRIMARY DISPATCH ACTION (Replaces AI Purple #6367FF with Indian Railways Command Navy) */
+html.light .bg-\[\#6367FF\],
+html.light button.bg-\[\#6367FF\],
+html.light a.bg-\[\#6367FF\] {
+  background-color: #1E40AF !important; /* Authentic Indian Railways Command Navy */
+  color: #FFFFFF !important;
+  border-color: #0F172A !important;
+}
+html.light .bg-\[\#6367FF\] *,
+html.light button.bg-\[\#6367FF\] *,
+html.light a.bg-\[\#6367FF\] * {
+  color: #FFFFFF !important;
+}
+html.light .bg-\[\#6367FF\]:hover,
+html.light button.bg-\[\#6367FF\]:hover,
+html.light a.bg-\[\#6367FF\]:hover {
+  background-color: #172554 !important;
+}
+html.light .bg-\[\#6367FF\] svg,
+html.light button.bg-\[\#6367FF\] svg,
+html.light .bg-\[\#6367FF\] .text-\[\#FFFF00\],
+html.light button.bg-\[\#6367FF\] .text-\[\#FFFF00\] {
+  color: #F59E0B !important; /* Warm Amber Gold Sparkle */
+}
+
+/* 2. TACTICAL / AFFIRMATIVE / SIGNAL CLEAR (Replaces AI Neon Cyan #00FFD2 with IR Signal Green) */
+html.light .bg-\[\#00FFD2\],
+html.light button.bg-\[\#00FFD2\],
+html.light a.bg-\[\#00FFD2\],
+html.light span.bg-\[\#00FFD2\] {
+  background-color: #047857 !important; /* Authentic Indian Railways Signal Green */
+  color: #FFFFFF !important;
+  border-color: #064E3B !important;
+}
+html.light .bg-\[\#00FFD2\] *,
+html.light button.bg-\[\#00FFD2\] *,
+html.light a.bg-\[\#00FFD2\] *,
+html.light span.bg-\[\#00FFD2\] * {
+  color: #FFFFFF !important;
+}
+html.light .bg-\[\#00FFD2\]:hover,
+html.light button.bg-\[\#00FFD2\]:hover,
+html.light a.bg-\[\#00FFD2\]:hover {
+  background-color: #065F46 !important;
+}
+
+/* 3. STRATEGIC / COMPLIANCE / CAUTION (Replaces AI Neon Yellow #FFFF00 with IR Saffron / Golden Amber) */
+html.light .bg-\[\#FFFF00\],
+html.light button.bg-\[\#FFFF00\],
+html.light a.bg-\[\#FFFF00\],
+html.light span.bg-\[\#FFFF00\] {
+  background-color: #D97706 !important; /* Indian Railways Saffron / Golden Amber */
+  color: #FFFFFF !important;
+  border-color: #92400E !important;
+}
+html.light .bg-\[\#FFFF00\] *,
+html.light button.bg-\[\#FFFF00\] *,
+html.light a.bg-\[\#FFFF00\] *,
+html.light span.bg-\[\#FFFF00\] * {
+  color: #FFFFFF !important;
+}
+html.light .bg-\[\#FFFF00\]:hover,
+html.light button.bg-\[\#FFFF00\]:hover,
+html.light a.bg-\[\#FFFF00\]:hover {
+  background-color: #B45309 !important;
+}
+
+/* 4. IMMEDIATE / DANGER / EMERGENCY (Replaces AI Neon Magenta #FB2077 with Railway Signal Red) */
+html.light .bg-\[\#FB2077\],
+html.light button.bg-\[\#FB2077\],
+html.light a.bg-\[\#FB2077\],
+html.light span.bg-\[\#FB2077\],
+html.light .bg-\[\#FF1818\],
+html.light button.bg-\[\#FF1818\],
+html.light a.bg-\[\#FF1818\],
+html.light .bg-rose-600,
+html.light button.bg-rose-600 {
+  background-color: #DC2626 !important; /* Authentic Railway Signal Red */
+  color: #FFFFFF !important;
+  border-color: #991B1B !important;
+}
+html.light .bg-\[\#FB2077\] *,
+html.light button.bg-\[\#FB2077\] *,
+html.light a.bg-\[\#FB2077\] *,
+html.light span.bg-\[\#FB2077\] *,
+html.light .bg-\[\#FF1818\] *,
+html.light button.bg-\[\#FF1818\] * {
+  color: #FFFFFF !important;
+}
+html.light .bg-\[\#FB2077\]:hover,
+html.light button.bg-\[\#FB2077\]:hover {
+  background-color: #B91C1C !important;
+}
+
+/* 5. SOLID GRAPHITE BUTTONS & HARDWARE BADGES (e.g. Official Circular, Horizon Scope) */
+html.light button.bg-\[\#022642\],
+html.light a.bg-\[\#022642\],
+html.light button.bg-\[\#000D18\],
+html.light a.bg-\[\#000D18\] {
+  background-color: #0F172A !important; /* Deep Graphite Command Button */
+  color: #FFFFFF !important;
+  border-color: #000000 !important;
+}
+html.light button.bg-\[\#022642\] *,
+html.light a.bg-\[\#022642\] *,
+html.light button.bg-\[\#000D18\] *,
+html.light a.bg-\[\#000D18\] * {
+  color: #FFFFFF !important;
+}
+html.light button.bg-\[\#022642\]:hover,
+html.light a.bg-\[\#022642\]:hover {
+  background-color: #1E293B !important;
+}
+html.light button.bg-\[\#022642\] svg,
+html.light a.bg-\[\#022642\] svg,
+html.light button.bg-\[\#022642\] .text-\[\#00FFD2\] {
+  color: #38BDF8 !important; /* Sky Blue accent icon */
+}
+
+/* Hardware Tag Badges (e.g. Horizon Scope tag) */
+html.light span.bg-\[\#000D18\] {
+  background-color: #0F172A !important;
+  color: #38BDF8 !important;
+  border-color: #000000 !important;
+}
+
+/* 6. BLACK BADGE PILLS ([IMMEDIATE], [STRATEGIC], [TACTICAL]) */
+html.light .bg-black {
+  background-color: #0F172A !important;
+  color: #FFFFFF !important;
+  border-color: #000000 !important;
+}
+html.light .bg-black .text-white {
+  color: #FFFFFF !important;
+}
+html.light .bg-black .text-\[\#00FFD2\] {
+  color: #34D399 !important; /* Fresh Mint */
+}
+html.light .bg-black .text-\[\#FFFF00\] {
+  color: #FBBF24 !important; /* Warm Amber */
+}
+
+/* 7. ALERT BOXES IN DAY MODE */
+html.light .bg-\[\#2D0014\] {
+  background-color: #FEF2F2 !important;
+  border-color: #DC2626 !important;
+  color: #991B1B !important;
+}
+html.light .bg-\[\#2D0014\] * {
+  color: #991B1B !important;
+}
+
+html.light .bg-\[\#3D0072\] {
+  background-color: #1E293B !important;
+  border-color: #0F172A !important;
+  color: #FFFFFF !important;
+}
+html.light .bg-\[\#3D0072\] * {
+  color: #FFFFFF !important;
+}
+
+/* 8. TYPOGRAPHY & READABLE METADATA */
 html.light .text-white,
 html.light .text-\[\#F8FAFC\],
 html.light .text-slate-100,
@@ -218,7 +416,6 @@ html.light .text-slate-200 {
   color: #0F172A !important;
 }
 
-/* High-Contrast Secondary Metadata & Subtitles */
 html.light .text-\[\#CABFFF\],
 html.light .text-\[\#8595FF\],
 html.light .text-\[\#B6BFFF\],
@@ -227,100 +424,49 @@ html.light .text-slate-300 {
   color: #334155 !important;
 }
 
-/* High-Contrast Accent Texts on White/Light Cards */
+/* Accent text on light cards */
 html.light .text-\[\#00FFD2\],
 html.light .text-\[\#3DFDCE\] {
-  color: #007A64 !important; /* Deep authoritative emerald-teal */
+  color: #047857 !important; /* Signal Forest Green */
 }
 
 html.light .text-\[\#FFFF00\] {
-  color: #B45309 !important; /* Deep rich golden amber */
+  color: #B45309 !important; /* Rich Golden Amber */
 }
 
 html.light .text-\[\#FB2077\],
 html.light .text-\[\#FF2A6D\],
 html.light .text-\[\#FF1818\] {
-  color: #DC2626 !important; /* Deep crimson alert */
+  color: #DC2626 !important; /* Signal Danger Red */
 }
 
 html.light .text-cyan-300,
 html.light .text-cyan-400 {
-  color: #0369A1 !important; /* Deep cyan */
+  color: #0369A1 !important; /* Railway Ocean Blue */
 }
 
 html.light .text-emerald-400 {
-  color: #047857 !important; /* Deep emerald */
+  color: #047857 !important; /* Signal Emerald */
 }
 
 html.light .text-amber-300 {
-  color: #B45309 !important; /* Deep amber */
+  color: #B45309 !important; /* Amber */
 }
 
-/* =========================================================================
-   PROTECTED SOLID BUTTONS & BADGES (CRITICAL FOR HIGH-CONTRAST ACCENTS)
-   ========================================================================= */
-
-/* Dark/Saturated Action Buttons Keep White Text */
-html.light .bg-\[\#6367FF\],
-html.light .bg-\[\#6367FF\] *,
-html.light .bg-\[\#FB2077\],
-html.light .bg-\[\#FB2077\] *,
-html.light .bg-\[\#FF1818\],
-html.light .bg-\[\#FF1818\] *,
-html.light .bg-rose-600,
-html.light .bg-rose-600 *,
-html.light .bg-indigo-600,
-html.light .bg-indigo-600 *,
-html.light button.bg-\[\#6367FF\],
-html.light button.bg-\[\#FB2077\],
-html.light button.bg-\[\#FF1818\] {
-  color: #FFFFFF !important;
+/* Unselected buttons / tabs hover state */
+html.light button.hover\:bg-\[\#011B30\]:hover,
+html.light a.hover\:bg-\[\#011B30\]:hover {
+  background-color: #CBD5E1 !important;
+  color: #0F172A !important;
 }
 
-/* Sparkle icon inside AI Optimize button */
-html.light .bg-\[\#6367FF\] .text-\[\#FFFF00\],
-html.light button.bg-\[\#6367FF\] .text-\[\#FFFF00\] {
-  color: #FFFF00 !important;
-}
-
-/* Black Badge Pills (e.g., [IMMEDIATE], [STRATEGIC], [TACTICAL], [G&SR]) */
-html.light .bg-black {
-  background-color: #000000 !important;
-  color: #FFFFFF !important;
-}
-html.light .bg-black .text-white {
-  color: #FFFFFF !important;
-}
-html.light .bg-black .text-\[\#00FFD2\] {
-  color: #00FFD2 !important;
-}
-html.light .bg-black .text-\[\#FFFF00\] {
-  color: #FFFF00 !important;
-}
-
-/* Mint Buttons & Badges (Always Pitch-Black Text on Bright Mint) */
-html.light .bg-\[\#00FFD2\],
-html.light .bg-\[\#00FFD2\] *,
-html.light button.bg-\[\#00FFD2\] {
-  background-color: #00FFD2 !important;
-  color: #000000 !important;
-}
-
-/* Yellow Badges & Buttons (Always Pitch-Black Text on Bright Yellow) */
-html.light .bg-\[\#FFFF00\],
-html.light .bg-\[\#FFFF00\] *,
-html.light button.bg-\[\#FFFF00\] {
-  background-color: #FFFF00 !important;
-  color: #000000 !important;
-}
-
-/* Form Inputs, Search Bars & Selects in Day Mode */
+/* 9. FORM INPUTS & SELECT CONTROLS */
 html.light input,
 html.light select,
 html.light textarea {
   background-color: #FFFFFF !important;
   color: #0F172A !important;
-  border-color: #000000 !important;
+  border-color: #0F172A !important;
 }
 html.light input::placeholder,
 html.light textarea::placeholder {
@@ -331,7 +477,7 @@ html.light select option {
   color: #0F172A !important;
 }
 
-/* Scrollbar for Day Mode */
+/* 10. SCROLLBAR FOR DAY MODE */
 html.light ::-webkit-scrollbar-track {
   background: #E2E8F0;
 }
@@ -340,6 +486,6 @@ html.light ::-webkit-scrollbar-thumb {
   border: 1px solid #CBD5E1;
 }
 html.light ::-webkit-scrollbar-thumb:hover {
-  background: #6367FF;
+  background: #1E40AF;
 }
 
