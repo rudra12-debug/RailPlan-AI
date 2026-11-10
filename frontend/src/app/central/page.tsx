@@ -21,8 +21,10 @@ import {
   ArrowCounterClockwise
 } from "@phosphor-icons/react";
 import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function CentralCommandPage() {
+  const { t } = useLanguage();
   const { 
     requests, 
     maintenanceTasks, 
@@ -93,10 +95,10 @@ export default function CentralCommandPage() {
             </span>
           </div>
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight font-sans leading-tight">
-            Central Railway Operations Command & Maintenance Control
+            {t("central.title", "Central Railway Operations Command & Maintenance Control")}
           </h1>
           <p className="text-xs text-[#8595FF] font-medium leading-relaxed">
-            Real-time multi-department maintenance planning, predictive risk mitigation & authority block sanctions
+            {t("central.subtitle", "Real-time multi-department maintenance planning, predictive risk mitigation & authority block sanctions")}
           </p>
         </div>
 
@@ -220,44 +222,44 @@ export default function CentralCommandPage() {
 
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3.5">
           <KpiCard
-            title={isCorridorFiltered ? "Route Length" : "Total Corridors"}
+            title={isCorridorFiltered ? t("central.routeLength", "Route Length") : "Total Corridors"}
             value={isCorridorFiltered ? `${selectedCorridor?.totalLengthKm} KM` : corridors.length}
             subtitle={isCorridorFiltered ? selectedCorridor?.zone : "Major Trunk Routes"}
             icon={MapTrifold as any}
             color="blue"
           />
           <KpiCard
-            title="Active Tasks"
+            title={t("central.activeTasks", "Active Tasks")}
             value={totalTasks}
             subtitle={isCorridorFiltered ? `On ${selectedCorridorId}` : "Scheduled / On Track"}
             icon={Stack as any}
             color="cyan"
           />
           <KpiCard
-            title="Pending Approvals"
+            title={t("central.pendingApprovals", "Pending Approvals")}
             value={pendingApprovals}
-            subtitle="Awaiting Sanction"
+            subtitle={t("central.awaitingSanction", "Awaiting Sanction")}
             icon={CheckSquare as any}
             color="amber"
             badge="Action"
           />
           <KpiCard
-            title="Joint Mega Blocks"
+            title={t("central.jointBlocks", "Joint Mega Blocks")}
             value={`${filteredBundles.length} Active`}
-            subtitle="35% Closure Saved"
+            subtitle={t("central.closureSaved", "35% Closure Saved")}
             icon={Package as any}
             color="emerald"
             badge="AI"
           />
           <KpiCard
-            title="Delayed Tasks"
+            title={t("central.delayedTasks", "Delayed Tasks")}
             value={delayedProjects}
-            subtitle="Past Target Window"
+            subtitle={t("central.pastWindow", "Past Target Window")}
             icon={Clock as any}
             color="rose"
           />
           <KpiCard
-            title="AI Est. Savings"
+            title={t("central.aiSavings", "AI Est. Savings")}
             value={isCorridorFiltered ? "₹4.2L" : "₹14.8L"}
             subtitle="Track Block Bundling"
             icon={Sparkle as any}

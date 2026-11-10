@@ -35,6 +35,9 @@ import {
 } from "@phosphor-icons/react";
 import { useDemoTour } from "@/context/DemoTourContext";
 import { ZONE_CORRIDOR_MAP } from "@/context/RailPlanContext";
+import { useLanguage } from "@/context/LanguageContext";
+import { ThemeSwitcher } from "./ThemeSwitcher";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 interface NavItem {
   label: string;
@@ -64,6 +67,7 @@ export const Sidebar: React.FC = () => {
     resetToDemoState
   } = useRailPlan();
   const { openTour } = useDemoTour();
+  const { t } = useLanguage();
 
   const pendingApprovalsCount = requests.filter(
     (r) => r.status === "UNDER_REVIEW" || r.status === "SUBMITTED"
@@ -71,19 +75,19 @@ export const Sidebar: React.FC = () => {
 
   const centralNavItems: { category: string; items: NavItem[] }[] = [
     {
-      category: "Command & Control",
+      category: t("cat.command", "Command & Control"),
       items: [
-        { label: "National Command OCC", href: "/central", icon: SquaresFour },
-        { label: "Live Corridor Map", href: "/central/map", icon: MapTrifold },
+        { label: t("nav.occ", "National Command OCC"), href: "/central", icon: SquaresFour },
+        { label: t("nav.map", "Live Corridor Map"), href: "/central/map", icon: MapTrifold },
         {
-          label: "Approval Center",
+          label: t("nav.approvals", "Approval Center"),
           href: "/central/approvals",
           icon: CheckSquare,
           badge: pendingApprovalsCount > 0 ? pendingApprovalsCount : undefined,
           badgeColor: "bg-[#FFFF00] text-black font-black border border-black shadow-[1px_1px_0_#000000]",
         },
         {
-          label: "Task Bundler & Mega Block",
+          label: t("nav.bundling", "Task Bundler & Mega Block"),
           href: "/central/bundling",
           icon: Package,
           badge: bundles.length > 0 ? `${bundles.length} Blocks` : undefined,
@@ -91,7 +95,7 @@ export const Sidebar: React.FC = () => {
           isNew: true,
         },
         {
-          label: "Official Sanctions (T/806)",
+          label: t("nav.sanctions", "Official Sanctions (T/806)"),
           href: "/central/sanctions",
           icon: FileText,
           badge: "G&SR",
@@ -101,25 +105,25 @@ export const Sidebar: React.FC = () => {
       ]
     },
     {
-      category: "Planning & Simulations",
+      category: t("cat.planning", "Planning & Simulations"),
       items: [
-        { label: "Block Schedule & Planning", href: "/central/planning", icon: Calendar },
-        { label: "Digital Twin & Telemetry", href: "/central/digital-twin", icon: Stack },
-        { label: "What-If Scenario Simulator", href: "/central/what-if", icon: Sliders },
-        { label: "Emergency Replanning Hub", href: "/central/emergency", icon: Lightning, isEmergency: true },
+        { label: t("nav.planning", "Block Schedule & Planning"), href: "/central/planning", icon: Calendar },
+        { label: t("nav.digitalTwin", "Digital Twin & Telemetry"), href: "/central/digital-twin", icon: Stack },
+        { label: t("nav.whatIf", "What-If Scenario Simulator"), href: "/central/what-if", icon: Sliders },
+        { label: t("nav.emergency", "Emergency Replanning Hub"), href: "/central/emergency", icon: Lightning, isEmergency: true },
       ]
     },
     {
-      category: "Resources & Audit",
+      category: t("cat.resources", "Resources & Audit"),
       items: [
-        { label: "Directorates Matrix", href: "/central/departments", icon: Buildings },
-        { label: "Heavy Equipment Fleet", href: "/central/resources", icon: Cpu },
-        { label: "Budget & Financial Grants", href: "/central/costs", icon: CurrencyInr },
-        { label: "Intelligence & Risk Hub", href: "/central/ai-insights", icon: Sparkle },
-        { label: "Reports & Gazette Audit", href: "/central/reports", icon: FileText },
-        { label: "Station Inspection Logs", href: "/central/audit", icon: ClockCounterClockwise },
+        { label: t("nav.departments", "Directorates Matrix"), href: "/central/departments", icon: Buildings },
+        { label: t("nav.resources", "Heavy Equipment Fleet"), href: "/central/resources", icon: Cpu },
+        { label: t("nav.costs", "Budget & Financial Grants"), href: "/central/costs", icon: CurrencyInr },
+        { label: t("nav.aiInsights", "Intelligence & Risk Hub"), href: "/central/ai-insights", icon: Sparkle },
+        { label: t("nav.reports", "Reports & Gazette Audit"), href: "/central/reports", icon: FileText },
+        { label: t("nav.audit", "Station Inspection Logs"), href: "/central/audit", icon: ClockCounterClockwise },
         {
-          label: "System Guide & Manual",
+          label: t("nav.guide", "System Guide & Manual"),
           href: "/guide",
           icon: BookOpen,
           badge: "DOCS",
@@ -131,27 +135,27 @@ export const Sidebar: React.FC = () => {
 
   const departmentNavItems: { category: string; items: NavItem[] }[] = [
     {
-      category: "Department Operations",
+      category: t("cat.deptOps", "Department Operations"),
       items: [
-        { label: "Department Dashboard", href: "/department/dashboard", icon: SquaresFour },
-        { label: "Scheduled Maintenance", href: "/department/tasks", icon: Calendar },
+        { label: t("nav.deptDashboard", "Department Dashboard"), href: "/department/dashboard", icon: SquaresFour },
+        { label: t("nav.scheduledTasks", "Scheduled Maintenance"), href: "/department/tasks", icon: Calendar },
         {
-          label: "Inter-Dept Requests",
+          label: t("nav.serviceRequests", "Inter-Dept Requests"),
           href: "/department/requests",
           icon: FileText,
         },
-        { label: "Submit New Maintenance", href: "/department/create-request", icon: PlusCircle },
+        { label: t("nav.newRequest", "Submit New Maintenance"), href: "/department/create-request", icon: PlusCircle },
       ]
     },
     {
-      category: "Asset Health & Telemetry",
+      category: t("cat.assetHealth", "Asset Health & Telemetry"),
       items: [
-        { label: "Field Machinery & Crew", href: "/department/resources", icon: Wrench },
-        { label: "IoT Sensor Monitoring", href: "/department/telemetry", icon: Pulse },
-        { label: "Workforce & Gang Roster", href: "/department/workforce", icon: Users },
-        { label: "Department Profile & SLA", href: "/department/profile", icon: Buildings },
+        { label: t("nav.fieldCrew", "Field Machinery & Crew"), href: "/department/resources", icon: Wrench },
+        { label: t("nav.iotTelemetry", "IoT Sensor Monitoring"), href: "/department/telemetry", icon: Pulse },
+        { label: t("nav.workforce", "Workforce & Gang Roster"), href: "/department/workforce", icon: Users },
+        { label: t("nav.deptProfile", "Department Profile & SLA"), href: "/department/profile", icon: Buildings },
         {
-          label: "System Guide & Manual",
+          label: t("nav.guide", "System Guide & Manual"),
           href: "/guide",
           icon: BookOpen,
           badge: "DOCS",
@@ -374,7 +378,7 @@ export const Sidebar: React.FC = () => {
             className="flex-1 py-1.5 px-2 rounded-lg bg-[#022642] hover:bg-[#033358] border border-black text-[#00FFD2] text-[11px] font-bold flex items-center justify-center space-x-1.5 shadow-[1px_1px_0_#000000] cursor-pointer"
           >
             <BookOpen size={15} weight="duotone" />
-            <span>System Guide</span>
+            <span>{t("header.systemGuide", "System Guide")}</span>
           </Link>
           <button
             onClick={() => {
@@ -384,8 +388,14 @@ export const Sidebar: React.FC = () => {
             className="flex-1 py-1.5 px-2 rounded-lg bg-[#022642] hover:bg-[#033358] border border-black text-[#FFFF00] text-[11px] font-bold flex items-center justify-center space-x-1.5 shadow-[1px_1px_0_#000000] cursor-pointer"
           >
             <ArrowCounterClockwise size={15} weight="duotone" />
-            <span>Reset Demo</span>
+            <span>{t("header.resetDemo", "Reset Demo")}</span>
           </button>
+        </div>
+
+        {/* Mobile Language & Day/Night Mode Switchers */}
+        <div className="p-3 bg-[#000D18] border-b-2 border-black flex items-center justify-between gap-2 shrink-0">
+          <LanguageSwitcher />
+          <ThemeSwitcher />
         </div>
 
         {/* Navigation Content (auto-closes drawer on mobile link click) */}

@@ -23,6 +23,8 @@ export const metadata: Metadata = {
 };
 
 import { DeviceProvider } from "@/context/DeviceContext";
+import { ThemeProvider } from "@/context/ThemeContext";
+import { LanguageProvider } from "@/context/LanguageContext";
 import { MobileBottomNav } from "@/components/common/MobileBottomNav";
 
 export default function RootLayout({
@@ -33,18 +35,22 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.variable} ${mono.variable} min-h-screen bg-[#050814] text-[#F8FAFC] antialiased selection:bg-[#6367FF]/30 selection:text-[#8494FF]`}>
-        <DeviceProvider>
-          <AuthProvider>
-            <RailPlanProvider>
-              <DemoTourProvider>
-                <AppShell>{children}</AppShell>
-                <DemoTourModal />
-                <AiChatbot />
-                <MobileBottomNav />
-              </DemoTourProvider>
-            </RailPlanProvider>
-          </AuthProvider>
-        </DeviceProvider>
+        <ThemeProvider>
+          <LanguageProvider>
+            <DeviceProvider>
+              <AuthProvider>
+                <RailPlanProvider>
+                  <DemoTourProvider>
+                    <AppShell>{children}</AppShell>
+                    <DemoTourModal />
+                    <AiChatbot />
+                    <MobileBottomNav />
+                  </DemoTourProvider>
+                </RailPlanProvider>
+              </AuthProvider>
+            </DeviceProvider>
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

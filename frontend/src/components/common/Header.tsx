@@ -24,9 +24,12 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { QuickRoleSwitcher } from "./QuickRoleSwitcher";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 import { NotificationDrawer } from "./NotificationDrawer";
 import { EmergencyReplanModal } from "@/components/simulation/EmergencyReplanModal";
 import { useDevice } from "@/context/DeviceContext";
+import { useLanguage } from "@/context/LanguageContext";
 
 export const Header: React.FC = () => {
   const { user, logout, isCentralAdmin } = useAuth();
@@ -46,6 +49,7 @@ export const Header: React.FC = () => {
   } = useRailPlan();
   const { isMobile, deviceType, modeOverride, toggleDeviceMode } = useDevice();
   const { openTour } = useDemoTour();
+  const { t } = useLanguage();
   const router = useRouter();
 
   const [currentTime, setCurrentTime] = useState<string>("");
@@ -121,7 +125,7 @@ export const Header: React.FC = () => {
                 <List size={19} weight="bold" className="text-[#00FFD2]" />
               )}
               <span className="hidden sm:inline font-mono text-[11px] font-black uppercase text-white tracking-wider">
-                {isMobileMenuOpen ? "Close" : "Menu"}
+                {isMobileMenuOpen ? t("header.close", "Close") : t("header.menu", "Menu")}
               </span>
             </button>
 
@@ -232,6 +236,12 @@ export const Header: React.FC = () => {
               )}
               <span className="hidden sm:inline">{isMobile ? "Mobile UI" : "Desktop UI"}</span>
             </button>
+
+            {/* Language Switcher */}
+            <LanguageSwitcher />
+
+            {/* Day / Night Mode Theme Switcher */}
+            <ThemeSwitcher />
 
             {/* Quick Role Switcher */}
             <QuickRoleSwitcher />
