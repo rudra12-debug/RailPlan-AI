@@ -165,8 +165,7 @@ export default function MaintenancePlanningPage() {
 
       {/* Header Banner */}
       <div 
-        style={{ backgroundColor: "#000D18", opacity: 1 }}
-        className="p-6 rounded-2xl border-3 border-black shadow-[8px_8px_0_#000000] flex flex-wrap items-center justify-between gap-4"
+        className="p-6 rounded-2xl bg-[#000D18] border-3 border-black shadow-[8px_8px_0_#000000] flex flex-wrap items-center justify-between gap-4"
       >
         <div className="space-y-1.5 max-w-3xl">
           <div className="flex flex-wrap items-center gap-2">
@@ -220,8 +219,7 @@ export default function MaintenancePlanningPage() {
       {/* TIME HORIZON SELECTOR BAR (WEEKLY vs MONTHLY vs DAILY)                     */}
       {/* ========================================================================= */}
       <div 
-        style={{ backgroundColor: "#022642", opacity: 1 }}
-        className="p-3.5 rounded-2xl border-3 border-black shadow-[6px_6px_0_#000000] space-y-3"
+        className="p-3.5 rounded-2xl bg-[#022642] border-3 border-black shadow-[6px_6px_0_#000000] space-y-3"
       >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
@@ -283,8 +281,7 @@ export default function MaintenancePlanningPage() {
 
         {/* Horizon Context Guidance */}
         <div 
-          style={{ backgroundColor: "#011526", opacity: 1 }}
-          className="p-3 rounded-xl border-2 border-black flex items-center justify-between text-xs text-slate-300"
+          className="p-3 rounded-xl bg-[#011526] border-2 border-black flex items-center justify-between text-xs text-slate-300"
         >
           <div className="flex items-center space-x-2">
             <span className="p-1 rounded bg-[#000D18] text-[#00FFD2] border border-black font-mono font-bold text-[10px]">
@@ -315,8 +312,7 @@ export default function MaintenancePlanningPage() {
       {/* AI Optimization Alert Banner (if triggered) */}
       {optimizationResult && (
         <div 
-          style={{ backgroundColor: "#000D18", opacity: 1 }}
-          className="p-4 rounded-xl border-3 border-black shadow-[5px_5px_0_#000000] flex items-center justify-between text-xs gap-3 border-l-8 border-l-[#00FFD2] animate-slide-up"
+          className="p-4 rounded-xl bg-[#000D18] border-3 border-black shadow-[5px_5px_0_#000000] flex items-center justify-between text-xs gap-3 border-l-8 border-l-[#00FFD2] animate-slide-up"
         >
           <div className="flex items-center space-x-3">
             <div className="p-2 rounded-lg bg-[#00FFD2] text-black font-black border border-black">
@@ -344,8 +340,7 @@ export default function MaintenancePlanningPage() {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {/* Metric 1: Planned Block Hours */}
         <div 
-          style={{ backgroundColor: "#022642", opacity: 1 }}
-          className="p-3.5 rounded-xl border-2 border-black shadow-[4px_4px_0_#000000] flex flex-col justify-between"
+          className="p-3.5 rounded-xl bg-[#022642] border-2 border-black shadow-[4px_4px_0_#000000] flex flex-col justify-between"
         >
           <div className="flex items-center justify-between text-[10px] font-mono font-black text-slate-400">
             <span>PLANNED BLOCKS</span>
@@ -361,8 +356,7 @@ export default function MaintenancePlanningPage() {
 
         {/* Metric 2: Track-KM Targeted */}
         <div 
-          style={{ backgroundColor: "#022642", opacity: 1 }}
-          className="p-3.5 rounded-xl border-2 border-black shadow-[4px_4px_0_#000000] flex flex-col justify-between"
+          className="p-3.5 rounded-xl bg-[#022642] border-2 border-black shadow-[4px_4px_0_#000000] flex flex-col justify-between"
         >
           <div className="flex items-center justify-between text-[10px] font-mono font-black text-slate-400">
             <span>TRACK RENEWAL</span>
@@ -384,8 +378,7 @@ export default function MaintenancePlanningPage() {
 
         {/* Metric 3: Passenger Delay Index */}
         <div 
-          style={{ backgroundColor: "#022642", opacity: 1 }}
-          className="p-3.5 rounded-xl border-2 border-black shadow-[4px_4px_0_#000000] flex flex-col justify-between"
+          className="p-3.5 rounded-xl bg-[#022642] border-2 border-black shadow-[4px_4px_0_#000000] flex flex-col justify-between"
         >
           <div className="flex items-center justify-between text-[10px] font-mono font-black text-slate-400">
             <span>TRAIN REGULATION</span>
@@ -401,8 +394,7 @@ export default function MaintenancePlanningPage() {
 
         {/* Metric 4: AI Punctuality & Safety Score */}
         <div 
-          style={{ backgroundColor: "#022642", opacity: 1 }}
-          className="p-3.5 rounded-xl border-2 border-black shadow-[4px_4px_0_#000000] flex flex-col justify-between"
+          className="p-3.5 rounded-xl bg-[#022642] border-2 border-black shadow-[4px_4px_0_#000000] flex flex-col justify-between"
         >
           <div className="flex items-center justify-between text-[10px] font-mono font-black text-slate-400">
             <span>AI CONFLICT-FREE</span>
@@ -418,8 +410,7 @@ export default function MaintenancePlanningPage() {
 
         {/* Metric 5: Committed Budget */}
         <div 
-          style={{ backgroundColor: "#022642", opacity: 1 }}
-          className="p-3.5 rounded-xl border-2 border-black shadow-[4px_4px_0_#000000] flex flex-col justify-between"
+          className="p-3.5 rounded-xl bg-[#022642] border-2 border-black shadow-[4px_4px_0_#000000] flex flex-col justify-between"
         >
           <div className="flex items-center justify-between text-[10px] font-mono font-black text-slate-400">
             <span>BUDGET ALLOCATED</span>
@@ -435,8 +426,7 @@ export default function MaintenancePlanningPage() {
 
         {/* Metric 6: Directorate Involvement */}
         <div 
-          style={{ backgroundColor: "#022642", opacity: 1 }}
-          className="p-3.5 rounded-xl border-2 border-black shadow-[4px_4px_0_#000000] flex flex-col justify-between"
+          className="p-3.5 rounded-xl bg-[#022642] border-2 border-black shadow-[4px_4px_0_#000000] flex flex-col justify-between"
         >
           <div className="flex items-center justify-between text-[10px] font-mono font-black text-slate-400">
             <span>JOINT DEPARTMENTS</span>
@@ -457,8 +447,7 @@ export default function MaintenancePlanningPage() {
       {/* FILTER CONTROLS & VIEW SWITCHER                                           */}
       {/* ========================================================================= */}
       <div 
-        style={{ backgroundColor: "#000D18", opacity: 1 }}
-        className="p-4 rounded-xl border-2 border-black shadow-[4px_4px_0_#000000] flex flex-wrap items-center justify-between gap-3"
+        className="p-4 rounded-xl bg-[#000D18] border-2 border-black shadow-[4px_4px_0_#000000] flex flex-wrap items-center justify-between gap-3"
       >
         <div className="flex flex-wrap items-center gap-3">
           {/* Search Box */}
@@ -565,8 +554,7 @@ export default function MaintenancePlanningPage() {
                   return (
                     <div
                       key={dayLabel}
-                      style={{ backgroundColor: "#022642", opacity: 1 }}
-                      className="rounded-2xl border-3 border-black shadow-[6px_6px_0_#000000] p-4 space-y-3 flex flex-col justify-between"
+                      className="rounded-2xl bg-[#022642] border-3 border-black shadow-[6px_6px_0_#000000] p-4 space-y-3 flex flex-col justify-between"
                     >
                       <div className="space-y-3">
                         {/* Day Column Header */}
@@ -580,8 +568,7 @@ export default function MaintenancePlanningPage() {
                         {/* Slots on this day */}
                         {daySlots.length === 0 ? (
                           <div 
-                            style={{ backgroundColor: "#011526", opacity: 1 }}
-                            className="p-6 rounded-xl border-2 border-black text-center text-xs text-slate-400 italic"
+                            className="p-6 rounded-xl bg-[#011526] border-2 border-black text-center text-xs text-slate-400 italic"
                           >
                             No scheduled block slots. Regular train traffic operational.
                           </div>
@@ -597,8 +584,7 @@ export default function MaintenancePlanningPage() {
                                 <div
                                   key={slot.id}
                                   onClick={() => setActiveSlot(slot)}
-                                  style={{ backgroundColor: "#000D18", opacity: 1 }}
-                                  className="p-3 rounded-xl border-2 border-black shadow-[3px_3px_0_#000000] hover:border-[#00FFD2] transition cursor-pointer space-y-2 hover:translate-x-0.5 hover:translate-y-0.5"
+                                  className="p-3 rounded-xl bg-[#000D18] border-2 border-black shadow-[3px_3px_0_#000000] hover:border-[#00FFD2] transition cursor-pointer space-y-2 hover:translate-x-0.5 hover:translate-y-0.5"
                                 >
                                   {/* Slot Time & Track */}
                                   <div className="flex items-center justify-between text-[10px] font-mono">
@@ -687,8 +673,7 @@ export default function MaintenancePlanningPage() {
                   return (
                     <div
                       key={week.id}
-                      style={{ backgroundColor: "#022642", opacity: 1 }}
-                      className="rounded-2xl border-3 border-black shadow-[6px_6px_0_#000000] p-5 space-y-4"
+                      className="rounded-2xl bg-[#022642] border-3 border-black shadow-[6px_6px_0_#000000] p-5 space-y-4"
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b-2 border-black">
                         <div>
@@ -718,8 +703,7 @@ export default function MaintenancePlanningPage() {
                           <div
                             key={slot.id}
                             onClick={() => setActiveSlot(slot)}
-                            style={{ backgroundColor: "#000D18", opacity: 1 }}
-                            className="p-4 rounded-xl border-2 border-black shadow-[3px_3px_0_#000000] hover:border-[#FFFF00] transition cursor-pointer space-y-2.5 flex flex-col justify-between"
+                            className="p-4 rounded-xl bg-[#000D18] border-2 border-black shadow-[3px_3px_0_#000000] hover:border-[#FFFF00] transition cursor-pointer space-y-2.5 flex flex-col justify-between"
                           >
                             <div className="space-y-2">
                               <div className="flex items-center justify-between text-[10px] font-mono">
@@ -782,8 +766,7 @@ export default function MaintenancePlanningPage() {
           {/* ===================================================================== */}
           {selectedHorizon === "DAILY" && (
             <div 
-              style={{ backgroundColor: "#022642", opacity: 1 }}
-              className="p-5 rounded-2xl border-3 border-black shadow-[6px_6px_0_#000000] space-y-4"
+              className="p-5 rounded-2xl bg-[#022642] border-3 border-black shadow-[6px_6px_0_#000000] space-y-4"
             >
               <div className="flex items-center justify-between pb-3 border-b-2 border-black">
                 <div>
@@ -803,8 +786,7 @@ export default function MaintenancePlanningPage() {
               </div>
 
               <div 
-                style={{ backgroundColor: "#000D18", opacity: 1 }}
-                className="p-6 rounded-xl border-2 border-black space-y-3"
+                className="p-6 rounded-xl bg-[#000D18] border-2 border-black space-y-3"
               >
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
                   <div className="p-3 rounded-lg bg-[#022642] border border-black">
@@ -834,8 +816,7 @@ export default function MaintenancePlanningPage() {
       {/* ========================================================================= */}
       {viewMode === "REGISTRY" && (
         <div 
-          style={{ backgroundColor: "#022642", opacity: 1 }}
-          className="rounded-2xl border-3 border-black shadow-[6px_6px_0_#000000] overflow-hidden"
+          className="rounded-2xl bg-[#022642] border-3 border-black shadow-[6px_6px_0_#000000] overflow-hidden"
         >
           <div className="p-4 bg-[#011B30] border-b-2 border-black flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -933,8 +914,7 @@ export default function MaintenancePlanningPage() {
       {viewMode === "STRATEGY" && (
         <div className="space-y-4">
           <div 
-            style={{ backgroundColor: "#022642", opacity: 1 }}
-            className="p-6 rounded-2xl border-3 border-black shadow-[6px_6px_0_#000000] space-y-4"
+            className="p-6 rounded-2xl bg-[#022642] border-3 border-black shadow-[6px_6px_0_#000000] space-y-4"
           >
             <div className="flex items-center space-x-3 pb-3 border-b-2 border-black">
               <div className="p-2.5 rounded-xl bg-[#00FFD2] text-black border-2 border-black">
@@ -952,8 +932,7 @@ export default function MaintenancePlanningPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div 
-                style={{ backgroundColor: "#000D18", opacity: 1 }}
-                className="p-4 rounded-xl border-2 border-black space-y-3"
+                className="p-4 rounded-xl bg-[#000D18] border-2 border-black space-y-3"
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-mono font-black text-[#00FFD2]">
@@ -973,8 +952,7 @@ export default function MaintenancePlanningPage() {
               </div>
 
               <div 
-                style={{ backgroundColor: "#000D18", opacity: 1 }}
-                className="p-4 rounded-xl border-2 border-black space-y-3"
+                className="p-4 rounded-xl bg-[#000D18] border-2 border-black space-y-3"
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-mono font-black text-[#FFFF00]">
@@ -1003,8 +981,7 @@ export default function MaintenancePlanningPage() {
       {activeSlot && (
         <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 animate-fade-in backdrop-blur-xs">
           <div 
-            style={{ backgroundColor: "#000D18", opacity: 1 }}
-            className="w-full max-w-2xl rounded-2xl border-3 border-black shadow-[10px_10px_0_#000000] overflow-hidden flex flex-col max-h-[90vh]"
+            className="w-full max-w-2xl rounded-2xl bg-[#000D18] border-3 border-black shadow-[10px_10px_0_#000000] overflow-hidden flex flex-col max-h-[90vh]"
           >
             {/* Modal Header */}
             <div className="p-4 bg-[#022642] border-b-2 border-black flex items-center justify-between">
@@ -1037,8 +1014,7 @@ export default function MaintenancePlanningPage() {
             <div className="p-5 overflow-y-auto space-y-4 text-xs text-slate-300">
               {/* Location & Track Coordinates */}
               <div 
-                style={{ backgroundColor: "#011526", opacity: 1 }}
-                className="p-3.5 rounded-xl border-2 border-black space-y-2"
+                className="p-3.5 rounded-xl bg-[#011526] border-2 border-black space-y-2"
               >
                 <span className="text-[10px] font-mono font-black text-[#00FFD2] uppercase">
                   SECTION LOCATION & TRACK DETAILS
@@ -1063,8 +1039,7 @@ export default function MaintenancePlanningPage() {
               {/* Machinery & Directorate */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div 
-                  style={{ backgroundColor: "#011526", opacity: 1 }}
-                  className="p-3 rounded-xl border-2 border-black space-y-1.5"
+                  className="p-3 rounded-xl bg-[#011526] border-2 border-black space-y-1.5"
                 >
                   <span className="text-[10px] font-mono font-black text-[#FFFF00] uppercase">
                     DIRECTORATE & WORKFORCE
@@ -1076,8 +1051,7 @@ export default function MaintenancePlanningPage() {
                 </div>
 
                 <div 
-                  style={{ backgroundColor: "#011526", opacity: 1 }}
-                  className="p-3 rounded-xl border-2 border-black space-y-1.5"
+                  className="p-3 rounded-xl bg-[#011526] border-2 border-black space-y-1.5"
                 >
                   <span className="text-[10px] font-mono font-black text-[#6367FF] uppercase">
                     HEAVY MACHINERY ALLOCATED
@@ -1094,8 +1068,7 @@ export default function MaintenancePlanningPage() {
 
               {/* Train Regulation & Freight Holds */}
               <div 
-                style={{ backgroundColor: "#011526", opacity: 1 }}
-                className="p-3.5 rounded-xl border-2 border-black space-y-2"
+                className="p-3.5 rounded-xl bg-[#011526] border-2 border-black space-y-2"
               >
                 <span className="text-[10px] font-mono font-black text-[#FB2077] uppercase">
                   TRAIN REGULATION & TRAFFIC IMPACT
@@ -1156,8 +1129,7 @@ export default function MaintenancePlanningPage() {
       {showCircularModal && (
         <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 animate-fade-in backdrop-blur-xs">
           <div 
-            style={{ backgroundColor: "#000D18", opacity: 1 }}
-            className="w-full max-w-3xl rounded-2xl border-3 border-black shadow-[10px_10px_0_#000000] overflow-hidden flex flex-col max-h-[90vh]"
+            className="w-full max-w-3xl rounded-2xl bg-[#000D18] border-3 border-black shadow-[10px_10px_0_#000000] overflow-hidden flex flex-col max-h-[90vh]"
           >
             {/* Modal Header */}
             <div className="p-4 bg-[#022642] border-b-2 border-black flex items-center justify-between">
