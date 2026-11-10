@@ -35,7 +35,7 @@ export const DemoTourModal: React.FC = () => {
         role="dialog"
         aria-modal="true"
         aria-labelledby="tour-dialog-title"
-        className="fixed bottom-3 right-3 sm:bottom-6 sm:right-6 z-50 max-w-xl w-[calc(100vw-24px)] sm:w-[540px] bg-[#000D18] border-3 border-black shadow-[8px_8px_0_#000000] rounded-2xl overflow-hidden ring-2 ring-[#00FFD2] animate-slide-up select-none"
+        className="fixed bottom-3 right-3 sm:bottom-6 sm:right-6 z-[60] max-w-xl w-[calc(100vw-24px)] sm:w-[540px] bg-[#000D18] border-3 border-black shadow-[8px_8px_0_#000000] rounded-2xl overflow-hidden ring-2 ring-[#00FFD2] animate-slide-up select-none"
         style={{ backgroundColor: "#000D18", opacity: 1 }}
       >
         {/* Official Indian Railways Tricolor Ribbon Accent Top Bar */}

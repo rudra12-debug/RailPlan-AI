@@ -41,6 +41,7 @@ export const Header: React.FC = () => {
     serverSyncConnected,
     isMobileMenuOpen,
     setIsMobileMenuOpen,
+    isSidebarOpen,
     toggleSidebar
   } = useRailPlan();
   const { isMobile, deviceType, modeOverride, toggleDeviceMode } = useDevice();
@@ -100,7 +101,7 @@ export const Header: React.FC = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-[#011526] border-b-2 border-black shadow-[0_4px_0_#000000] select-none">
+      <header className="fixed top-0 left-0 right-0 z-50 w-full bg-[#011526] border-b-2 border-black shadow-[0_4px_0_#000000] select-none">
         {/* Official Indian National Tricolor Ribbon Accent Top Bar */}
         <div className="h-1.5 w-full bg-gradient-to-r from-[#FF671F] via-[#FFFFFF] to-[#046A38]" />
 

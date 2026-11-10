@@ -258,8 +258,22 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
   const toggleSidebar = useCallback(() => {
-    setIsMobileMenuOpen((prev) => !prev);
-    setIsSidebarOpen((prev) => !prev);
+    if (typeof window !== "undefined" && window.innerWidth >= 1024) {
+      setIsSidebarOpen((prev) => !prev);
+      setIsMobileMenuOpen(false);
+    } else {
+      setIsMobileMenuOpen((prev) => !prev);
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (typeof window !== "undefined" && window.innerWidth >= 1024) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
   const [activeHomeTab, setActiveHomeTab] = useState<"OCC" | "BUNDLER" | "EMERGENCY" | "SANCTIONS">("OCC");
 

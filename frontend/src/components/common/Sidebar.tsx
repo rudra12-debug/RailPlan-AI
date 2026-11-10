@@ -91,7 +91,7 @@ export const Sidebar: React.FC = () => {
           isNew: true,
         },
         {
-          label: "Official Sanctions (Form T/806)",
+          label: "Official Sanctions (T/806)",
           href: "/central/sanctions",
           icon: FileText,
           badge: "G&SR",
@@ -136,7 +136,7 @@ export const Sidebar: React.FC = () => {
         { label: "Department Dashboard", href: "/department/dashboard", icon: SquaresFour },
         { label: "Scheduled Maintenance", href: "/department/tasks", icon: Calendar },
         {
-          label: "Inter-Dept Service Requests",
+          label: "Inter-Dept Requests",
           href: "/department/requests",
           icon: FileText,
         },
@@ -229,6 +229,7 @@ export const Sidebar: React.FC = () => {
                     key={item.href}
                     href={item.href}
                     onClick={onLinkClick}
+                    title={item.label}
                     className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-bold transition-all duration-100 group border-2 ${
                       isActive
                         ? "bg-[#6367FF] text-white border-black shadow-[2px_2px_0_#000000] translate-y-0.5"
@@ -237,7 +238,7 @@ export const Sidebar: React.FC = () => {
                         : "bg-transparent text-[#CABFFF] border-transparent hover:bg-[#022642] hover:text-white hover:border-black"
                     }`}
                   >
-                    <div className="flex items-center space-x-2.5 truncate">
+                    <div className="flex items-center space-x-2.5 min-w-0 flex-1 mr-1.5">
                       <IconComponent
                         size={18}
                         weight={isActive ? "fill" : "duotone"}
@@ -284,21 +285,25 @@ export const Sidebar: React.FC = () => {
   return (
     <>
       {/* 1. Desktop Solid Permanent Sidebar (Controlled by toggleSidebar on desktop) */}
-      <aside className={`${isSidebarOpen ? "hidden lg:flex" : "hidden"} w-64 bg-[#011526] border-r-2 border-black flex-col h-[calc(100vh-4rem)] sticky top-16 select-none shrink-0 overflow-y-auto transition-all duration-150`}>
+      <aside
+        className={`${
+          isSidebarOpen ? "hidden lg:flex" : "hidden"
+        } w-72 bg-[#011526] border-r-2 border-black flex-col fixed top-[70px] left-0 bottom-0 z-40 select-none shrink-0 overflow-y-auto transition-all duration-150`}
+      >
         {renderContent()}
       </aside>
 
-      {/* 2. Responsive Drawer Backdrop (When Hamburger is opened) */}
+      {/* 2. Responsive Drawer Backdrop (When Hamburger is opened on mobile/tablet) */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 transition-opacity"
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] transition-opacity lg:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
-      {/* 3. Responsive Drawer Panel (Slides out when Hamburger Menu is clicked on any device) */}
+      {/* 3. Responsive Drawer Panel (Slides out when Hamburger Menu is clicked on mobile/tablet) */}
       <aside
-        className={`fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-[#011526] border-r-2 border-black flex flex-col h-full z-50 select-none overflow-y-auto shadow-[6px_0_24px_rgba(0,0,0,0.9)] transition-transform duration-200 ease-in-out ${
+        className={`fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-[#011526] border-r-2 border-black flex flex-col h-full z-[60] select-none overflow-y-auto shadow-[6px_0_24px_rgba(0,0,0,0.9)] transition-transform duration-200 ease-in-out lg:hidden ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >

@@ -53,7 +53,7 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({ isOpen, 
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
+    <div className="fixed inset-0 z-[60] overflow-hidden">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
 
       <div className="fixed inset-y-0 right-0 w-full max-w-[100vw] sm:max-w-md bg-[#0C1326] border-l-2 border-black shadow-2xl flex flex-col z-10 animate-slide-left">

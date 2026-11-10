@@ -149,7 +149,7 @@ Ask me anything or click one of the quick topics below!`,
       {/* Interactive Chat Window */}
       {isOpen && (
         <div
-          className={`fixed z-50 transition-all duration-200 shadow-[6px_6px_0_#000000] flex flex-col overflow-hidden bg-[#022642] border-2 border-black ${
+          className={`fixed z-[60] transition-all duration-200 shadow-[6px_6px_0_#000000] flex flex-col overflow-hidden bg-[#022642] border-2 border-black ${
             isExpanded
               ? "inset-2 sm:inset-10 rounded-2xl"
               : "bottom-2 right-2 sm:bottom-4 sm:right-4 w-[calc(100vw-1rem)] sm:w-[440px] h-[520px] sm:h-[640px] max-h-[85vh] sm:max-h-[90vh] rounded-2xl"

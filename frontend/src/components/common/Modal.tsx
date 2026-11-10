@@ -50,7 +50,7 @@ export const Modal: React.FC<ModalProps> = ({
   }[maxWidth];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-6 overflow-y-auto">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-6 overflow-y-auto">
       {/* Dark backdrop */}
       <div
         className="fixed inset-0 bg-black/80 transition-opacity duration-300"
