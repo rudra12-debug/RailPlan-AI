@@ -109,7 +109,7 @@ export default function CentralCommandPage() {
             className="btn-tactile px-3.5 sm:px-4 py-2.5 rounded-xl bg-[#FB2077] text-white text-xs font-black flex items-center justify-center space-x-2 cursor-pointer w-full sm:w-auto"
           >
             <FileText size={18} weight="duotone" className="text-white shrink-0" />
-            <span className="truncate">Official Sanctions (Form T/806)</span>
+            <span className="truncate">{t("nav.sanctions", "Official Sanctions (Form T/806)")}</span>
           </Link>
 
           <Link
@@ -117,7 +117,7 @@ export default function CentralCommandPage() {
             className="btn-tactile px-3.5 sm:px-4 py-2.5 rounded-xl bg-[#6367FF] text-white text-xs font-black flex items-center justify-center space-x-2 cursor-pointer w-full sm:w-auto"
           >
             <Package size={18} weight="duotone" className="text-white shrink-0" />
-            <span className="truncate">Task Bundler ({filteredBundles.length} Mega Blocks)</span>
+            <span className="truncate">{t("nav.bundlingShort", "Task Bundler")} ({filteredBundles.length} Mega Blocks)</span>
           </Link>
 
           <Link
@@ -125,7 +125,7 @@ export default function CentralCommandPage() {
             className="btn-tactile px-3.5 sm:px-4 py-2.5 rounded-xl bg-[#00FFD2] text-black text-xs font-black flex items-center justify-center space-x-2 cursor-pointer w-full sm:w-auto"
           >
             <CheckSquare size={18} weight="duotone" className="text-black shrink-0" />
-            <span className="truncate">Approval Center ({pendingApprovals})</span>
+            <span className="truncate">{t("nav.approvals", "Approval Center")} ({pendingApprovals})</span>
           </Link>
         </div>
       </div>
@@ -141,7 +141,7 @@ export default function CentralCommandPage() {
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                 <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-white">
-                  {isCorridorFiltered ? "Active Filtered Corridor:" : isZoneFiltered ? "Active Filtered Zone:" : "Select Railway Trunk Corridor:"}
+                  {isCorridorFiltered ? t("central.activeFilter", "Active Filtered Corridor:") : isZoneFiltered ? "Active Filtered Zone:" : "Select Railway Trunk Corridor:"}
                 </span>
                 {selectedCorridor ? (
                   <span className="text-xs font-mono font-black text-black bg-[#00FFD2] px-2 py-0.5 rounded border border-black shadow-[1px_1px_0_#000000]">
@@ -173,7 +173,7 @@ export default function CentralCommandPage() {
               className="px-3 py-1.5 rounded-lg text-xs font-mono font-black bg-[#FF1818] text-white border-2 border-black shadow-[0_3px_0_#000000] hover:brightness-110 active:translate-y-0.5 active:shadow-[0_1px_0_#000000] flex items-center justify-center space-x-1.5 transition cursor-pointer self-start sm:self-auto shrink-0"
             >
               <ArrowCounterClockwise size={14} weight="bold" />
-              <span>Reset Filters</span>
+              <span>{t("central.resetFilters", "Reset Filters")}</span>
             </button>
           )}
         </div>
@@ -188,7 +188,7 @@ export default function CentralCommandPage() {
                 : "bg-[#000D18] text-[#CABFFF] shadow-[0_3px_0_#000000] hover:bg-[#02395D]"
             }`}
           >
-            <span>{isZoneFiltered ? `All ${selectedZone.split("(")[0].trim()} (${availableCorridors.length})` : `All Corridors (${availableCorridors.length})`}</span>
+            <span>{isZoneFiltered ? `All ${selectedZone.split("(")[0].trim()} (${availableCorridors.length})` : `${t("central.allCorridors", "All Corridors")} (${availableCorridors.length})`}</span>
           </button>
 
           {availableCorridors.map((c) => (
@@ -282,8 +282,8 @@ export default function CentralCommandPage() {
               }`}
             >
               <MapTrifold size={18} weight="duotone" className="shrink-0" />
-              <span className="sm:hidden">Map View</span>
-              <span className="hidden sm:inline">National Operations Map</span>
+              <span className="sm:hidden">{t("central.tabMap", "Live Corridor Map")}</span>
+              <span className="hidden sm:inline">{t("central.tabMap", "Live Corridor Map")}</span>
             </button>
 
             <button
@@ -295,8 +295,8 @@ export default function CentralCommandPage() {
               }`}
             >
               <Clock size={18} weight="duotone" className="shrink-0" />
-              <span className="sm:hidden">Multi-Horizon</span>
-              <span className="hidden sm:inline">Multi-Horizon Block Timeline (Daily/Weekly/Monthly)</span>
+              <span className="sm:hidden">{t("central.tabGantt", "Track Occupancy Gantt")}</span>
+              <span className="hidden sm:inline">{t("central.tabGantt", "Track Occupancy Gantt")} (Daily/Weekly/Monthly)</span>
             </button>
           </div>
 

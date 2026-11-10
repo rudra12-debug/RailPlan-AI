@@ -205,10 +205,10 @@ export const Sidebar: React.FC = () => {
           <div className="min-w-0 flex-1">
             <h4 className="text-xs font-black text-white truncate">{user?.name}</h4>
             <p className="text-[10px] text-[#CABFFF] truncate font-medium">
-              {isCentralAdmin ? "Executive Director (Railway Board)" : user?.designation || user?.departmentName}
+              {isCentralAdmin ? t("role.edRailwayBoard", "Executive Director (Railway Board)") : user?.designation || user?.departmentName}
             </p>
             <span className="inline-block mt-0.5 text-[9px] font-mono font-black px-2 py-0.5 rounded bg-[#000D18] text-[#00FFD2] border border-black truncate max-w-full">
-              {isCentralAdmin ? "Central Authority (Railway Board)" : user?.division || "HQ New Delhi"}
+              {isCentralAdmin ? t("role.centralAuthority", "Central Authority (Railway Board)") : user?.division || "HQ New Delhi"}
             </span>
           </div>
         </div>
@@ -277,10 +277,10 @@ export const Sidebar: React.FC = () => {
       {/* Bottom Authority Seal */}
       <div className="p-3 border-t-2 border-black bg-[#000D18] text-center shrink-0">
         <p className="text-[10px] text-[#00FFD2] font-mono font-black">
-          CRIS / RailTel National Mesh
+          {t("header.nationalMesh", "CRIS / RailTel National Mesh")}
         </p>
         <p className="text-[9px] text-[#8595FF] font-mono">
-          G&SR Standard 15.06 Compliant
+          {t("header.compliance", "G&SR Standard 15.06 Compliant")}
         </p>
       </div>
     </>

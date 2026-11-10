@@ -46,6 +46,7 @@ import { RiskBadge } from "@/components/common/StatusBadge";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { ENGINEERING_CAUTION_ZONES, EngineeringCautionZone, CautionZoneType } from "@/lib/cautionZonesData";
+import { useLanguage } from "@/context/LanguageContext";
 
 const GeographicalLeafletMap = dynamic(
   () => import("./GeographicalLeafletMap").then((mod) => mod.GeographicalLeafletMap),
@@ -92,6 +93,7 @@ export interface MaintenanceBlockZone {
 }
 
 export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCorridor) => void }> = ({ onSelectCorridor }) => {
+  const { t } = useLanguage();
   const { corridors, selectedCorridorId, setSelectedCorridorId, selectedZone } = useRailPlan();
 
   const availableCorridors = useMemo(() => {
@@ -714,11 +716,11 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
           <div>
             <div className="flex items-center space-x-2">
               <h3 className="font-extrabold text-[#F8FAFC] text-sm sm:text-base font-sans">
-                National Dynamic Corridor & Traffic Control Map
+                {t("map.nationalDynamicMap", "National Dynamic Corridor & Traffic Control Map")}
               </h3>
               <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#131E3D] text-[#3DFDCE] border border-[#3DFDCE]/40 shadow-[0_0_8px_rgba(61,253,206,0.2)]">
                 {selectedCorridorId === "ALL" 
-                  ? "ALL CORRIDORS (NATIONAL GIS GRID)" 
+                  ? t("map.allCorridorsNational", "ALL CORRIDORS (NATIONAL GIS GRID)") 
                   : viewMode === "GEO"
                   ? `REAL GIS: ${activeCorridor.id}` 
                   : `TRACK SCHEMATIC: ${activeCorridor.id}`}
@@ -739,7 +741,7 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
           {/* Direct Corridor Switcher Dropdown */}
           <div className="flex items-center space-x-1.5 bg-[#0C1326] px-2.5 py-1 rounded-xl border border-[#1A274E] text-xs">
             <MapPin className="w-3.5 h-3.5 text-[#8494FF] shrink-0" />
-            <span className="text-[10px] text-[#B6BFFF] font-semibold uppercase">Corridor:</span>
+            <span className="text-[10px] text-[#B6BFFF] font-semibold uppercase">{t("map.corridor", "Corridor:")}</span>
             <select
               value={selectedCorridorId}
               onChange={(e) => {
@@ -760,7 +762,7 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
               className="bg-transparent text-[#00FFE0] font-mono font-bold focus:outline-none cursor-pointer text-xs"
             >
               <option value="ALL" className="bg-[#0C1326] text-[#00FFE0] font-bold">
-                🌐 All Corridors ({availableCorridors.length})
+                🌐 {t("map.allCorridorsSelect", "All Corridors")} ({availableCorridors.length})
               </option>
               {availableCorridors.map((c) => (
                 <option key={c.id} value={c.id} className="bg-[#0C1326] text-[#F8FAFC]">
@@ -782,7 +784,7 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
               title="Real Interactive Geographic Map (Google / Satellite / OSM Tiles & OpenRailwayMap)"
             >
               <Globe className="w-3.5 h-3.5" />
-              <span>Real GIS Map</span>
+              <span>{t("map.realGisMap", "Real GIS Map")}</span>
             </button>
             <button
               onClick={() => {
@@ -799,17 +801,17 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
               title="Clean isolated corridor trackbed view with zero overlap"
             >
               <Focus className="w-3.5 h-3.5" />
-              <span>Linear Track Schematic</span>
+              <span>{t("map.linearTrack", "Linear Track Schematic")}</span>
             </button>
           </div>
 
           {/* Layer Filter Pills */}
           <div className="hidden sm:flex items-center bg-[#0C1326] p-1 rounded-xl border border-[#1A274E] text-[11px]">
             {[
-              { id: "ALL", label: "All Layers" },
-              { id: "TRAFFIC", label: "🚆 Live Trains" },
-              { id: "MAINTENANCE", label: "🚧 Blocks" },
-              { id: "KAVACH", label: "📡 Kavach" },
+              { id: "ALL", label: t("map.allLayers", "All Layers") },
+              { id: "TRAFFIC", label: `🚆 ${t("map.liveTrains", "Live Trains")}` },
+              { id: "MAINTENANCE", label: `🚧 ${t("map.blocks", "Blocks")}` },
+              { id: "KAVACH", label: `📡 ${t("map.kavach", "Kavach")}` },
             ].map((layer) => (
               <button
                 key={layer.id}
@@ -833,7 +835,7 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
                 isSimulating ? "bg-[#3DFDCE]/15 text-[#3DFDCE] border border-[#3DFDCE]/40" : "bg-[#131E3D] text-[#B6BFFF]"
               }`}
             >
-              {isSimulating ? "● STREAMING" : "❚❚ PAUSED"}
+              {isSimulating ? `● ${t("map.streaming", "STREAMING")}` : `❚❚ ${t("map.paused", "PAUSED")}`}
             </button>
             <button
               onClick={() => setSimSpeed(simSpeed === 1 ? 2 : simSpeed === 2 ? 4 : 1)}
@@ -856,7 +858,7 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
           }`}
         >
           <Globe className="w-4 h-4 text-[#00FFD2]" />
-          <span>Interactive Map</span>
+          <span>{t("map.interactiveMap", "Interactive Map")}</span>
         </button>
         <button
           onClick={() => setMobileActiveTab("INSPECTOR")}
@@ -868,7 +870,7 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
         >
           <ListFilter className="w-4 h-4" />
           <span>
-            Stations & Details
+            {t("map.stationsDetails", "Stations & Details")}
             {(selectedTrain || selectedBlock || selectedStation || selectedCautionZone) ? " (1)" : ""}
           </span>
         </button>
@@ -1389,7 +1391,7 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
                   onClick={() => setMobileActiveTab("INSPECTOR")}
                   className="px-2.5 py-1.5 rounded-lg bg-[#00FFD2] text-black font-black text-xs border border-black shadow-[1px_1px_0_#000000] active:translate-y-0.5 cursor-pointer"
                 >
-                  View Details
+                  {t("action.view", "View Details")}
                 </button>
                 <button
                   onClick={() => {
@@ -1399,7 +1401,7 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
                     setSelectedCautionZone(null);
                   }}
                   className="p-1.5 rounded-lg bg-[#000D18] text-slate-300 hover:text-white border border-black cursor-pointer"
-                  title="Close Preview"
+                  title={t("map.closePreview", "Close Preview")}
                 >
                   ✕
                 </button>
@@ -1416,7 +1418,7 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
               onClick={() => setMobileActiveTab("MAP")}
               className="py-1.5 px-3 rounded-lg bg-[#6367FF] text-white text-xs font-bold border border-black shadow-[1px_1px_0_#000000] flex items-center space-x-1.5 cursor-pointer"
             >
-              <span>← Back to Interactive Map</span>
+              <span>← {t("map.backToMap", "Back to Interactive Map")}</span>
             </button>
             <span className="text-[10px] font-mono text-[#00FFD2] font-black uppercase">Inspector Mode</span>
           </div>
@@ -1426,7 +1428,7 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-[10px] font-mono font-bold bg-[#00FFD2] text-black border border-black px-2 py-0.5 rounded shadow-[1px_1px_0_#000000] uppercase">
-                    Live Train Telemetry
+                    {t("map.liveTrainTelemetry", "Live Train Telemetry")}
                   </span>
                   <span
                     className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold border border-black shadow-[1px_1px_0_#000000] ${
@@ -1447,7 +1449,7 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
               {/* Speedometer & Delay */}
               <div className="grid grid-cols-2 gap-2 text-center text-xs">
                 <div className="p-3 rounded-xl bg-[#022642] border-2 border-black shadow-[2px_2px_0_#000000]">
-                  <p className="text-[10px] text-slate-300 font-semibold uppercase">Current Speed</p>
+                  <p className="text-[10px] text-slate-300 font-semibold uppercase">{t("map.currentSpeed", "Current Speed")}</p>
                   <p className="text-2xl font-extrabold text-[#00FFD2] font-mono mt-0.5">
                     {selectedTrain.speedKmph} <span className="text-xs font-normal">km/h</span>
                   </p>
@@ -1455,7 +1457,7 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
                 </div>
 
                 <div className="p-3 rounded-xl bg-[#022642] border-2 border-black shadow-[2px_2px_0_#000000]">
-                  <p className="text-[10px] text-slate-300 font-semibold uppercase">Schedule Status</p>
+                  <p className="text-[10px] text-slate-300 font-semibold uppercase">{t("map.scheduleStatus", "Schedule Status")}</p>
                   <p className={`text-2xl font-extrabold font-mono mt-0.5 ${selectedTrain.delayMinutes === 0 ? "text-[#3DFDCE]" : "text-[#FFFF00]"}`}>
                     {selectedTrain.delayMinutes === 0 ? "RT" : `+${selectedTrain.delayMinutes}m`}
                   </p>
@@ -1493,7 +1495,7 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-[10px] font-mono font-bold bg-[#FF2A6D] text-white border border-black shadow-[1px_1px_0_#000000] px-2 py-0.5 rounded uppercase">
-                    Active Track Block Zone
+                    {t("map.activeTrackBlock", "Active Track Block Zone")}
                   </span>
                   <span className="text-xs text-[#FFFF00] font-mono font-bold">{selectedBlock.timeRemaining}</span>
                 </div>
@@ -1524,7 +1526,7 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
                   className="w-full py-2.5 rounded-xl bg-[#6367FF] hover:bg-[#5255e3] text-white text-xs font-bold border-2 border-black shadow-[2px_2px_0_#000000] flex items-center justify-center space-x-1.5 transition cursor-pointer"
                 >
                   <Sparkles className="w-4 h-4" />
-                  <span>Optimize in Task Bundler</span>
+                  <span>{t("map.optimizeBundler", "Optimize in Task Bundler")}</span>
                 </Link>
 
                 <button
@@ -1541,7 +1543,7 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-[10px] font-mono font-bold bg-[#6367FF] text-white border border-black shadow-[1px_1px_0_#000000] px-2 py-0.5 rounded uppercase">
-                    Station Diagnostics
+                    {t("map.stationDiagnostics", "Station Diagnostics")}
                   </span>
                   <RiskBadge risk={selectedStation.status} />
                 </div>
@@ -1673,7 +1675,7 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-[10px] font-mono font-bold bg-[#00FFD2] text-black border border-black px-2 py-0.5 rounded shadow-[1px_1px_0_#000000] uppercase tracking-widest">
-                    National Grid Inspector
+                    {t("map.nationalGridInspector", "National Grid Inspector")}
                   </span>
                   <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#3DFDCE] text-black border border-black shadow-[1px_1px_0_#000000]">
                     ALL 10 ROUTES ACTIVE
@@ -1686,20 +1688,20 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
               {/* All Corridors Quick Metrics */}
               <div className="grid grid-cols-2 gap-2 text-center text-xs">
                 <div className="p-2.5 rounded-xl bg-[#022642] border-2 border-black shadow-[2px_2px_0_#000000]">
-                  <p className="text-[10px] text-slate-300 font-semibold">Total Network</p>
+                  <p className="text-[10px] text-slate-300 font-semibold">{t("map.totalNetwork", "Total Network")}</p>
                   <p className="text-sm font-bold text-white font-mono">11,881 KM</p>
                 </div>
                 <div className="p-2.5 rounded-xl bg-[#022642] border-2 border-black shadow-[2px_2px_0_#000000]">
-                  <p className="text-[10px] text-slate-300 font-semibold">Live Trains</p>
+                  <p className="text-[10px] text-slate-300 font-semibold">{t("map.liveTrains", "Live Trains")}</p>
                   <p className="text-sm font-bold text-[#00FFD2] font-mono">{trains.length} Active</p>
                 </div>
                 <div className="p-2.5 rounded-xl bg-[#022642] border-2 border-black shadow-[2px_2px_0_#000000]">
-                  <p className="text-[10px] text-slate-300 font-semibold">Active Blocks</p>
+                  <p className="text-[10px] text-slate-300 font-semibold">{t("map.activeBlocks", "Active Blocks")}</p>
                   <p className="text-sm font-bold text-[#FFFF00] font-mono">{maintenanceBlocks.length} Zones</p>
                 </div>
                 <div className="p-2.5 rounded-xl bg-[#022642] border-2 border-black shadow-[2px_2px_0_#000000]">
-                  <p className="text-[10px] text-slate-300 font-semibold">Corridors</p>
-                  <p className="text-sm font-bold text-[#3DFDCE] font-mono">{availableCorridors.length} Tracked</p>
+                  <p className="text-[10px] text-slate-300 font-semibold">{t("central.allCorridors", "Corridors")}</p>
+                  <p className="text-sm font-bold text-[#3DFDCE] font-mono">{availableCorridors.length} {t("map.tracked", "Tracked")}</p>
                 </div>
               </div>
 
@@ -1707,9 +1709,9 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-xs font-bold text-[#00FFD2] uppercase tracking-wider">
-                    All Corridors Roster
+                    {t("map.allCorridorsRoster", "All Corridors Roster")}
                   </p>
-                  <span className="text-[10px] text-[#FFFF00] font-mono">Click to Focus</span>
+                  <span className="text-[10px] text-[#FFFF00] font-mono">{t("map.clickToFocus", "Click to Focus")}</span>
                 </div>
                 <div className="space-y-1.5 max-h-52 overflow-y-auto pr-1">
                   {availableCorridors.map((c) => {
@@ -1759,7 +1761,7 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-[10px] font-mono font-bold bg-[#6367FF] text-white border border-black px-2 py-0.5 rounded shadow-[1px_1px_0_#000000] uppercase tracking-widest">
-                    Corridor Inspector
+                    {t("map.corridorInspector", "Corridor Inspector")}
                   </span>
                   <RiskBadge risk={activeCorridor.status} />
                 </div>
@@ -1770,19 +1772,19 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
               {/* Corridor Quick Metrics */}
               <div className="grid grid-cols-2 gap-2 text-center text-xs">
                 <div className="p-2.5 rounded-xl bg-[#022642] border-2 border-black shadow-[2px_2px_0_#000000]">
-                  <p className="text-[10px] text-slate-300 font-semibold">Total Length</p>
+                  <p className="text-[10px] text-slate-300 font-semibold">{t("map.totalLength", "Total Length")}</p>
                   <p className="text-sm font-bold text-white font-mono">{activeCorridor.totalLengthKm} KM</p>
                 </div>
                 <div className="p-2.5 rounded-xl bg-[#022642] border-2 border-black shadow-[2px_2px_0_#000000]">
-                  <p className="text-[10px] text-slate-300 font-semibold">Live Trains</p>
+                  <p className="text-[10px] text-slate-300 font-semibold">{t("map.liveTrains", "Live Trains")}</p>
                   <p className="text-sm font-bold text-[#00FFD2] font-mono">{activeCorridorTrains.length}</p>
                 </div>
                 <div className="p-2.5 rounded-xl bg-[#022642] border-2 border-black shadow-[2px_2px_0_#000000]">
-                  <p className="text-[10px] text-slate-300 font-semibold">Active Blocks</p>
+                  <p className="text-[10px] text-slate-300 font-semibold">{t("map.activeBlocks", "Active Blocks")}</p>
                   <p className="text-sm font-bold text-[#FFFF00] font-mono">{activeCorridorBlocks.length}</p>
                 </div>
                 <div className="p-2.5 rounded-xl bg-[#022642] border-2 border-black shadow-[2px_2px_0_#000000]">
-                  <p className="text-[10px] text-slate-300 font-semibold">Critical Spots</p>
+                  <p className="text-[10px] text-slate-300 font-semibold">{t("map.criticalSpots", "Critical Spots")}</p>
                   <p className="text-sm font-bold text-[#FF2A6D] font-mono">{activeCorridor.criticalSpotsCount}</p>
                 </div>
               </div>
@@ -1790,7 +1792,7 @@ export const LiveCorridorMap: React.FC<{ onSelectCorridor?: (corridor: RailwayCo
               {/* Station Node Quick Selector */}
               <div>
                 <p className="text-xs font-bold text-[#00FFD2] uppercase tracking-wider mb-2">
-                  Corridor Stations & Yard Points
+                  {t("map.corridorStations", "Corridor Stations & Yard Points")}
                 </p>
                 <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
                   {activeCorridor.stations.map((stn) => (

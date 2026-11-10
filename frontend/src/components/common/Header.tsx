@@ -216,7 +216,7 @@ export const Header: React.FC = () => {
               title="Real-Time Central Server State Synchronization"
             >
               <Broadcast size={14} weight="duotone" className="w-3.5 h-3.5 shrink-0" />
-              <span className="hidden xl:inline">{serverSyncConnected ? "Live Sync" : "Syncing"}</span>
+              <span className="hidden xl:inline">{serverSyncConnected ? t("header.liveSync", "Live Sync") : t("header.syncing", "Syncing")}</span>
             </div>
 
             {/* Device Mode Switcher (Icon on mobile, text on sm+) */}
@@ -234,7 +234,7 @@ export const Header: React.FC = () => {
               ) : (
                 <Desktop size={14} weight="bold" className="text-white shrink-0" />
               )}
-              <span className="hidden sm:inline">{isMobile ? "Mobile UI" : "Desktop UI"}</span>
+              <span className="hidden sm:inline">{isMobile ? t("header.mobileUI", "Mobile UI") : t("header.desktopUI", "Desktop UI")}</span>
             </button>
 
             {/* Language Switcher */}
@@ -249,9 +249,9 @@ export const Header: React.FC = () => {
             {/* Notification Bell */}
             <button
               onClick={() => setIsNotifOpen(true)}
-              aria-label="View Notifications"
+              aria-label={t("header.notifications", "Notifications")}
               className="relative p-1.5 sm:p-2 rounded-xl bg-[#022642] hover:bg-[#033358] border-2 border-black shadow-[1px_1px_0_#000000] text-white transition active:translate-y-0.5 active:shadow-none shrink-0 cursor-pointer"
-              title="Notifications"
+              title={t("header.notifications", "Notifications")}
             >
               <Bell size={16} weight="duotone" />
               {unreadNotificationCount > 0 && (
@@ -264,20 +264,20 @@ export const Header: React.FC = () => {
             {/* System Guide Webpage */}
             <Link
               href="/guide"
-              aria-label="System Operations Guide & Manual"
+              aria-label={t("header.systemGuide", "System Operations Guide & Manual")}
               className="flex items-center space-x-1 p-1.5 sm:px-2 sm:py-1.5 rounded-xl bg-[#022642] hover:bg-[#033358] border-2 border-black shadow-[1px_1px_0_#000000] text-[#00FFD2] transition active:translate-y-0.5 active:shadow-none cursor-pointer shrink-0"
-              title="System Operations Guide & Manual"
+              title={t("header.systemGuide", "System Operations Guide & Manual")}
             >
               <BookOpen size={16} weight="duotone" className="shrink-0 text-[#00FFD2]" />
-              <span className="text-[10px] font-mono font-black hidden md:inline">Guide</span>
+              <span className="text-[10px] font-mono font-black hidden md:inline">{t("header.guide", "Guide")}</span>
             </Link>
 
             {/* Reset Demo Data */}
             <button
               onClick={resetToDemoState}
-              aria-label="Reset System Data to Default"
+              aria-label={t("header.resetDemo", "Reset System Data to Default")}
               className="hidden md:flex p-1.5 sm:p-2 rounded-xl bg-[#022642] hover:bg-[#033358] border-2 border-black shadow-[1px_1px_0_#000000] text-white transition active:translate-y-0.5 active:shadow-none cursor-pointer shrink-0"
-              title="Reset System Simulation State"
+              title={t("header.resetDemo", "Reset System Simulation State")}
             >
               <ArrowCounterClockwise size={16} weight="duotone" />
             </button>
@@ -285,9 +285,9 @@ export const Header: React.FC = () => {
             {/* Logout */}
             <button
               onClick={handleLogout}
-              aria-label="Sign Out"
+              aria-label={t("header.signOut", "Sign Out")}
               className="p-1.5 sm:p-2 rounded-xl bg-[#FF1818] hover:brightness-110 border-2 border-black shadow-[1px_1px_0_#000000] text-white transition active:translate-y-0.5 active:shadow-none shrink-0 cursor-pointer"
-              title="Sign Out"
+              title={t("header.signOut", "Sign Out")}
             >
               <SignOut size={16} weight="duotone" />
             </button>

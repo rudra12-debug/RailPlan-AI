@@ -5,9 +5,11 @@ import { useAuth } from "@/context/AuthContext";
 import { MOCK_USERS } from "@/lib/mockData";
 import { ShieldCheck, Users, CaretDown, CheckCircle, X } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/context/LanguageContext";
 
 export const QuickRoleSwitcher: React.FC = () => {
   const { user, switchUser } = useAuth();
+  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
@@ -21,6 +23,18 @@ export const QuickRoleSwitcher: React.FC = () => {
     }
   };
 
+  const getDeptName = (deptId?: string, fallback?: string) => {
+    switch (deptId) {
+      case "ENG": return t("role.deptCivil", fallback || "Civil");
+      case "ELEC": return t("role.deptElec", fallback || "Electrical");
+      case "SNT": return t("role.deptSnt", fallback || "Signal & Telecom");
+      case "MECH": return t("role.deptMech", fallback || "Mechanical");
+      case "OPTG": return t("role.deptOptg", fallback || "Operating");
+      case "SAFETY": return t("role.deptSafety", fallback || "Safety");
+      default: return fallback || "";
+    }
+  };
+
   return (
     <div className="relative shrink-0">
       <button
@@ -28,13 +42,11 @@ export const QuickRoleSwitcher: React.FC = () => {
         className="flex items-center space-x-1.5 sm:space-x-2 px-2 sm:px-3 py-1.5 rounded-lg bg-[#022642] border-2 border-black shadow-[2px_2px_0_#000000] hover:bg-[#033358] transition-all text-xs font-bold text-white cursor-pointer active:translate-y-0.5 active:shadow-none shrink-0"
       >
         <div className="w-2 h-2 rounded-full bg-[#00FFD2] animate-pulse shrink-0" />
-        <span className="text-[#CABFFF] hidden sm:inline">Role:</span>
+        <span className="text-[#CABFFF] hidden sm:inline">{t("header.role", "Role")}:</span>
         <span className="font-mono font-black text-[#00FFD2] truncate max-w-[70px] xs:max-w-[95px] sm:max-w-[130px] md:max-w-[150px] lg:max-w-[180px]">
           {user?.role === "CENTRAL_ADMIN" 
-            ? "Central Admin" 
-            : user?.departmentId 
-            ? `${user.departmentId}` 
-            : user?.departmentName || "Dept"}
+            ? t("role.centralAdmin", "Central Admin") 
+            : getDeptName(user?.departmentId, user?.departmentName || "Dept")}
         </span>
         <CaretDown size={14} weight="bold" className={`text-[#CABFFF] shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`} />
       </button>
@@ -46,7 +58,7 @@ export const QuickRoleSwitcher: React.FC = () => {
             <div className="p-3 bg-[#000D18] border-b-2 border-black">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black uppercase tracking-wider text-white">
-                  Switch Active Persona
+                  {t("header.switchRole", "Switch Active Persona")}
                 </span>
                 <div className="flex items-center space-x-2">
                   <span className="text-[10px] bg-[#6367FF] text-white border border-black px-1.5 py-0.5 rounded font-mono font-black">
@@ -78,15 +90,15 @@ export const QuickRoleSwitcher: React.FC = () => {
                     <ShieldCheck size={18} weight="duotone" />
                   </div>
                   <div>
-                    <p className="text-xs font-black text-white">Central Control Authority</p>
-                    <p className="text-[10px] text-[#CABFFF] font-mono">admin@railplan.ai (Full Access)</p>
+                    <p className="text-xs font-black text-white">{t("role.centralAuthorityFull", "Central Control Authority")}</p>
+                    <p className="text-[10px] text-[#CABFFF] font-mono">admin@railplan.ai ({t("role.fullAccess", "Full Access")})</p>
                   </div>
                 </div>
                 {user?.role === "CENTRAL_ADMIN" && <CheckCircle size={18} weight="fill" className="text-[#00FFD2]" />}
               </button>
 
               <div className="pt-2 pb-1 px-2 text-[10px] font-black uppercase tracking-wider text-[#FFFF00]">
-                Core Directorates (Civil • Electrical • S&T • Safety)
+                {t("role.coreDirectorates", "Core Directorates (Civil • Electrical • S&T • Safety)")}
               </div>
 
               {/* Department Users */}
@@ -107,7 +119,9 @@ export const QuickRoleSwitcher: React.FC = () => {
                         <Users size={16} weight="duotone" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs font-black text-white whitespace-normal leading-tight">{u.departmentName}</p>
+                        <p className="text-xs font-black text-white whitespace-normal leading-tight">
+                          {getDeptName(u.departmentId, u.departmentName)}
+                        </p>
                         <p className="text-[10px] text-[#CABFFF] font-mono truncate">{u.email}</p>
                       </div>
                     </div>

@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState, useMemo } from "react";
 import { RailwayCorridor, RiskLevel } from "@/lib/types";
 import { LiveTrain, MaintenanceBlockZone } from "./LiveCorridorMap";
 import { EngineeringCautionZone, CautionZoneType } from "@/lib/cautionZonesData";
+import { useLanguage } from "@/context/LanguageContext";
 import { 
   Layers, 
   MapPin, 
@@ -69,6 +70,7 @@ export const GeographicalLeafletMap: React.FC<GeographicalLeafletMapProps> = ({
   onSelectBlock,
   onSelectCautionZone,
 }) => {
+  const { t } = useLanguage();
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const tileLayerRef = useRef<any>(null);
@@ -751,7 +753,7 @@ export const GeographicalLeafletMap: React.FC<GeographicalLeafletMapProps> = ({
           }`}
           title="ESRI Dark Mode OCC Railway Grid"
         >
-          <span>🌙 <span className="hidden sm:inline">Dark </span>OCC</span>
+          <span>🌙 {t("map.darkOcc", "Dark OCC")}</span>
         </button>
         <button
           onClick={() => setActiveTile("SATELLITE")}
@@ -762,7 +764,7 @@ export const GeographicalLeafletMap: React.FC<GeographicalLeafletMapProps> = ({
           }`}
           title="ESRI High-Resolution Photographic Satellite Imagery"
         >
-          <span>🛰️ <span className="hidden sm:inline">Satellite</span><span className="sm:hidden">Sat</span></span>
+          <span>🛰️ {t("map.satellite", "Satellite")}</span>
         </button>
         <button
           onClick={() => setActiveTile("STREET")}
@@ -773,7 +775,7 @@ export const GeographicalLeafletMap: React.FC<GeographicalLeafletMapProps> = ({
           }`}
           title="Street View"
         >
-          <span>🗺️ <span className="hidden sm:inline">Street</span><span className="sm:hidden">Map</span></span>
+          <span>🗺️ {t("map.street", "Street")}</span>
         </button>
 
         {/* Railway Overlay Toggle */}
@@ -786,7 +788,7 @@ export const GeographicalLeafletMap: React.FC<GeographicalLeafletMapProps> = ({
           }`}
           title="Toggle OpenRailwayMap Real Track Infrastructure Lines"
         >
-          <span>🚆 Tracks: {showRailOverlay ? "ON" : "OFF"}</span>
+          <span>🚆 {showRailOverlay ? t("map.tracksOn", "Tracks: ON") : t("map.tracksOff", "Tracks: OFF")}</span>
         </button>
       </div>
 
@@ -803,7 +805,7 @@ export const GeographicalLeafletMap: React.FC<GeographicalLeafletMapProps> = ({
           title="Reset View to India Boundaries"
         >
           <Compass className="w-3.5 h-3.5 text-[#00FFD2]" />
-          <span>India Overview</span>
+          <span>{t("map.indiaOverview", "India Overview")}</span>
         </button>
         {activeCorridor?.geoCoordinates && selectedCorridorId !== "ALL" && (
           <button
