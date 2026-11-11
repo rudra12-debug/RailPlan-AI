@@ -20,21 +20,21 @@ body {
   letter-spacing: -0.01em;
 }
 
-/* Base OCC Dark Mode Form Controls & Inputs (Ensures zero browser white-flash or unstyled white inputs) */
+/* Base OCC Dark Mode Form Controls & Inputs (Guarantees zero browser white-flash or unstyled white inputs) */
 input, select, textarea {
-  background-color: #000D18;
-  color: #F8FAFC;
-  border-color: #334155;
-  color-scheme: dark;
+  background-color: #000D18 !important;
+  color: #F8FAFC !important;
+  border-color: #334155 !important;
+  color-scheme: dark !important;
 }
 
 input::placeholder, textarea::placeholder {
-  color: #64748B;
+  color: #94A3B8 !important;
 }
 
 select option {
-  background-color: #000D18;
-  color: #F8FAFC;
+  background-color: #000D18 !important;
+  color: #F8FAFC !important;
 }
 
 /* Explicit fallback definitions for navy utilities across both modes */
