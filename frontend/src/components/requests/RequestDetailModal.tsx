@@ -33,6 +33,7 @@ interface RequestDetailModalProps {
   request: ServiceRequest | null;
   isOpen: boolean;
   onClose: () => void;
+  onApproved?: (requestId: string) => void;
 }
 
 const STAGES: { key: RequestStatus; label: string }[] = [
@@ -46,7 +47,7 @@ const STAGES: { key: RequestStatus; label: string }[] = [
   { key: "CLOSED", label: "Closed / Verified" },
 ];
 
-export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({ request, isOpen, onClose }) => {
+export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({ request, isOpen, onClose, onApproved }) => {
   const { isCentralAdmin, user } = useAuth();
   const { 
     approveServiceRequest, 
@@ -60,8 +61,19 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({ request,
   const [rejectReason, setRejectReason] = useState("");
   const [showRejectInput, setShowRejectInput] = useState(false);
   const [isSanctionLetterOpen, setIsSanctionLetterOpen] = useState(false);
+  const [confirmedSanction, setConfirmedSanction] = useState<{
+    sanctionNumber: string;
+    t806Number: string;
+    t806Id: string;
+    assignedDept: string;
+  } | null>(null);
 
   if (!request) return null;
+
+  const handleCloseModal = () => {
+    setConfirmedSanction(null);
+    onClose();
+  };
 
   const currentStageIndex = () => {
     switch (request.status) {
@@ -82,13 +94,19 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({ request,
   const stageIdx = currentStageIndex();
 
   const handleApprove = () => {
-    approveServiceRequest(
+    const res = approveServiceRequest(
       request.id,
       request.targetDepartment,
       commentText || "Approved by Central Control Authority (Railway Board O&M)."
     );
+    setConfirmedSanction({
+      sanctionNumber: res?.sanctionNumber || `RB/SANCTION/2026/${request.id.replace("SR-", "")}`,
+      t806Number: res?.t806Sanction?.sanctionNumber || `WCR/BPL-ET/T806/2026/${request.id.replace("SR-", "")}`,
+      t806Id: res?.t806Sanction?.id || `SANCTION-T806-${request.id.replace("SR-", "")}`,
+      assignedDept: request.targetDepartment,
+    });
     setCommentText("");
-    onClose();
+    onApproved?.(request.id);
   };
 
   const handleReject = () => {
@@ -118,6 +136,111 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({ request,
     request.status === "COMPLETED" ||
     request.status === "CLOSED" ||
     request.status === "VERIFIED";
+
+  if (confirmedSanction) {
+    return (
+      <>
+        <Modal
+          isOpen={isOpen}
+          onClose={handleCloseModal}
+          title="Sanction Order Confirmed & Dispatched"
+          subtitle={`Request ID: ${request.id} • ${request.title}`}
+          maxWidth="2xl"
+          headerBadge={
+            <div className="px-2.5 py-1 rounded-full bg-[#047857] text-white text-[10px] font-mono font-black border border-black flex items-center space-x-1.5 shadow-[1px_1px_0_#000000]">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>G&SR 15.06 & 17.08 COMPLIANT</span>
+            </div>
+          }
+        >
+          <div className="p-4 sm:p-6 text-center space-y-5 animate-scale-up">
+            <div className="w-16 h-16 rounded-2xl bg-[#047857] text-white border-3 border-black flex items-center justify-center mx-auto shadow-[4px_4px_0_#000000]">
+              <CheckCircle2 className="w-9 h-9" />
+            </div>
+
+            <div>
+              <span className="text-xs font-mono font-black text-[#047857] dark:text-[#34D399] uppercase tracking-widest px-3 py-1 bg-emerald-50 dark:bg-emerald-950/60 rounded-full border border-emerald-500/40">
+                Official Sanction Order Dispatched
+              </span>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-2.5 font-mono">
+                {confirmedSanction.sanctionNumber}
+              </h3>
+              <p className="text-xs text-slate-600 dark:text-slate-300 mt-2 max-w-md mx-auto leading-relaxed">
+                Central Control Authority (Railway Board) has sanctioned this request and dispatched formal work possession authority to <strong className="text-[#1E40AF] dark:text-[#38BDF8]">{confirmedSanction.assignedDept} Department</strong>.
+              </p>
+            </div>
+
+            {/* Sanction Spec Sheet Box */}
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#000D18] border-2 border-black text-left grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs font-mono shadow-[2px_2px_0_#000000]">
+              <div className="space-y-0.5">
+                <span className="text-slate-500 dark:text-slate-400 block text-[10px] uppercase font-bold">
+                  Statutory Form T/806 Ref:
+                </span>
+                <strong className="text-emerald-700 dark:text-emerald-400 text-xs font-black">
+                  {confirmedSanction.t806Number}
+                </strong>
+              </div>
+
+              <div className="space-y-0.5">
+                <span className="text-slate-500 dark:text-slate-400 block text-[10px] uppercase font-bold">
+                  Operational Status:
+                </span>
+                <span className="inline-block px-2 py-0.5 rounded text-[10px] font-black bg-[#047857] text-white border border-black">
+                  SANCTIONED & CONFIRMED
+                </span>
+              </div>
+
+              <div className="space-y-0.5">
+                <span className="text-slate-500 dark:text-slate-400 block text-[10px] uppercase font-bold">
+                  Corridor & Location:
+                </span>
+                <span className="text-slate-800 dark:text-slate-200 font-bold">
+                  {request.corridorId} ({request.locationKm})
+                </span>
+              </div>
+
+              <div className="space-y-0.5">
+                <span className="text-slate-500 dark:text-slate-400 block text-[10px] uppercase font-bold">
+                  Digital Sign-off Pipeline:
+                </span>
+                <span className="text-[#047857] dark:text-[#34D399] font-bold">
+                  ✓ Step 4/4 Complete (QR Sealed)
+                </span>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="pt-2 flex flex-col sm:flex-row justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => setIsSanctionLetterOpen(true)}
+                className="px-5 py-2.5 rounded-xl bg-[#1E40AF] hover:bg-[#1D4ED8] text-white text-xs font-black border-2 border-black shadow-[3px_3px_0_#000000] transition cursor-pointer flex items-center justify-center space-x-1.5"
+              >
+                <Printer className="w-4 h-4" />
+                <span>View Official Sanction Letter</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleCloseModal}
+                className="px-5 py-2.5 rounded-xl bg-[#047857] hover:bg-[#065F46] text-white text-xs font-black border-2 border-black shadow-[3px_3px_0_#000000] transition cursor-pointer flex items-center justify-center space-x-1.5"
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                <span>Done & View in Active Requests</span>
+              </button>
+            </div>
+          </div>
+        </Modal>
+
+        {/* Official Sanction Letter Modal */}
+        <OfficialSanctionLetterModal
+          request={request}
+          isOpen={isSanctionLetterOpen}
+          onClose={() => setIsSanctionLetterOpen(false)}
+        />
+      </>
+    );
+  }
 
   return (
     <>

@@ -372,6 +372,83 @@ export function executeServerAction(
         return res;
       });
 
+      // Synchronize Statutory Form T/806 Sanction Order into Server State
+      let generatedT806: StatutoryT806Sanction = payload.t806Sanction;
+      if (!generatedT806) {
+        let fromKm = 148;
+        let toKm = 154;
+        if (targetReq?.locationKm) {
+          const nums = targetReq.locationKm.match(/(\d+(\.\d+)?)/g);
+          if (nums && nums.length >= 2) {
+            fromKm = parseFloat(nums[0]);
+            toKm = parseFloat(nums[1]);
+          } else if (nums && nums.length === 1) {
+            fromKm = parseFloat(nums[0]);
+            toKm = fromKm + 4;
+          }
+        }
+        const rawSuffix = requestId.replace(/[^0-9]/g, "").slice(-4) || String(Math.floor(1000 + Math.random() * 9000));
+        generatedT806 = {
+          id: `SANCTION-T806-${requestId.replace("SR-", "")}`,
+          sanctionNumber: `WCR/BPL-ET/T806/2026/${rawSuffix}`,
+          blockId: requestId,
+          associatedRequestId: requestId,
+          corridorId: corridor,
+          corridorName: "Bhopal - Itarsi High-Density Trunk Corridor",
+          fromKm,
+          toKm,
+          trackLine: "DOWN_LINE",
+          sanctionedWindow: reqDate ? `${reqDate} (02:00 - 06:00 IST)` : "02:00 - 06:00 IST",
+          durationHours: 4,
+          cautionSpeedKmph: 30,
+          tractionPowerCutoff: true,
+          ohePermitToWorkNumber: `PTW-RB-${rawSuffix}`,
+          tpcIsolationCertificateNumber: `TIC-OCC-${rawSuffix}`,
+          gsrRulesCited: [
+            "G&SR 15.06 (Statutory Line Block Authority - High Density Network)",
+            "G&SR 17.08 (25kV Traction Power Isolation & Earthing Certificate)",
+            "IRPWM 2020 Para 804 (Track Relaying Safety Rules)",
+          ],
+          signoffPipeline: {
+            step1DeptSubmission: {
+              completed: true,
+              by: `${requestingDept} Field Engineer`,
+              timestamp: `${dateStr} ${timeStr}`,
+            },
+            step2PowerIsolation: {
+              completed: true,
+              by: "Central TPC (Traction Power Controller)",
+              certificate: `TIC-OCC-${rawSuffix} / 25kV Earthing Verified`,
+              timestamp: `${dateStr} ${timeStr}`,
+            },
+            step3TrafficSanction: {
+              completed: true,
+              by: `${actor?.name || "Rajesh Verma"} (Chief OCC Controller / Railway Board)`,
+              timestamp: `${dateStr} ${timeStr}`,
+            },
+            step4T806Issued: {
+              completed: true,
+              by: `${actor?.name || "Rajesh Verma"} (Executive Director O&M, Railway Board)`,
+              timestamp: `${dateStr} ${timeStr}`,
+              qrCodeHash: `sha256_${Date.now().toString(16)}_ir_gov_t806`,
+            },
+          },
+          currentStep: 4,
+          status: "SANCTIONED",
+          issuingOfficer: actor?.name || "Rajesh Verma",
+          issuingDesignation: actor?.designation || "Executive Director (Railway Board) & OCC Chief Authority",
+          participatingDepartments: [requestingDept, assignedDept, "OPS", "SFTY"],
+          digitalSignatureHash: `sha256_${Date.now().toString(16)}_ir_gov_t806_confirmed`,
+          issuedAt: fullSanctionTimestamp,
+          cautionOrderSummary: `Statutory Form T/806 Line Block Sanctioned. TSR 30 km/h caution imposed between KM ${fromKm} and KM ${toKm}; 25kV traction isolated. Assigned to ${assignedDept}.`,
+        };
+      }
+
+      state.t806Sanctions = [
+        generatedT806,
+        ...state.t806Sanctions.filter((s) => s.id !== generatedT806.id && s.blockId !== requestId),
+      ];
+
       addAuditLog(
         "Approved & Booked Resources",
         requestId,

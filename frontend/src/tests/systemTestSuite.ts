@@ -260,6 +260,13 @@ console.log("\n▶ TEST SUITE 6: Multi-User Server Synchronization & Optimistic 
   assert(Boolean(approvedReq?.sanctionOrderNumber?.startsWith("RB/SANCTION/2026/")), "Official sanction order number generated");
   assert(approvedReq?.formT806Generated === true, "Form T/806 generated flag is set");
 
+  const linkedT806 = approveRes.state.t806Sanctions.find(
+    (s) => s.associatedRequestId === newReqId || s.blockId === newReqId
+  );
+  assert(Boolean(linkedT806), "Statutory Form T/806 sanction created in server t806Sanctions");
+  assert(linkedT806?.status === "SANCTIONED", "Form T/806 status is SANCTIONED");
+  assert(linkedT806?.currentStep === 4, "Form T/806 sign-off pipeline completed to Step 4");
+
   // Test 3: CREATE_BLOCK_REQUEST
   const v2 = approveRes.state.stateVersion;
   const blockRes = executeServerAction(

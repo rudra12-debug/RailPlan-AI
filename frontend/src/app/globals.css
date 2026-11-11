@@ -28,6 +28,10 @@ input, select, textarea {
   color-scheme: dark !important;
 }
 
+input:focus, select:focus, textarea:focus {
+  border-color: #38BDF8 !important;
+}
+
 input::placeholder, textarea::placeholder {
   color: #94A3B8 !important;
 }
@@ -439,12 +443,49 @@ html.light .bg-\[\#3D0072\] * {
   color: #FFFFFF !important;
 }
 
+/* Subtle Executive Elevation & Clean Slate Outlines in Day Mode (Eliminates harsh neo-brutalist AI-generated black blocks) */
+html.light .shadow-\[8px_8px_0_\#000000\],
+html.light .shadow-\[6px_6px_0_\#000000\],
+html.light .shadow-\[4px_4px_0_\#000000\],
+html.light .shadow-\[3px_3px_0_\#000000\],
+html.light .shadow-\[2px_2px_0_\#000000\],
+html.light .shadow-\[1px_1px_0_\#000000\] {
+  box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.05) !important;
+}
+
+html.light .border-black {
+  border-color: #CBD5E1 !important;
+}
+
+html.light .border-3 {
+  border-width: 1.5px !important;
+}
+
 /* 8. TYPOGRAPHY & READABLE METADATA */
 html.light .text-white,
 html.light .text-\[\#F8FAFC\],
 html.light .text-slate-100,
 html.light .text-slate-200 {
   color: #0F172A !important;
+}
+
+/* Ensure buttons, badges and containers with dark solid backgrounds keep crisp white text in Day Mode */
+html.light button.text-white,
+html.light button .text-white,
+html.light a.text-white,
+html.light a .text-white,
+html.light span.text-white,
+html.light .bg-\[\#1E40AF\] *,
+html.light .bg-\[\#047857\] *,
+html.light .bg-\[\#DC2626\] *,
+html.light .bg-\[\#D97706\] *,
+html.light .bg-\[\#0F172A\] *,
+html.light .bg-black *,
+html.light button[class*="bg-\[#1E40AF\]"] *,
+html.light button[class*="bg-\[#047857\]"] *,
+html.light button[class*="bg-\[#DC2626\]"] *,
+html.light button[class*="bg-\[#D97706\]"] * {
+  color: #FFFFFF !important;
 }
 
 html.light .text-\[\#CABFFF\],
@@ -497,8 +538,14 @@ html.light select,
 html.light textarea {
   background-color: #FFFFFF !important;
   color: #0F172A !important;
-  border-color: #0F172A !important;
-  color-scheme: light;
+  border-color: #94A3B8 !important;
+  color-scheme: light !important;
+}
+html.light input:focus,
+html.light select:focus,
+html.light textarea:focus {
+  border-color: #1E40AF !important;
+  outline: 2px solid rgba(30, 64, 175, 0.2) !important;
 }
 html.light input::placeholder,
 html.light textarea::placeholder {

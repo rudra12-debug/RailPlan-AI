@@ -12,6 +12,7 @@ interface RequestTableProps {
   title?: string;
   subtitle?: string;
   showActions?: boolean;
+  onApproved?: (requestId: string) => void;
 }
 
 export const RequestTable: React.FC<RequestTableProps> = ({
@@ -19,6 +20,7 @@ export const RequestTable: React.FC<RequestTableProps> = ({
   title = "Inter-Department Service Requests",
   subtitle = "Real-time track maintenance requisitions and multi-department coordination requests",
   showActions = true,
+  onApproved,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
@@ -211,6 +213,7 @@ export const RequestTable: React.FC<RequestTableProps> = ({
       <RequestDetailModal
         request={selectedRequest}
         isOpen={isModalOpen && selectedRequest !== null}
+        onApproved={onApproved}
         onClose={() => {
           setIsModalOpen(false);
           setSelectedRequestId(null);

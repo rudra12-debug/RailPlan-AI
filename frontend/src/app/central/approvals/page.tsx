@@ -262,6 +262,9 @@ export default function ApprovalCenterPage() {
         requests={displayedRequests()}
         title={`${activeTab.replace("_", " ")} Service Requests`}
         subtitle="Click any row to open the Central Admin sanction, rejection, or reassignment panel"
+        onApproved={(_id) => {
+          setActiveTab("ACTIVE");
+        }}
       />
     </div>
   );
