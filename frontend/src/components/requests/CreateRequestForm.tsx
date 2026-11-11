@@ -29,11 +29,17 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 export const CreateRequestForm: React.FC = () => {
   const { user } = useAuth();
-  const { createServiceRequest, corridors, departments } = useRailPlan();
+  const { 
+    createServiceRequest, 
+    corridors, 
+    departments,
+    selectedCorridorId,
+    setSelectedCorridorId 
+  } = useRailPlan();
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const initialCorridor = searchParams?.get("corridor") || "NDLS-MMCT";
+  const initialCorridor = searchParams?.get("corridor") || (selectedCorridorId !== "ALL" ? selectedCorridorId : "NDLS-MMCT");
   const initialLocation = searchParams?.get("location") || "KM 148.0 - 154.0 (Mathura Section)";
   const initialTargetDept = (searchParams?.get("targetDept") as DepartmentId) || "ELEC";
   const initialTitle = searchParams?.get("title") || "25kV OHE Power Block & Catenary Tensioning Support for Track Relay";
@@ -175,7 +181,12 @@ export const CreateRequestForm: React.FC = () => {
 
           <div className="pt-4 flex flex-col sm:flex-row justify-center gap-3">
             <button
-              onClick={() => router.push("/department/requests")}
+              onClick={() => {
+                if (selectedCorridorId !== "ALL" && selectedCorridorId !== corridorId) {
+                  setSelectedCorridorId("ALL");
+                }
+                router.push("/department/requests");
+              }}
               className="px-5 py-2.5 rounded-xl bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-black border-2 border-black shadow-[3px_3px_0_#000000] transition cursor-pointer"
             >
               View in Service Requests

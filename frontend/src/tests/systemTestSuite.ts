@@ -10,6 +10,7 @@ import { ALL_HORIZON_BLOCK_PLANS, WEEKLY_BLOCK_PLANS, MONTHLY_BLOCK_PLANS } from
 import { BHOPAL_ITARSI_CORRIDOR } from "../lib/bhopalItarsiData";
 import { ALL_EXPANDED_CORRIDORS } from "../lib/expandedCorridorsData";
 import { MaintenanceBlockRequest } from "../lib/types";
+import { executeServerAction, getServerState, resetServerState } from "../lib/serverStore";
 
 let passedCount = 0;
 let failedCount = 0;
@@ -191,6 +192,111 @@ console.log("\n▶ TEST SUITE 5: Theme & Form Controls Contrast Specification Au
   assert(globalsContent.includes("html.light input"), "globals.css sets day mode override for inputs");
   assert(globalsContent.includes("background-color: #FFFFFF !important"), "globals.css specifies white background for daylight inputs");
   assert(globalsContent.includes("color-scheme: light"), "globals.css specifies color-scheme: light for daylight native inputs");
+}
+
+// -----------------------------------------------------------------------------
+// SUITE 6: MULTI-USER STATE SYNCHRONIZATION & MUTATION ENGINE
+// -----------------------------------------------------------------------------
+console.log("\n▶ TEST SUITE 6: Multi-User Server Synchronization & Optimistic Mutations");
+{
+  const initialState = resetServerState();
+  const v0 = initialState.stateVersion;
+  assert(initialState.requests.length > 0, "Server state initialized with baseline service requests");
+  assert(initialState.blockRequests.length > 0, "Server state initialized with master block requests");
+  assert(initialState.horizonPlans.length > 0, "Server state initialized with multi-horizon plans");
+
+  // Test 1: CREATE_REQUEST
+  const createRes = executeServerAction(
+    "CREATE_REQUEST",
+    {
+      title: "25kV Emergency Power Isolation & OHE Contact Wire Repair",
+      targetDepartment: "ELEC",
+      corridorId: "BPL-ET",
+      locationKm: "KM 45.2",
+      requestType: "Electrical Support",
+      priority: "CRITICAL",
+      description: "Urgent catenary repair on Barkhera section",
+      requiredDate: "2026-09-30",
+      estimatedCost: 180000,
+      costBreakdown: {
+        labour: 60000,
+        equipment: 50000,
+        material: 50000,
+        logistics: 10000,
+        trackBlock: 0,
+        contingency: 10000,
+        totalEstimated: 180000,
+        actualCost: 0,
+      },
+      resourcesRequired: ["Tower Wagon #102"],
+    },
+    { name: "Sunil Deshmukh", departmentId: "ENG", departmentName: "Civil Engineering" }
+  );
+
+  assert(createRes.success === true, "executeServerAction CREATE_REQUEST succeeds");
+  const newReqId = createRes.result;
+  assert(typeof newReqId === "string" && newReqId.startsWith("SR-"), "New request ID properly generated", `ID: ${newReqId}`);
+  assert(createRes.state.stateVersion > v0, "State version increments on CREATE_REQUEST");
+  assert(createRes.state.requests[0].id === newReqId, "New request is prepended at index 0");
+  assert(createRes.state.requests[0].status === "UNDER_REVIEW", "New request starts in UNDER_REVIEW status");
+
+  // Test 2: APPROVE_REQUEST
+  const v1 = createRes.state.stateVersion;
+  const approveRes = executeServerAction(
+    "APPROVE_REQUEST",
+    {
+      requestId: newReqId,
+      assignedDept: "ELEC",
+      comments: "Sanctioned under G&SR 15.06 by Railway Board Central Authority",
+      priorityOverride: "CRITICAL",
+    },
+    { name: "Rajesh Verma", role: "CENTRAL_ADMIN" }
+  );
+
+  assert(approveRes.success === true, "executeServerAction APPROVE_REQUEST succeeds");
+  assert(approveRes.state.stateVersion > v1, "State version increments on APPROVE_REQUEST");
+  const approvedReq = approveRes.state.requests.find((r) => r.id === newReqId);
+  assert(approvedReq?.status === "APPROVED", "Request status updated to APPROVED");
+  assert(Boolean(approvedReq?.sanctionOrderNumber?.startsWith("RB/SANCTION/2026/")), "Official sanction order number generated");
+  assert(approvedReq?.formT806Generated === true, "Form T/806 generated flag is set");
+
+  // Test 3: CREATE_BLOCK_REQUEST
+  const v2 = approveRes.state.stateVersion;
+  const blockRes = executeServerAction(
+    "CREATE_BLOCK_REQUEST",
+    {
+      id: "REQ-TEST-SYNC-01",
+      blockId: "BLK-TEST-SYNC-01",
+      title: "Automated Ultrasonic Rail Testing Block",
+      corridorId: "BPL-ET",
+      fromKm: 52.0,
+      toKm: 56.0,
+      status: "Submitted",
+      department: "Civil",
+      departmentId: "ENG",
+    },
+    { name: "Sunil Deshmukh", departmentId: "ENG" }
+  );
+
+  assert(blockRes.success === true, "executeServerAction CREATE_BLOCK_REQUEST succeeds");
+  assert(blockRes.state.stateVersion > v2, "State version increments on CREATE_BLOCK_REQUEST");
+  assert(blockRes.state.blockRequests[0].id === "REQ-TEST-SYNC-01", "New block request is saved in server state");
+
+  // Test 4: AI_OPTIMIZE_HORIZON
+  const v3 = blockRes.state.stateVersion;
+  const targetPlan = blockRes.state.horizonPlans[0];
+  const oldScore = targetPlan.aiOptimizationScore;
+  const optRes = executeServerAction(
+    "AI_OPTIMIZE_HORIZON",
+    { planId: targetPlan.id },
+    { name: "OCC Controller", role: "CENTRAL_ADMIN" }
+  );
+
+  assert(optRes.success === true, "executeServerAction AI_OPTIMIZE_HORIZON succeeds");
+  assert(optRes.state.stateVersion > v3, "State version increments on AI_OPTIMIZE_HORIZON");
+  const updatedPlan = optRes.state.horizonPlans.find((p) => p.id === targetPlan.id);
+  assert((updatedPlan?.aiOptimizationScore || 0) >= oldScore, "AI optimization score increased");
+  assert(updatedPlan?.conflictCheckPassed === true, "Conflict check passed flag set to true");
 }
 
 console.log("\n================================================================================");

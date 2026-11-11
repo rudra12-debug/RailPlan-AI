@@ -11,13 +11,22 @@ import {
   ArrowUpRight, 
   Clock, 
   CheckCircle2,
-  Filter
+  Filter,
+  RotateCw
 } from "lucide-react";
 import Link from "next/link";
 
 export default function DepartmentRequestsPage() {
   const { user } = useAuth();
-  const { requests, selectedCorridorId, selectedZone } = useRailPlan();
+  const { 
+    requests, 
+    selectedCorridorId, 
+    setSelectedCorridorId, 
+    selectedZone, 
+    corridors,
+    triggerManualSync,
+    isSyncing 
+  } = useRailPlan();
 
   const [activeTab, setActiveTab] = useState<"ALL" | "OUTGOING" | "INCOMING">("ALL");
 
@@ -25,6 +34,10 @@ export default function DepartmentRequestsPage() {
 
   const isCorridorFiltered = selectedCorridorId !== "ALL";
   const allowedZoneCorridors = ZONE_CORRIDOR_MAP[selectedZone] || ZONE_CORRIDOR_MAP["ALL"];
+
+  const availableCorridors = useMemo(() => {
+    return corridors.filter((c) => allowedZoneCorridors.includes(c.id));
+  }, [corridors, allowedZoneCorridors]);
 
   const scopedRequests = useMemo(() => {
     return requests.filter((r) => {
@@ -79,13 +92,79 @@ export default function DepartmentRequestsPage() {
           </p>
         </div>
 
-        <Link
-          href="/department/create-request"
-          className="px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-navy-950 font-bold text-xs shadow-glow-cyan flex items-center space-x-2 transition transform active:scale-95"
-        >
-          <PlusCircle className="w-4 h-4" />
-          <span>New Service Request</span>
-        </Link>
+        <div className="flex items-center space-x-2.5">
+          <button
+            onClick={() => triggerManualSync()}
+            disabled={isSyncing}
+            className="px-3.5 py-2.5 rounded-xl bg-navy-900 hover:bg-navy-800 text-slate-200 font-bold text-xs border border-slate-700 flex items-center space-x-1.5 transition active:scale-95 cursor-pointer shadow-md"
+            title="Force refresh state from Central OCC Server"
+          >
+            <RotateCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin text-cyan-400" : "text-cyan-400"}`} />
+            <span>{isSyncing ? "Refreshing..." : "Refresh"}</span>
+          </button>
+          <Link
+            href="/department/create-request"
+            className="px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-navy-950 font-bold text-xs shadow-glow-cyan flex items-center space-x-2 transition transform active:scale-95"
+          >
+            <PlusCircle className="w-4 h-4" />
+            <span>New Service Request</span>
+          </Link>
+        </div>
+      </div>
+
+      {/* Quick Corridor Selection Bar */}
+      <div className="p-3.5 rounded-xl bg-navy-900 border border-slate-800 space-y-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2 text-xs">
+            <span className="font-bold text-slate-300 uppercase tracking-wider">
+              {isCorridorFiltered ? "Corridor Filter:" : "Corridor Scope:"}
+            </span>
+            {isCorridorFiltered ? (
+              <span className="font-mono font-bold text-cyan-300 bg-navy-950 px-2 py-0.5 rounded border border-cyan-800">
+                {selectedCorridorId}
+              </span>
+            ) : (
+              <span className="font-mono font-bold text-slate-400">All Corridors Active</span>
+            )}
+          </div>
+          {isCorridorFiltered && (
+            <button
+              onClick={() => setSelectedCorridorId("ALL")}
+              className="text-xs text-rose-400 hover:text-rose-300 font-mono font-bold cursor-pointer"
+            >
+              Reset to All Corridors
+            </button>
+          )}
+        </div>
+
+        <div className="pt-1.5 border-t border-slate-800 flex items-center gap-1.5 overflow-x-auto pb-1 touch-pan-x no-scrollbar">
+          <button
+            onClick={() => setSelectedCorridorId("ALL")}
+            className={`px-3 py-1 rounded-lg text-xs font-bold font-mono transition shrink-0 cursor-pointer ${
+              selectedCorridorId === "ALL"
+                ? "bg-cyan-500 text-navy-950 font-black"
+                : "bg-navy-950 border border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white"
+            }`}
+          >
+            All Corridors ({requests.length})
+          </button>
+          {availableCorridors.map((c) => {
+            const count = requests.filter((r) => r.corridorId === c.id).length;
+            return (
+              <button
+                key={c.id}
+                onClick={() => setSelectedCorridorId(c.id)}
+                className={`px-3 py-1 rounded-lg text-xs font-bold font-mono transition shrink-0 cursor-pointer ${
+                  selectedCorridorId === c.id
+                    ? "bg-cyan-500 text-navy-950 font-black"
+                    : "bg-navy-950 border border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white"
+                }`}
+              >
+                {c.id} ({count})
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Tabs */}

@@ -62,6 +62,8 @@ interface RailPlanContextType {
   selectedCorridorId: string;
   unreadNotificationCount: number;
   serverSyncConnected: boolean;
+  isSyncing: boolean;
+  triggerManualSync: () => Promise<void>;
   isMobileMenuOpen: boolean;
   setIsMobileMenuOpen: (open: boolean) => void;
   isSidebarOpen: boolean;
@@ -254,6 +256,9 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [selectedZone, setSelectedZoneState] = useState<string>("All Zones (National OCC)");
   const [selectedCorridorId, setSelectedCorridorIdState] = useState<string>("BPL-ET");
   const [serverSyncConnected, setServerSyncConnected] = useState<boolean>(true);
+  const [isSyncing, setIsSyncing] = useState<boolean>(false);
+  const serverVersionRef = useRef<number>(1);
+  const syncChannelRef = useRef<BroadcastChannel | null>(null);
   const [activeToast, setActiveToast] = useState<NotificationItem | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
@@ -280,6 +285,159 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   // Multi-Horizon Block Planning State (Weekly Short-Term & Monthly Long-Term)
   const [selectedHorizon, setSelectedHorizon] = useState<PlanningHorizon>("WEEKLY");
   const [horizonPlans, setHorizonPlans] = useState<HorizonBlockPlan[]>(ALL_HORIZON_BLOCK_PLANS);
+
+  // Apply server state to local React state
+  const applyServerState = useCallback((s: any) => {
+    if (!s) return;
+    if (s.requests && Array.isArray(s.requests)) setRequests(s.requests);
+    if (s.maintenanceTasks && Array.isArray(s.maintenanceTasks)) setMaintenanceTasks(s.maintenanceTasks);
+    if (s.bundles && Array.isArray(s.bundles)) setBundles(s.bundles);
+    if (s.corridors && Array.isArray(s.corridors)) setCorridors(s.corridors);
+    if (s.assets && Array.isArray(s.assets)) setAssets(s.assets);
+    if (s.departments && Array.isArray(s.departments)) setDepartments(s.departments);
+    if (s.resources && Array.isArray(s.resources)) setResources(s.resources);
+    if (s.aiRecommendations && Array.isArray(s.aiRecommendations)) setAiRecommendations(s.aiRecommendations);
+    if (s.notifications && Array.isArray(s.notifications)) setNotifications(s.notifications);
+    if (s.auditLogs && Array.isArray(s.auditLogs)) setAuditLogs(s.auditLogs);
+    if (s.blockRequests && Array.isArray(s.blockRequests)) setBlockRequests(s.blockRequests);
+    if (s.t806Sanctions && Array.isArray(s.t806Sanctions)) setT806Sanctions(s.t806Sanctions);
+    if (s.horizonPlans && Array.isArray(s.horizonPlans)) setHorizonPlans(s.horizonPlans);
+
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("railplan_client_state_v1", JSON.stringify(s));
+      } catch (err) {}
+    }
+  }, []);
+
+  // Heartbeat sync against /api/railplan/sync
+  const syncWithServer = useCallback(async (force = false) => {
+    try {
+      const ver = force ? 0 : serverVersionRef.current;
+      const res = await fetch(`/api/railplan/sync?version=${ver}`, {
+        cache: "no-store",
+      });
+      if (!res.ok) {
+        setServerSyncConnected(false);
+        return;
+      }
+      const data = await res.json();
+      setServerSyncConnected(true);
+      if (data.changed && data.state) {
+        serverVersionRef.current = data.version;
+        applyServerState(data.state);
+      }
+    } catch (err) {
+      setServerSyncConnected(false);
+    }
+  }, [applyServerState]);
+
+  // Dispatch action to server and broadcast across tabs
+  const dispatchServerAction = useCallback(async (actionType: string, payload: any) => {
+    try {
+      setIsSyncing(true);
+      const res = await fetch("/api/railplan/action", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          actionType,
+          payload,
+          actor: {
+            name: user?.name,
+            departmentId: user?.departmentId,
+            departmentName: user?.departmentName,
+            role: user?.role,
+            designation: user?.designation,
+          },
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.state) {
+          serverVersionRef.current = data.version;
+          applyServerState(data.state);
+          setServerSyncConnected(true);
+
+          if (syncChannelRef.current) {
+            try {
+              syncChannelRef.current.postMessage({
+                type: "SYNC_STATE",
+                state: data.state,
+                version: data.version,
+              });
+            } catch (e) {}
+          }
+          return data.result;
+        }
+      }
+    } catch (err) {
+      console.warn("Server action dispatch error:", err);
+      setServerSyncConnected(false);
+    } finally {
+      setIsSyncing(false);
+    }
+  }, [user, applyServerState]);
+
+  const triggerManualSync = useCallback(async () => {
+    setIsSyncing(true);
+    await syncWithServer(true);
+    setIsSyncing(false);
+    const toast: NotificationItem = {
+      id: `NOTIF-SYNC-${Date.now()}`,
+      title: "OCC Real-Time Synchronized",
+      message: "Operational schedules, requests, and assets synchronized with Central Server.",
+      type: "SUCCESS",
+      timestamp: "Just now",
+      read: false,
+    };
+    setActiveToast(toast);
+    playNotificationChime();
+  }, [syncWithServer]);
+
+  // Cross-tab BroadcastChannel listener
+  useEffect(() => {
+    if (typeof window === "undefined" || !("BroadcastChannel" in window)) return;
+    try {
+      const channel = new BroadcastChannel("railplan_realtime_sync_bus");
+      syncChannelRef.current = channel;
+
+      channel.onmessage = (event) => {
+        if (event.data?.type === "SYNC_STATE" && event.data?.state) {
+          applyServerState(event.data.state);
+          if (event.data.version) {
+            serverVersionRef.current = event.data.version;
+          }
+        }
+      };
+
+      return () => {
+        channel.close();
+        syncChannelRef.current = null;
+      };
+    } catch (e) {}
+  }, [applyServerState]);
+
+  // Client hydration + Polling heartbeat for seamless multi-user collaboration
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem("railplan_client_state_v1");
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          applyServerState(parsed);
+        }
+      } catch (e) {}
+    }
+
+    syncWithServer(true);
+
+    const pollInterval = setInterval(() => {
+      syncWithServer(false);
+    }, 2500);
+
+    return () => clearInterval(pollInterval);
+  }, [applyServerState, syncWithServer]);
 
   // Helper: Tamper-proof audit logger with pseudo-hash chaining
   const logAudit = useCallback((
@@ -487,6 +645,7 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
     setActiveToast(toast);
     playNotificationChime();
+    dispatchServerAction("CREATE_BLOCK_REQUEST", newReq);
     return id;
   };
 
@@ -494,6 +653,7 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setBlockRequests((prev) =>
       prev.map((r) => (r.id === id ? { ...r, status } : r))
     );
+    dispatchServerAction("UPDATE_BLOCK_STATUS", { id, status });
   };
 
   // Multi-Horizon Block Planning Actions
@@ -517,8 +677,9 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
     setActiveToast(toast);
     playNotificationChime();
+    dispatchServerAction("APPROVE_HORIZON_PLAN", { planId });
     return { success: true, message: msg };
-  }, [horizonPlans, logAudit, user]);
+  }, [horizonPlans, logAudit, user, dispatchServerAction]);
 
   const aiOptimizeHorizonSchedule = useCallback((planId: string) => {
     setHorizonPlans((prev) =>
@@ -549,8 +710,9 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
     setActiveToast(toast);
     playNotificationChime();
+    dispatchServerAction("AI_OPTIMIZE_HORIZON", { planId });
     return { success: true, message: msg, savedHours: 4.5, punctualityGainPct: 14.2 };
-  }, [horizonPlans, logAudit, user]);
+  }, [horizonPlans, logAudit, user, dispatchServerAction]);
 
   // AI Mega-Block Acceptance Action
   const acceptBundledCluster = (cluster: BundledCluster): BundledMaintenanceOrder => {
@@ -567,7 +729,7 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setBundles((prev) => [newOrder, ...prev]);
 
     // Automatically create a pre-filled Statutory T/806 draft
-    createT806FromBundle(
+    const newSanction = createT806FromBundle(
       newOrder.id,
       cluster.fromKm,
       cluster.toKm,
@@ -593,6 +755,12 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
     setActiveToast(toast);
     playNotificationChime();
+
+    dispatchServerAction("ACCEPT_BUNDLED_CLUSTER", {
+      order: newOrder,
+      requestIds: cluster.requests.map((r) => r.id),
+      sanction: newSanction,
+    });
     return newOrder;
   };
 
@@ -649,7 +817,7 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           user?.departmentId || "OPS",
           `SIGN_T806_STEP_${step}`,
           sanctionId,
-          `Completed Step ${step} sign-off for Form T/806 Block Authority ${s.sanctionNumber}.`
+          `Completed Step ${step} sign-off for Form T/806 Block Authority ${s.sanctionNumber}.${notes ? ` Notes: ${notes}` : ""}`
         );
 
         return updated;
@@ -657,6 +825,7 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     );
 
     playNotificationChime();
+    dispatchServerAction("SIGN_T806_STEP", { sanctionId, step, notes });
     return {
       success: true,
       message: `Step ${step} signed off successfully under G&SR 15.06 compliance.`,
@@ -714,6 +883,7 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
 
     setT806Sanctions((prev) => [newSanction, ...prev]);
+    dispatchServerAction("CREATE_T806", newSanction);
     return newSanction;
   };
 
@@ -778,42 +948,543 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setActiveToast(toast);
     playNotificationChime();
 
+    dispatchServerAction("CONFIRM_EMERGENCY", { scenarioId, incidentTitle, allocatedWindow });
+
     return {
       success: true,
       message: `Emergency Dispatch confirmed by ${user?.name} (${user?.designation}). Digital Confirmation Stamp: IR-OCC-STAMP-${Date.now().toString(16).toUpperCase()}`,
     };
   };
 
-  // Legacy Service Request & Department Handlers
-  const createServiceRequest = (data: any): string => {
-    const id = `REQ-SR-${Date.now().toString().slice(-4)}`;
-    return id;
-  };
-  const approveServiceRequest = () => {};
-  const rejectServiceRequest = () => {};
-  const requestModification = () => {};
-  const updateRequestPriority = () => {};
-  const updateRequestProgress = () => {};
-  const markWorkCompleted = () => {};
-  const verifyAndCloseRequest = () => {};
-  const acceptAiRecommendation = () => {};
-  const dismissAiRecommendation = () => {};
-  const createCustomBundle = (taskIds: string[], customTitle?: string) => bundles[0];
-  const approveBundle = () => {};
-  const executeBundle = () => {};
-  const allocateResource = () => {};
-  const markNotificationRead = (id: string) => {
+  // Full Real-Time Service Request & Operations Handlers
+  const createServiceRequest = useCallback((data: {
+    title: string;
+    targetDepartment: DepartmentId;
+    corridorId: string;
+    locationKm: string;
+    requestType: ServiceRequestType;
+    priority: RequestPriority;
+    description: string;
+    requiredDate: string;
+    estimatedCost: number;
+    costBreakdown: CostBreakdown;
+    resourcesRequired: string[];
+    attachments?: string[];
+    additionalNotes?: string;
+  }): string => {
+    const newId = `SR-${Math.floor(1000 + Math.random() * 9000)}`;
+    const reqDept = (user?.departmentId as DepartmentId) || "ENG";
+    const newRequest: ServiceRequest = {
+      id: newId,
+      title: data.title,
+      requestingDepartment: reqDept,
+      targetDepartment: data.targetDepartment,
+      corridorId: data.corridorId,
+      locationKm: data.locationKm,
+      requestType: data.requestType,
+      priority: data.priority,
+      description: data.description,
+      requiredDate: data.requiredDate,
+      submissionDate: new Date().toISOString().split("T")[0],
+      completionDeadline: data.requiredDate,
+      status: "UNDER_REVIEW",
+      estimatedCost: data.estimatedCost,
+      costBreakdown: data.costBreakdown,
+      resourcesRequired: data.resourcesRequired,
+      attachments: data.attachments || ["Inspection_Checksheet_V1.pdf"],
+      additionalNotes: data.additionalNotes,
+      progress: 0,
+      assignedToDepartment: data.targetDepartment,
+      aiRiskScore: Math.floor(75 + Math.random() * 20),
+      aiRecommendedPriority: data.priority,
+      aiRationale: `Automated AI risk assessment computed correlation with track section vulnerability. Recommended action: expedite allocation.`,
+      progressUpdates: [],
+      history: [
+        {
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          actor: `${user?.name || "Department Officer"} (${reqDept})`,
+          action: `Submitted Service Request ${newId} requesting ${data.targetDepartment} support.`,
+        },
+      ],
+    };
+
+    // 1. Optimistic instant UI update (0ms delay)
+    setRequests((prev) => [newRequest, ...prev]);
+    setDepartments((prev) =>
+      prev.map((d) => (d.id === reqDept ? { ...d, pendingRequests: d.pendingRequests + 1 } : d))
+    );
+    logAudit(
+      user?.name || "Official",
+      reqDept,
+      "CREATE_SERVICE_REQUEST",
+      newId,
+      `Created service request ${newId} for ${data.targetDepartment} on ${data.corridorId}`
+    );
+
+    const toast: NotificationItem = {
+      id: `NOTIF-${Date.now()}`,
+      title: "Service Request Created",
+      message: `Request ${newId} submitted for Central Authority review.`,
+      type: "SUCCESS",
+      timestamp: "Just now",
+      read: false,
+    };
+    setActiveToast(toast);
+    playNotificationChime();
+
+    // 2. Persist to central server store and broadcast
+    dispatchServerAction("CREATE_REQUEST", data);
+
+    return newId;
+  }, [user, logAudit, dispatchServerAction]);
+
+  const approveServiceRequest = useCallback((
+    requestId: string,
+    assignedDept: DepartmentId,
+    comments?: string,
+    priorityOverride?: RequestPriority,
+    deadline?: string
+  ) => {
+    const sanctionNumber = `RB/SANCTION/2026/${requestId.replace("SR-", "")}`;
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true });
+    const dateStr = now.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+    const fullSanctionTimestamp = `${dateStr}, ${timeStr} IST`;
+
+    // 1. Optimistic state mutation
+    setRequests((prev) =>
+      prev.map((r) => {
+        if (r.id !== requestId) return r;
+        return {
+          ...r,
+          status: "APPROVED" as RequestStatus,
+          assignedToDepartment: assignedDept,
+          priority: priorityOverride || r.priority,
+          completionDeadline: deadline || r.completionDeadline,
+          centralAdminComments: comments,
+          sanctionOrderNumber: sanctionNumber,
+          sanctionTimestamp: fullSanctionTimestamp,
+          formT806Generated: true,
+          history: [
+            ...r.history,
+            {
+              timestamp: `${dateStr} ${timeStr}`,
+              actor: `${user?.name || "Central Admin"} (Railway Board)`,
+              action: `Approved Request & Dispatched Sanction Order (${sanctionNumber}). Assigned to ${assignedDept}.`,
+              note: comments,
+            },
+          ],
+        };
+      })
+    );
+
+    // Reserve resources optimistically
+    setResources((prev) =>
+      prev.map((res) => {
+        if (res.departmentId === assignedDept && res.status === "AVAILABLE") {
+          return {
+            ...res,
+            status: "ASSIGNED",
+            currentTask: `Sanctioned for Request ${requestId}`,
+          };
+        }
+        return res;
+      })
+    );
+
+    logAudit(
+      user?.name || "Central Admin",
+      "CENTRAL",
+      "APPROVE_SERVICE_REQUEST",
+      requestId,
+      `Sanctioned request ${requestId} with sanction number ${sanctionNumber}`
+    );
+
+    const toast: NotificationItem = {
+      id: `NOTIF-${Date.now()}`,
+      title: "Request Sanctioned",
+      message: `Service Request ${requestId} approved. Sanction ${sanctionNumber} issued.`,
+      type: "SUCCESS",
+      timestamp: "Just now",
+      read: false,
+    };
+    setActiveToast(toast);
+    playNotificationChime();
+
+    dispatchServerAction("APPROVE_REQUEST", {
+      requestId,
+      assignedDept,
+      comments,
+      priorityOverride,
+      deadline,
+    });
+  }, [user, logAudit, dispatchServerAction]);
+
+  const rejectServiceRequest = useCallback((requestId: string, reason: string) => {
+    setRequests((prev) =>
+      prev.map((r) =>
+        r.id === requestId
+          ? {
+              ...r,
+              status: "REJECTED" as RequestStatus,
+              centralAdminComments: `Rejected: ${reason}`,
+              history: [
+                ...r.history,
+                {
+                  timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                  actor: `${user?.name || "Central Admin"}`,
+                  action: `Rejected request: ${reason}`,
+                },
+              ],
+            }
+          : r
+      )
+    );
+
+    logAudit(user?.name || "Central Admin", "CENTRAL", "REJECT_SERVICE_REQUEST", requestId, `Reason: ${reason}`);
+
+    const toast: NotificationItem = {
+      id: `NOTIF-${Date.now()}`,
+      title: "Request Rejected",
+      message: `Service Request ${requestId} was rejected.`,
+      type: "CRITICAL",
+      timestamp: "Just now",
+      read: false,
+    };
+    setActiveToast(toast);
+    playNotificationChime();
+
+    dispatchServerAction("REJECT_REQUEST", { requestId, reason });
+  }, [user, logAudit, dispatchServerAction]);
+
+  const requestModification = useCallback((requestId: string, notes: string) => {
+    setRequests((prev) =>
+      prev.map((r) =>
+        r.id === requestId
+          ? {
+              ...r,
+              status: "UNDER_REVIEW" as RequestStatus,
+              modificationNotes: notes,
+              history: [
+                ...r.history,
+                {
+                  timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                  actor: `${user?.name || "Central Admin"}`,
+                  action: `Sent back for modification: ${notes}`,
+                },
+              ],
+            }
+          : r
+      )
+    );
+
+    logAudit(user?.name || "Central Admin", "CENTRAL", "REQUEST_MODIFICATION", requestId, `Notes: ${notes}`);
+
+    const toast: NotificationItem = {
+      id: `NOTIF-${Date.now()}`,
+      title: "Modification Requested",
+      message: `Request ${requestId} returned to department for revision.`,
+      type: "WARNING",
+      timestamp: "Just now",
+      read: false,
+    };
+    setActiveToast(toast);
+    playNotificationChime();
+
+    dispatchServerAction("REQUEST_MODIFICATION", { requestId, notes });
+  }, [user, logAudit, dispatchServerAction]);
+
+  const updateRequestPriority = useCallback((requestId: string, priority: RequestPriority) => {
+    setRequests((prev) =>
+      prev.map((r) =>
+        r.id === requestId
+          ? {
+              ...r,
+              priority,
+              history: [
+                ...r.history,
+                {
+                  timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                  actor: `${user?.name || "Central Admin"}`,
+                  action: `Priority updated to ${priority}`,
+                },
+              ],
+            }
+          : r
+      )
+    );
+
+    logAudit(user?.name || "Central Admin", "CENTRAL", "UPDATE_PRIORITY", requestId, `Priority set to ${priority}`);
+    dispatchServerAction("UPDATE_PRIORITY", { requestId, priority });
+  }, [user, logAudit, dispatchServerAction]);
+
+  const updateRequestProgress = useCallback((
+    requestId: string,
+    percentage: number,
+    notes: string,
+    issues?: string,
+    photoUrl?: string
+  ) => {
+    const updatedStatus: RequestStatus = percentage >= 100 ? "COMPLETED" : "IN_PROGRESS";
+    setRequests((prev) =>
+      prev.map((r) => {
+        if (r.id !== requestId) return r;
+        const currentActual = Math.round(r.estimatedCost * (percentage / 100) * 0.96);
+        const newUpdate = {
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " IST",
+          updatedBy: user?.name || "Assigned Crew Lead",
+          department: (r.assignedToDepartment || user?.departmentId || "ELEC") as DepartmentId,
+          percentage,
+          notes,
+          issues,
+          photos: photoUrl ? [photoUrl] : undefined,
+        };
+        return {
+          ...r,
+          progress: percentage,
+          status: updatedStatus,
+          costBreakdown: { ...r.costBreakdown, actualCost: currentActual },
+          progressUpdates: [newUpdate, ...r.progressUpdates],
+          history: [
+            ...r.history,
+            {
+              timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+              actor: `${user?.name || "Crew Lead"}`,
+              action: `Progress updated to ${percentage}%: ${notes}`,
+            },
+          ],
+        };
+      })
+    );
+
+    logAudit(user?.name || "Lead", user?.departmentId || "ENG", "UPDATE_PROGRESS", requestId, `Progress: ${percentage}%`);
+
+    const toast: NotificationItem = {
+      id: `NOTIF-${Date.now()}`,
+      title: percentage >= 100 ? "Work Order Completed!" : "Progress Updated",
+      message: `Request ${requestId} progress updated to ${percentage}%.`,
+      type: percentage >= 100 ? "SUCCESS" : "INFO",
+      timestamp: "Just now",
+      read: false,
+    };
+    setActiveToast(toast);
+    playNotificationChime();
+
+    dispatchServerAction("UPDATE_PROGRESS", { requestId, percentage, notes, issues, photoUrl });
+  }, [user, logAudit, dispatchServerAction]);
+
+  const markWorkCompleted = useCallback((requestId: string, notes: string) => {
+    updateRequestProgress(requestId, 100, notes || "Maintenance work completed by field gang.");
+  }, [updateRequestProgress]);
+
+  const verifyAndCloseRequest = useCallback((requestId: string, centralNotes: string) => {
+    setRequests((prev) =>
+      prev.map((r) =>
+        r.id === requestId
+          ? {
+              ...r,
+              status: "CLOSED" as RequestStatus,
+              progress: 100,
+              centralAdminComments: centralNotes,
+              history: [
+                ...r.history,
+                {
+                  timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                  actor: `${user?.name || "Central Admin"}`,
+                  action: `Inspection verified and request CLOSED.`,
+                  note: centralNotes,
+                },
+              ],
+            }
+          : r
+      )
+    );
+
+    logAudit(user?.name || "Central Admin", "CENTRAL", "VERIFY_CLOSE", requestId, centralNotes);
+
+    const toast: NotificationItem = {
+      id: `NOTIF-${Date.now()}`,
+      title: "Work Order Verified & Closed",
+      message: `Request ${requestId} successfully closed.`,
+      type: "SUCCESS",
+      timestamp: "Just now",
+      read: false,
+    };
+    setActiveToast(toast);
+    playNotificationChime();
+
+    dispatchServerAction("VERIFY_CLOSE", { requestId, centralNotes });
+  }, [user, logAudit, dispatchServerAction]);
+
+  const acceptAiRecommendation = useCallback((recId: string) => {
+    setAiRecommendations((prev) =>
+      prev.map((r) => (r.id === recId ? { ...r, status: "ACCEPTED" as const } : r))
+    );
+    logAudit(user?.name || "OCC", "OPS", "ACCEPT_AI_REC", recId, `Accepted AI plan`);
+    const toast: NotificationItem = {
+      id: `NOTIF-${Date.now()}`,
+      title: "AI Recommendation Applied",
+      message: "Maintenance schedule optimized.",
+      type: "SUCCESS",
+      timestamp: "Just now",
+      read: false,
+    };
+    setActiveToast(toast);
+    playNotificationChime();
+    dispatchServerAction("ACCEPT_AI_REC", { recId });
+  }, [user, logAudit, dispatchServerAction]);
+
+  const dismissAiRecommendation = useCallback((recId: string) => {
+    setAiRecommendations((prev) =>
+      prev.map((r) => (r.id === recId ? { ...r, status: "DISMISSED" as const } : r))
+    );
+    logAudit(user?.name || "OCC", "OPS", "DISMISS_AI_REC", recId, `Dismissed AI plan`);
+    dispatchServerAction("DISMISS_AI_REC", { recId });
+  }, [user, logAudit, dispatchServerAction]);
+
+  const createCustomBundle = useCallback((taskIds: string[], customTitle?: string): BundledMaintenanceOrder => {
+    const candidateList = [
+      ...maintenanceTasks.map((t) => ({
+        id: t.id,
+        title: t.title,
+        departmentId: t.departmentId,
+        estimatedDurationHours: t.estimatedDurationHours || 4,
+        estimatedCost: t.estimatedCost || 150000,
+        corridorId: t.corridorId || "NDLS-MMCT",
+        locationKm: t.locationKm || "KM 148.0 - 156.0",
+        recommendedDate: t.recommendedDate || "2026-08-30",
+      })),
+      ...requests.map((r) => ({
+        id: r.id,
+        title: r.title,
+        departmentId: (r.assignedToDepartment || r.requestingDepartment || "ENG") as DepartmentId,
+        estimatedDurationHours: 4,
+        estimatedCost: r.estimatedCost || 250000,
+        corridorId: r.corridorId || "NDLS-MMCT",
+        locationKm: r.locationKm || "KM 148.0 - 154.0",
+        recommendedDate: r.requiredDate || r.completionDeadline || "2026-08-30",
+      })),
+    ];
+    const selectedItems = candidateList.filter((item) => taskIds.includes(item.id));
+    const newId = `BND-${Math.floor(100 + Math.random() * 900)}`;
+    const totalIndividualHours = selectedItems.reduce((acc, t) => acc + t.estimatedDurationHours, 0);
+    const bundledHours = Number((Math.max(...selectedItems.map((t) => t.estimatedDurationHours), 3) * 1.15).toFixed(1));
+    const timeSaved = Number((totalIndividualHours - bundledHours).toFixed(1));
+    const timeReductionPct = totalIndividualHours > 0 ? Math.round((timeSaved / totalIndividualHours) * 100) : 35;
+    const participatingDepts = Array.from(new Set(selectedItems.map((t) => t.departmentId)));
+    const commonCorridor = selectedItems[0]?.corridorId || "NDLS-MMCT";
+    const commonLocation = selectedItems[0]?.locationKm || "KM 148.0 - 156.0";
+
+    const newBundle: BundledMaintenanceOrder = {
+      id: newId,
+      title: customTitle || `Joint Mega Block (${selectedItems.map((t) => t.id).join(" + ")})`,
+      corridorId: commonCorridor,
+      locationKm: commonLocation,
+      taskIds,
+      tasksSummary: selectedItems.map((t) => ({
+        id: t.id,
+        title: t.title,
+        departmentId: t.departmentId,
+        durationHours: t.estimatedDurationHours,
+        cost: t.estimatedCost,
+      })),
+      scheduledDate: selectedItems[0]?.recommendedDate || "2026-08-30",
+      timeWindow: "01:30 AM - 05:30 AM (Optimized Joint Night Block)",
+      individualHoursSum: totalIndividualHours,
+      bundledBlockHours: bundledHours,
+      timeSavedHours: timeSaved,
+      timeReductionPercent: timeReductionPct,
+      trainsDelaySavedMinutes: Math.round(timeSaved * 35),
+      financialSavingsINR: Math.round(selectedItems.reduce((acc, t) => acc + t.estimatedCost, 0) * 0.22),
+      participatingDepartments: participatingDepts,
+      status: "APPROVED",
+      aiBundlingRationale: `AI Spatio-temporal clustering detected overlapping corridor sections (${commonLocation}). Combining ${selectedItems.length} activities yields ${timeReductionPct}% reduction in track closure.`,
+    };
+
+    setBundles((prev) => [newBundle, ...prev]);
+    logAudit(user?.name || "OCC", "OPS", "CREATE_BUNDLE", newId, `Created bundle ${newId} combining ${taskIds.length} tasks`);
+    const toast: NotificationItem = {
+      id: `NOTIF-${Date.now()}`,
+      title: "Joint Mega Block Created",
+      message: `${newBundle.title} created with ${timeReductionPct}% closure reduction.`,
+      type: "SUCCESS",
+      timestamp: "Just now",
+      read: false,
+    };
+    setActiveToast(toast);
+    playNotificationChime();
+
+    dispatchServerAction("CREATE_BUNDLE", { taskIds, customTitle });
+    return newBundle;
+  }, [maintenanceTasks, requests, user, logAudit, dispatchServerAction]);
+
+  const approveBundle = useCallback((bundleId: string) => {
+    setBundles((prev) => prev.map((b) => (b.id === bundleId ? { ...b, status: "APPROVED" as const } : b)));
+    logAudit(user?.name || "OCC", "OPS", "APPROVE_BUNDLE", bundleId, `Approved Mega Block window.`);
+    dispatchServerAction("APPROVE_BUNDLE", { bundleId });
+  }, [user, logAudit, dispatchServerAction]);
+
+  const executeBundle = useCallback((bundleId: string) => {
+    setBundles((prev) => prev.map((b) => (b.id === bundleId ? { ...b, status: "IN_EXECUTION" as const } : b)));
+    logAudit(user?.name || "OCC", "OPS", "EXECUTE_BUNDLE", bundleId, `Joint mega block commenced.`);
+    dispatchServerAction("EXECUTE_BUNDLE", { bundleId });
+  }, [user, logAudit, dispatchServerAction]);
+
+  const allocateResource = useCallback((resourceId: string, departmentId: DepartmentId, corridorId?: string) => {
+    setResources((prev) =>
+      prev.map((res) =>
+        res.id === resourceId
+          ? { ...res, departmentId, assignedCorridor: corridorId || res.assignedCorridor, status: "ASSIGNED" as const }
+          : res
+      )
+    );
+    logAudit(user?.name || "Controller", "CENTRAL", "ALLOCATE_RESOURCE", resourceId, `Allocated to ${departmentId}`);
+    dispatchServerAction("ALLOCATE_RESOURCE", { resourceId, departmentId, corridorId });
+  }, [user, logAudit, dispatchServerAction]);
+
+  const markNotificationRead = useCallback((id: string) => {
     setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
-  };
-  const markAllNotificationsRead = () => {
+    dispatchServerAction("MARK_NOTIF_READ", { notifId: id });
+  }, [dispatchServerAction]);
+
+  const markAllNotificationsRead = useCallback((() => {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-  };
-  const resetToDemoState = () => {
+    dispatchServerAction("MARK_ALL_NOTIFS_READ", {});
+  }), [dispatchServerAction]);
+
+  const resetToDemoState = useCallback(() => {
     setTrains(MOCK_LIVE_TRAINS);
     setBlockRequests(MOCK_BLOCK_REQUESTS);
     setT806Sanctions(MOCK_T806_SANCTIONS);
     setAssets(MOCK_ASSETS);
-  };
+    setRequests(MOCK_SERVICE_REQUESTS);
+    setMaintenanceTasks(MOCK_MAINTENANCE_TASKS);
+    setBundles(MOCK_BUNDLES);
+    setCorridors(MOCK_CORRIDORS);
+    setDepartments(MOCK_DEPARTMENTS);
+    setResources(MOCK_RESOURCES);
+    setAiRecommendations(MOCK_AI_RECOMMENDATIONS);
+    setNotifications(MOCK_NOTIFICATIONS);
+    setAuditLogs(MOCK_AUDIT_LOGS);
+    setHorizonPlans(ALL_HORIZON_BLOCK_PLANS);
+
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.removeItem("railplan_client_state_v1");
+      } catch (e) {}
+    }
+
+    dispatchServerAction("RESET_STATE", {});
+    const toast: NotificationItem = {
+      id: `NOTIF-${Date.now()}`,
+      title: "Demo State Reset",
+      message: "All operational datasets restored to baseline simulation defaults.",
+      type: "INFO",
+      timestamp: "Just now",
+      read: false,
+    };
+    setActiveToast(toast);
+  }, [dispatchServerAction]);
 
   const unreadNotificationCount = notifications.filter((n) => !n.read).length;
   const activeCautionOrdersCount = trains.filter((t) => !!t.cautionOrderApplied).length + 2;
@@ -836,6 +1507,8 @@ export const RailPlanProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         selectedCorridorId,
         unreadNotificationCount,
         serverSyncConnected,
+        isSyncing,
+        triggerManualSync,
         isMobileMenuOpen,
         setIsMobileMenuOpen,
         isSidebarOpen,

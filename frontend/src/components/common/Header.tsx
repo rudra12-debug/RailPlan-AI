@@ -42,6 +42,8 @@ export const Header: React.FC = () => {
     unreadNotificationCount,
     resetToDemoState,
     serverSyncConnected,
+    isSyncing,
+    triggerManualSync,
     isMobileMenuOpen,
     setIsMobileMenuOpen,
     isSidebarOpen,
@@ -206,18 +208,30 @@ export const Header: React.FC = () => {
 
           {/* Right: Actions, Device Toggle, Role, Notifications, Logout */}
           <div className="flex items-center space-x-1 sm:space-x-1.5 shrink-0 justify-end min-w-0">
-            {/* Live Multi-Device Sync Indicator (Icon on small screens, label on large) */}
-            <div
-              className={`flex items-center space-x-1 p-1.5 sm:px-2 sm:py-1 rounded-lg border-2 border-black shadow-[1px_1px_0_#000000] text-[10px] font-mono font-black shrink-0 ${
-                serverSyncConnected
-                  ? "bg-[#00FFD2] text-black"
-                  : "bg-[#FF1818] text-white"
+            {/* Live Multi-Device Sync Indicator with Click-to-Sync & Pulse animation */}
+            <button
+              onClick={() => triggerManualSync()}
+              disabled={isSyncing}
+              className={`flex items-center space-x-1.5 p-1.5 sm:px-2.5 sm:py-1 rounded-lg border-2 border-black shadow-[1px_1px_0_#000000] text-[10px] font-mono font-black shrink-0 transition active:translate-y-0.5 cursor-pointer ${
+                !serverSyncConnected
+                  ? "bg-[#DC2626] text-white"
+                  : isSyncing
+                  ? "bg-[#D97706] text-black animate-pulse"
+                  : "bg-[#047857] text-white hover:bg-[#065F46]"
               }`}
-              title="Real-Time Central Server State Synchronization"
+              title={
+                isSyncing
+                  ? "Synchronizing with Central OCC Server..."
+                  : serverSyncConnected
+                  ? "Live Synced • Multi-User Central Server Active (Click to sync now)"
+                  : "Offline / Reconnecting to OCC Server"
+              }
             >
-              <Broadcast size={14} weight="duotone" className="w-3.5 h-3.5 shrink-0" />
-              <span className="hidden xl:inline">{serverSyncConnected ? t("header.liveSync", "Live Sync") : t("header.syncing", "Syncing")}</span>
-            </div>
+              <Broadcast size={14} weight="duotone" className={`w-3.5 h-3.5 shrink-0 ${isSyncing ? "animate-spin" : ""}`} />
+              <span className="hidden xl:inline">
+                {!serverSyncConnected ? t("header.offline", "Offline") : isSyncing ? t("header.syncing", "Syncing...") : t("header.liveSync", "Live Sync")}
+              </span>
+            </button>
 
             {/* Device Mode Switcher (Icon on mobile, text on sm+) */}
             <button

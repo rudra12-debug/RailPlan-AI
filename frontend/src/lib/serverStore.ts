@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import os from "os";
 import {
   ServiceRequest,
   MaintenanceTask,
@@ -19,6 +20,9 @@ import {
   CostBreakdown,
   EmergencyIncidentRequest,
   EmergencyReplanResult,
+  MaintenanceBlockRequest,
+  StatutoryT806Sanction,
+  HorizonBlockPlan,
 } from "./types";
 import {
   MOCK_SERVICE_REQUESTS,
@@ -31,7 +35,10 @@ import {
   MOCK_NOTIFICATIONS,
   MOCK_AUDIT_LOGS,
   MOCK_BUNDLES,
+  MOCK_BLOCK_REQUESTS,
+  MOCK_T806_SANCTIONS,
 } from "./mockData";
+import { ALL_HORIZON_BLOCK_PLANS } from "./horizonPlansData";
 
 export interface ServerState {
   requests: ServiceRequest[];
@@ -44,6 +51,9 @@ export interface ServerState {
   aiRecommendations: AiRecommendation[];
   notifications: NotificationItem[];
   auditLogs: AuditLogEntry[];
+  blockRequests: MaintenanceBlockRequest[];
+  t806Sanctions: StatutoryT806Sanction[];
+  horizonPlans: HorizonBlockPlan[];
   stateVersion: number;
   lastUpdated: string;
 }
@@ -54,7 +64,20 @@ declare global {
   var __railplan_server_state__: ServerState | undefined;
 }
 
-const DB_FILE_PATH = path.join(process.cwd(), ".railplan_server_db.json");
+function getDbFilePath(): string {
+  try {
+    const cwdPath = path.join(process.cwd(), ".railplan_server_db.json");
+    if (!fs.existsSync(cwdPath)) {
+      fs.writeFileSync(cwdPath, "");
+      fs.unlinkSync(cwdPath);
+    }
+    return cwdPath;
+  } catch {
+    return path.join(os.tmpdir(), ".railplan_server_db.json");
+  }
+}
+
+const DB_FILE_PATH = getDbFilePath();
 
 function getInitialState(): ServerState {
   return {
@@ -68,6 +91,9 @@ function getInitialState(): ServerState {
     aiRecommendations: JSON.parse(JSON.stringify(MOCK_AI_RECOMMENDATIONS)),
     notifications: JSON.parse(JSON.stringify(MOCK_NOTIFICATIONS)),
     auditLogs: JSON.parse(JSON.stringify(MOCK_AUDIT_LOGS)),
+    blockRequests: JSON.parse(JSON.stringify(MOCK_BLOCK_REQUESTS)),
+    t806Sanctions: JSON.parse(JSON.stringify(MOCK_T806_SANCTIONS)),
+    horizonPlans: JSON.parse(JSON.stringify(ALL_HORIZON_BLOCK_PLANS)),
     stateVersion: 1,
     lastUpdated: new Date().toISOString(),
   };
@@ -81,7 +107,17 @@ function loadState(): ServerState {
   try {
     if (fs.existsSync(DB_FILE_PATH)) {
       const raw = fs.readFileSync(DB_FILE_PATH, "utf-8");
-      const parsed = JSON.parse(raw);
+      const parsed: ServerState = JSON.parse(raw);
+      // Ensure missing newly-added arrays gracefully initialize
+      if (!parsed.blockRequests || !Array.isArray(parsed.blockRequests)) {
+        parsed.blockRequests = JSON.parse(JSON.stringify(MOCK_BLOCK_REQUESTS));
+      }
+      if (!parsed.t806Sanctions || !Array.isArray(parsed.t806Sanctions)) {
+        parsed.t806Sanctions = JSON.parse(JSON.stringify(MOCK_T806_SANCTIONS));
+      }
+      if (!parsed.horizonPlans || !Array.isArray(parsed.horizonPlans)) {
+        parsed.horizonPlans = JSON.parse(JSON.stringify(ALL_HORIZON_BLOCK_PLANS));
+      }
       global.__railplan_server_state__ = parsed;
       return parsed;
     }
@@ -930,6 +966,175 @@ export function executeServerAction(
     case "MARK_ALL_NOTIFS_READ": {
       state.notifications = state.notifications.map((n) => ({ ...n, read: true }));
       break;
+    }
+
+    // 16. Block Requests & Multi-Department Bundler
+    case "CREATE_BLOCK_REQUEST": {
+      const newReq = payload;
+      state.blockRequests = [newReq, ...state.blockRequests];
+      addAuditLog(
+        actor?.name || "Official",
+        newReq.departmentId || "ENG",
+        "CREATE_BLOCK_REQUEST",
+        newReq.id,
+        `Created maintenance block request on ${newReq.corridorId} KM ${newReq.fromKm}-${newReq.toKm}`
+      );
+      addNotification(
+        "Maintenance Block Submitted",
+        `Request ${newReq.blockId || newReq.id} submitted for AI Mega-Block Bundler analysis.`,
+        "SUCCESS",
+        newReq.departmentId || "ALL"
+      );
+      actionResult = newReq.id;
+      break;
+    }
+
+    case "UPDATE_BLOCK_STATUS": {
+      const { id, status } = payload;
+      state.blockRequests = state.blockRequests.map((r) =>
+        r.id === id ? { ...r, status } : r
+      );
+      break;
+    }
+
+    case "ACCEPT_BUNDLED_CLUSTER": {
+      const { order, requestIds, sanction } = payload;
+      if (order) {
+        state.bundles = [order, ...state.bundles];
+      }
+      if (requestIds && Array.isArray(requestIds)) {
+        const idSet = new Set(requestIds);
+        state.blockRequests = state.blockRequests.map((r) =>
+          idSet.has(r.id) ? { ...r, status: "Bundled", bundleId: order?.id } : r
+        );
+      }
+      if (sanction) {
+        state.t806Sanctions = [sanction, ...state.t806Sanctions];
+      }
+      addAuditLog(
+        actor?.name || "OCC Controller",
+        "OPS",
+        "ACCEPT_AI_BUNDLE",
+        order?.id || "BUNDLE",
+        `Approved Joint Mega-Block bundling ${requestIds?.length || 0} requests`
+      );
+      addNotification(
+        "Joint Mega-Block Approved!",
+        `${order?.title || "Mega Block"} sanctioned. Form T/806 draft generated.`,
+        "SUCCESS",
+        "ALL"
+      );
+      actionResult = order;
+      break;
+    }
+
+    // 17. Statutory Form T/806 Signoff & Creation
+    case "SIGN_T806_STEP": {
+      const { sanctionId, step, notes } = payload;
+      const now = new Date().toLocaleString("en-IN", { dateStyle: "short", timeStyle: "medium" }) + " IST";
+      const actorName = actor?.name || "Designated Officer";
+      state.t806Sanctions = state.t806Sanctions.map((s) => {
+        if (s.id !== sanctionId) return s;
+        const updated = { ...s };
+        if (step === 1) {
+          updated.signoffPipeline.step1DeptSubmission = { completed: true, by: actorName, timestamp: now };
+          updated.currentStep = 2;
+        } else if (step === 2) {
+          updated.signoffPipeline.step2PowerIsolation = {
+            completed: true,
+            by: actorName,
+            certificate: `TIC-${Date.now().toString().slice(-4)} / 25kV Earthing Verified`,
+            timestamp: now,
+          };
+          updated.currentStep = 3;
+          updated.status = "ISOLATION_CONFIRMED";
+        } else if (step === 3) {
+          updated.signoffPipeline.step3TrafficSanction = { completed: true, by: actorName, timestamp: now };
+          updated.currentStep = 4;
+          updated.status = "SANCTIONED";
+        } else if (step === 4) {
+          updated.signoffPipeline.step4T806Issued = {
+            completed: true,
+            by: actorName,
+            timestamp: now,
+            qrCodeHash: `sha256_${Date.now().toString(16)}_ir_gov_t806`,
+          };
+          updated.status = "ACTIVE_BLOCK";
+        }
+        return updated;
+      });
+      addAuditLog(
+        actorName,
+        actor?.departmentId || "OPS",
+        `SIGN_T806_STEP_${step}`,
+        sanctionId,
+        `Completed Step ${step} sign-off for Form T/806 Block Authority.${notes ? ` Notes: ${notes}` : ""}`
+      );
+      break;
+    }
+
+    case "CREATE_T806": {
+      const sanction = payload;
+      state.t806Sanctions = [sanction, ...state.t806Sanctions];
+      actionResult = sanction;
+      break;
+    }
+
+    // 18. Multi-Horizon Block Planning
+    case "APPROVE_HORIZON_PLAN": {
+      const { planId } = payload;
+      state.horizonPlans = state.horizonPlans.map((p) =>
+        p.id === planId ? { ...p, status: "BOARD_APPROVED" as const } : p
+      );
+      addAuditLog(actor?.name || "Railway Board", "CENTRAL_ADMIN", "BOARD_SANCTION_PLAN", planId, `Railway Board Sanction granted for ${planId}`);
+      addNotification("Board Sanction Granted", `Railway Board Statutory Sanction issued for plan ${planId}`, "SUCCESS", "ALL");
+      break;
+    }
+
+    case "AI_OPTIMIZE_HORIZON": {
+      const { planId } = payload;
+      state.horizonPlans = state.horizonPlans.map((p) => {
+        if (p.id === planId) {
+          return {
+            ...p,
+            aiOptimizationScore: Math.min(100, p.aiOptimizationScore + 4),
+            averageDelayMinutesPerTrain: Math.max(1.5, Number((p.averageDelayMinutesPerTrain * 0.72).toFixed(1))),
+            freightCapacityImpactPct: Math.max(1.0, Number((p.freightCapacityImpactPct * 0.78).toFixed(1))),
+            conflictCheckPassed: true,
+          };
+        }
+        return p;
+      });
+      addAuditLog(actor?.name || "Official", "CENTRAL_ADMIN", "AI_OPTIMIZE_HORIZON_SCHEDULE", planId, `AI schedule optimization executed for ${planId}`);
+      addNotification("AI Horizon Optimization Complete", `AI Optimization Engine tightened schedule for plan ${planId}`, "SUCCESS", "ALL");
+      break;
+    }
+
+    // 19. Emergency Dispatch
+    case "CONFIRM_EMERGENCY": {
+      const { scenarioId, incidentTitle, allocatedWindow } = payload;
+      addAuditLog(
+        actor?.name || "Chief Controller",
+        "OPS",
+        "CONFIRM_EMERGENCY_DISPATCH",
+        scenarioId,
+        `Authorized Emergency Dispatch (${scenarioId}) for ${incidentTitle}. Allocated Window: ${allocatedWindow}.`
+      );
+      addNotification(
+        "🚨 Emergency OCC Dispatch Executed",
+        `${scenarioId} enacted. Station Masters notified; emergency line clearance broadcasted.`,
+        "CRITICAL",
+        "ALL"
+      );
+      break;
+    }
+
+    // 20. Reset to Demo Simulation State
+    case "RESET_STATE": {
+      const fresh = getInitialState();
+      fresh.stateVersion = state.stateVersion + 1;
+      saveState(fresh);
+      return { success: true, state: fresh, result: null };
     }
 
     default:

@@ -11,11 +11,20 @@ import {
   Stack, 
   Sparkle,
   ShieldCheck,
-  Funnel
+  Funnel,
+  ArrowsClockwise
 } from "@phosphor-icons/react";
 
 export default function ApprovalCenterPage() {
-  const { requests, selectedCorridorId, setSelectedCorridorId, selectedZone, corridors } = useRailPlan();
+  const { 
+    requests, 
+    selectedCorridorId, 
+    setSelectedCorridorId, 
+    selectedZone, 
+    corridors,
+    triggerManualSync,
+    isSyncing 
+  } = useRailPlan();
   const [activeTab, setActiveTab] = useState<"ALL" | "PENDING" | "ACTIVE" | "COMPLETED" | "CLOSED">("PENDING");
 
   const availableCorridors = useMemo(() => {
@@ -80,7 +89,16 @@ export default function ApprovalCenterPage() {
           </p>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2.5">
+          <button
+            onClick={() => triggerManualSync()}
+            disabled={isSyncing}
+            className="px-3.5 py-1.5 rounded-xl bg-[#030914] border border-cyan-500/50 hover:bg-[#07192f] text-cyan-300 text-xs font-bold font-mono flex items-center space-x-1.5 transition active:scale-95 cursor-pointer shadow-[0_0_10px_rgba(0,242,254,0.15)]"
+            title="Force refresh state from Central OCC Server"
+          >
+            <ArrowsClockwise size={14} className={isSyncing ? "animate-spin text-amber-400" : "text-cyan-300"} />
+            <span>{isSyncing ? "Refreshing..." : "Refresh"}</span>
+          </button>
           <span className="px-3.5 py-1.5 rounded-xl bg-[#030914] border border-cyan-500/50 text-cyan-300 text-xs font-bold font-mono shadow-[0_0_12px_rgba(0,242,254,0.2)]">
             {pendingRequests.length} Pending Actions {isCorridorFiltered && `(${selectedCorridorId})`}
           </span>
