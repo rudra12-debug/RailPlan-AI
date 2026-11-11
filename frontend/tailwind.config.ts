@@ -12,6 +12,14 @@ const config: Config = {
       colors: {
         background: "#011526",
         foreground: "#F8FAFC",
+        navy: {
+          950: "#000D18",
+          900: "#022642",
+          850: "#011B30",
+          800: "#033358",
+          700: "#02395D",
+          600: "#0A4E7A",
+        },
         chassis: {
           canvas: "#011526",
           card: "#022642",

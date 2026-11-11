@@ -20,6 +20,37 @@ body {
   letter-spacing: -0.01em;
 }
 
+/* Base OCC Dark Mode Form Controls & Inputs (Ensures zero browser white-flash or unstyled white inputs) */
+input, select, textarea {
+  background-color: #000D18;
+  color: #F8FAFC;
+  border-color: #334155;
+  color-scheme: dark;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #64748B;
+}
+
+select option {
+  background-color: #000D18;
+  color: #F8FAFC;
+}
+
+/* Explicit fallback definitions for navy utilities across both modes */
+.bg-navy-950 {
+  background-color: #000D18;
+}
+.bg-navy-900 {
+  background-color: #022642;
+}
+.bg-navy-850 {
+  background-color: #011B30;
+}
+.bg-navy-800 {
+  background-color: #033358;
+}
+
 /* Custom Executive OCC Solid Scrollbar */
 ::-webkit-scrollbar {
   width: 7px;
@@ -467,6 +498,7 @@ html.light textarea {
   background-color: #FFFFFF !important;
   color: #0F172A !important;
   border-color: #0F172A !important;
+  color-scheme: light;
 }
 html.light input::placeholder,
 html.light textarea::placeholder {
